@@ -23,6 +23,7 @@ import {
   faSquare,
   faSun,
   faTree,
+  faTimes,
   faUmbrellaBeach,
   faWater,
   faWind,
@@ -52,6 +53,7 @@ library.add(
   faSquare,
   faSun,
   faTree,
+  faTimes,
   faUmbrellaBeach,
   faWater,
   faWind

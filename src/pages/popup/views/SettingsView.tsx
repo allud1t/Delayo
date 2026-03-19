@@ -19,7 +19,6 @@ function SettingsView(): React.ReactElement {
             <Link
               to='/'
               className='btn btn-circle btn-ghost btn-sm mr-3 transition-all duration-200 hover:bg-base-100'
-              viewTransition={{ types: ['slide-right'] }}
             >
               <FontAwesomeIcon icon='arrow-left' />
             </Link>
@@ -29,7 +28,12 @@ function SettingsView(): React.ReactElement {
             type='button'
             className='btn btn-circle btn-ghost btn-sm transition-all duration-200 hover:bg-base-100'
             onClick={toggleTheme}
-            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            aria-label={t('common.theme.toggle', {
+              theme:
+                theme === 'light'
+                  ? t('common.theme.dark')
+                  : t('common.theme.light'),
+            })}
           >
             <FontAwesomeIcon
               icon={theme === 'light' ? 'moon' : 'sun'}

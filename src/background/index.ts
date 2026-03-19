@@ -1,264 +1,112 @@
-import { DelayedTab, RecurrencePattern } from '@types';
-import generateUniqueTabId from '@utils/generateUniqueTabId';
-import normalizeDelayedTabs from '@utils/normalizeDelayedTabs';
+import {
+  DelayedTabsRuntimeMessage,
+  DelayedTabsRuntimeResponse,
+} from '@types';
 
-chrome.runtime.onInstalled.addListener(({ reason }) => {
-  if (reason === 'install') {
-    chrome.storage.local.set({ delayedTabs: [] });
+import { createDelayedTabsController } from './delayedTabsController';
 
-    chrome.contextMenus.create({
-      id: 'delay-tab',
-      title: 'Delay this tab',
-      contexts: ['page'],
-    });
-  }
-});
+const delayedTabsController = createDelayedTabsController();
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'delay-tab' && tab?.id) {
-    chrome.action.openPopup();
-  }
-});
-
-function calculateNextWakeTime(
-  recurrencePattern: RecurrencePattern
-): number | null {
-  const now = new Date();
-  const [hours, minutes] = recurrencePattern.time.split(':').map(Number);
-
-  if (recurrencePattern.endDate && now.getTime() >= recurrencePattern.endDate) {
-    return null;
-  }
-
-  const nextWakeTime = new Date();
-  nextWakeTime.setHours(hours, minutes, 0, 0);
-
-  switch (recurrencePattern.type) {
-    case 'daily':
-      if (nextWakeTime.getTime() <= now.getTime()) {
-        nextWakeTime.setDate(nextWakeTime.getDate() + 1);
-      }
-      break;
-
-    case 'weekdays': {
-      nextWakeTime.setDate(nextWakeTime.getDate() + 1);
-      while (nextWakeTime.getDay() === 0 || nextWakeTime.getDay() === 6) {
-        nextWakeTime.setDate(nextWakeTime.getDate() + 1);
-      }
-      break;
-    }
-
-    case 'weekly':
-    case 'custom': {
-      if (
-        !recurrencePattern.daysOfWeek ||
-        recurrencePattern.daysOfWeek.length === 0
-      ) {
-        return null;
-      }
-
-      const currentDay = now.getDay();
-      const sortedDays = [...recurrencePattern.daysOfWeek].sort(
-        (a, b) => a - b
-      );
-
-      const nextDayIndex = sortedDays.findIndex((day) => day > currentDay);
-
-      if (nextDayIndex !== -1) {
-        const daysToAdd = sortedDays[nextDayIndex] - currentDay;
-        nextWakeTime.setDate(now.getDate() + daysToAdd);
-      } else {
-        const daysToAdd = 7 - currentDay + sortedDays[0];
-        nextWakeTime.setDate(now.getDate() + daysToAdd);
-      }
-
-      if (
-        nextWakeTime.getDay() === currentDay &&
-        nextWakeTime.getTime() <= now.getTime()
-      ) {
-        nextWakeTime.setDate(nextWakeTime.getDate() + 7);
-      }
-      break;
-    }
-
-    case 'monthly': {
-      nextWakeTime.setDate(recurrencePattern.dayOfMonth || 1);
-
-      if (nextWakeTime.getTime() <= now.getTime()) {
-        nextWakeTime.setMonth(nextWakeTime.getMonth() + 1);
-      }
-      break;
-    }
-
-    default:
-      // Default case
-      return null;
-  }
-
-  return nextWakeTime.getTime();
+async function bootstrapDelayedTabs(): Promise<void> {
+  await delayedTabsController.initializeStorage();
+  await delayedTabsController.reconcileDelayedTabs();
 }
 
-chrome.alarms.onAlarm.addListener(async (alarm) => {
-  if (alarm.name.startsWith('delayed-tab-')) {
-    try {
-      const tabId = alarm.name.replace('delayed-tab-', '');
+function runBootstrapDelayedTabs(): void {
+  void bootstrapDelayedTabs().catch((error: unknown) => {
+    console.error('Failed to bootstrap delayed tabs:', error);
+  });
+}
 
-      const { delayedTabs = [] } =
-        await chrome.storage.local.get('delayedTabs');
-      const normalizedTabs = normalizeDelayedTabs(delayedTabs);
+runBootstrapDelayedTabs();
 
-      const delayedTab = normalizedTabs.find(
-        (tab: DelayedTab) => tab.id === tabId
-      );
+chrome.runtime.onInstalled.addListener(async ({ reason }) => {
+  await bootstrapDelayedTabs();
 
-      if (delayedTab && delayedTab.url) {
-        await chrome.tabs.create({ url: delayedTab.url });
-
-        chrome.notifications.create({
-          type: 'basic',
-          iconUrl: delayedTab.favicon || 'icons/icon128.png',
-          title: 'Tab Awakened!',
-          message: `Your ${delayedTab.isRecurring ? 'recurring' : 'delayed'} tab "${delayedTab.title}" is now open.`,
-        });
-
-        if (delayedTab.isRecurring && delayedTab.recurrencePattern) {
-          const nextWakeTime = calculateNextWakeTime(
-            delayedTab.recurrencePattern
-          );
-
-          // Refresh tabs before updating to avoid race conditions when multiple
-          // alarms fire simultaneously
-          const { delayedTabs: currentTabs = [] } = await chrome.storage.local.get(
-            'delayedTabs'
-          );
-          const updatedTabs = currentTabs.filter(
-            (tab: DelayedTab) => String(tab.id) !== tabId
-          );
-
-          if (nextWakeTime) {
-            const updatedTab = {
-              ...delayedTab,
-              wakeTime: nextWakeTime,
-            };
-
-            const newTabId = generateUniqueTabId();
-            updatedTab.id = newTabId;
-            updatedTabs.push(updatedTab);
-
-            await chrome.storage.local.set({ delayedTabs: updatedTabs });
-
-            await chrome.alarms.create(`delayed-tab-${newTabId}`, {
-              when: nextWakeTime,
-            });
-          } else {
-            await chrome.storage.local.set({ delayedTabs: updatedTabs });
-          }
-        } else {
-          const { delayedTabs: currentTabs = [] } = await chrome.storage.local.get(
-            'delayedTabs'
-          );
-          const updatedTabs = currentTabs.filter(
-            (tab: DelayedTab) => String(tab.id) !== tabId
-          );
-          await chrome.storage.local.set({ delayedTabs: updatedTabs });
-        }
-      }
-    } catch (error) {
-      // Handle errors waking the tab
-      if (chrome.runtime.lastError) {
-        // Log runtime errors for debugging
-      }
-    }
+  if (reason === 'install' || reason === 'update') {
+    await delayedTabsController.setupContextMenu();
   }
 });
 
-chrome.runtime.onStartup.addListener(async () => {
-  try {
-    const { delayedTabs = [] } = await chrome.storage.local.get('delayedTabs');
-    const normalizedTabs = normalizeDelayedTabs(delayedTabs);
-    const now = Date.now();
-
-    const tabsToWake = normalizedTabs.filter(
-      (tab: DelayedTab) => tab.wakeTime <= now
-    );
-    const remainingTabs = normalizedTabs.filter(
-      (tab: DelayedTab) => tab.wakeTime > now
-    );
-
-    await Promise.all(
-      tabsToWake.map(async (tab: DelayedTab) => {
-        if (tab.url) {
-          await chrome.tabs.create({ url: tab.url });
-          if (tab.isRecurring && tab.recurrencePattern) {
-            const nextWakeTime = calculateNextWakeTime(tab.recurrencePattern);
-
-            if (nextWakeTime) {
-              const newTabId = generateUniqueTabId();
-              const updatedTab = {
-                ...tab,
-                id: newTabId,
-                wakeTime: nextWakeTime,
-              };
-
-              remainingTabs.push(updatedTab);
-              await chrome.alarms.create(`delayed-tab-${newTabId}`, {
-                when: nextWakeTime,
-              });
-            }
-          }
-        }
-      })
-    );
-
-    await chrome.storage.local.set({ delayedTabs: remainingTabs });
-
-    await Promise.all(
-      remainingTabs.map((tab: DelayedTab) =>
-        chrome.alarms.create(`delayed-tab-${tab.id}`, {
-          when: tab.wakeTime,
-        })
-      )
-    );
-  } catch (error) {
-    // Handle errors during startup wake process
-    if (chrome.runtime.lastError) {
-      // Log runtime errors for debugging
-    }
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId === 'delay-tab' && tab?.id) {
+    await chrome.action.openPopup();
   }
+});
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  void delayedTabsController.handleAlarm(alarm);
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  runBootstrapDelayedTabs();
 });
 
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
-  if (request.action === 'wake-tabs' && Array.isArray(request.tabIds)) {
-    const wakeTabs = async (): Promise<void> => {
-      try {
-        const { delayedTabs = [] } = await chrome.storage.local.get('delayedTabs');
-        const normalizedTabs = normalizeDelayedTabs(delayedTabs);
+  const delayedTabsRequest = request as DelayedTabsRuntimeMessage;
 
-        const tabsToWake = normalizedTabs.filter((tab: DelayedTab) =>
-          request.tabIds.includes(tab.id)
-        );
+  if (delayedTabsRequest.action === 'schedule-tabs') {
+    void delayedTabsController
+      .scheduleTabs(
+        delayedTabsRequest.tabs,
+        delayedTabsRequest.wakeTime,
+        delayedTabsRequest.recurrencePattern
+      )
+      .then(sendResponse)
+      .catch((error: unknown) => {
+        sendResponse({
+          success: false,
+          error: error instanceof Error ? error.message : 'Failed to schedule tabs',
+        } satisfies DelayedTabsRuntimeResponse);
+      });
 
-        for (const tab of tabsToWake) {
-          if (tab.url) {
-            await chrome.tabs.create({ url: tab.url });
-          }
-          await chrome.alarms.clear(`delayed-tab-${tab.id}`);
-        }
-
-        const updatedTabs = normalizedTabs.filter(
-          (tab: DelayedTab) => !request.tabIds.includes(tab.id)
-        );
-
-        await chrome.storage.local.set({ delayedTabs: updatedTabs });
-
-        sendResponse({ success: true });
-      } catch (error) {
-        sendResponse({ success: false, error });
-      }
-    };
-
-    wakeTabs();
-    return true; // keep the message channel open for async response
+    return true;
   }
+
+  if (delayedTabsRequest.action === 'wake-tabs') {
+    void delayedTabsController
+      .wakeTabs(delayedTabsRequest.tabIds)
+      .then(sendResponse)
+      .catch((error: unknown) => {
+        sendResponse({
+          success: false,
+          error: error instanceof Error ? error.message : 'Failed to wake tabs',
+        } satisfies DelayedTabsRuntimeResponse);
+      });
+
+    return true;
+  }
+
+  if (delayedTabsRequest.action === 'remove-tabs') {
+    void delayedTabsController
+      .removeTabs(delayedTabsRequest.tabIds)
+      .then(sendResponse)
+      .catch((error: unknown) => {
+        sendResponse({
+          success: false,
+          error: error instanceof Error ? error.message : 'Failed to remove tabs',
+        } satisfies DelayedTabsRuntimeResponse);
+      });
+
+    return true;
+  }
+
+  if (delayedTabsRequest.action === 'reconcile-delayed-tabs') {
+    void delayedTabsController
+      .reconcileDelayedTabs()
+      .then(sendResponse)
+      .catch((error: unknown) => {
+        sendResponse({
+          success: false,
+          error:
+            error instanceof Error
+              ? error.message
+              : 'Failed to reconcile delayed tabs',
+        } satisfies DelayedTabsRuntimeResponse);
+      });
+
+    return true;
+  }
+
   return undefined;
 });

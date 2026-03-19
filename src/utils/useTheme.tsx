@@ -1,74 +1,74 @@
+import { ThemePreference } from '@types';
+import {
+  getSystemThemePreference,
+  getThemePreference,
+  setThemePreference,
+  subscribeToStorageKey,
+} from '@utils/extensionStorage';
 import { useEffect, useState } from 'react';
 
-type Theme = 'light' | 'dark';
+function applyTheme(theme: ThemePreference): void {
+  document.documentElement.setAttribute('data-theme', theme);
+}
 
-/**
- * Custom hook for managing theme state across the extension
- * Handles loading saved theme preference, system theme detection, and theme toggling
- * @returns {Object} Theme state and toggle function
- */
 const useTheme = (): {
-  theme: Theme;
+  theme: ThemePreference;
   toggleTheme: () => void;
 } => {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<ThemePreference>('light');
+  const [usesSystemTheme, setUsesSystemTheme] = useState(false);
 
   useEffect(() => {
     const loadTheme = async (): Promise<void> => {
-      try {
-        const { theme: savedTheme } = await chrome.storage.local.get('theme');
+      const savedTheme = await getThemePreference();
+      const nextTheme = savedTheme ?? getSystemThemePreference();
 
-        if (!savedTheme) {
-          const prefersDark = window.matchMedia(
-            '(prefers-color-scheme: dark)'
-          ).matches;
-          const systemTheme = prefersDark ? 'dark' : 'light';
-          setTheme(systemTheme);
-          document.documentElement.setAttribute('data-theme', systemTheme);
-        } else {
-          setTheme(savedTheme);
-          document.documentElement.setAttribute('data-theme', savedTheme);
-        }
-      } catch (error) {
-        // Fallback to light theme if stored value cannot be loaded
-        setTheme('light');
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
+      setUsesSystemTheme(!savedTheme);
+      setTheme(nextTheme);
+      applyTheme(nextTheme);
     };
 
-    loadTheme();
+    void loadTheme();
+  }, []);
 
+  useEffect(() => {
+    return subscribeToStorageKey('theme', (value) => {
+      const nextTheme =
+        value === 'light' || value === 'dark'
+          ? value
+          : getSystemThemePreference();
+
+      setUsesSystemTheme(!(value === 'light' || value === 'dark'));
+      setTheme(nextTheme);
+      applyTheme(nextTheme);
+    });
+  }, []);
+
+  useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = async (e: MediaQueryListEvent): Promise<void> => {
-      try {
-        const { theme: savedTheme } = await chrome.storage.local.get('theme');
-        if (!savedTheme) {
-          const newTheme = e.matches ? 'dark' : 'light';
-          setTheme(newTheme);
-          document.documentElement.setAttribute('data-theme', newTheme);
-        }
-      } catch (error) {
-        // Ignore errors during theme change detection
+
+    const handleChange = (event: MediaQueryListEvent): void => {
+      if (!usesSystemTheme) {
+        return;
       }
+
+      const nextTheme = event.matches ? 'dark' : 'light';
+      setTheme(nextTheme);
+      applyTheme(nextTheme);
     };
 
     mediaQuery.addEventListener('change', handleChange);
+
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  }, [usesSystemTheme]);
 
   const toggleTheme = (): void => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
-    if (
-      typeof chrome !== 'undefined' &&
-      chrome.storage &&
-      chrome.storage.local
-    ) {
-      chrome.storage.local.set({ theme: newTheme });
-    } else {
-      localStorage.setItem('theme', newTheme);
-    }
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+
+    setUsesSystemTheme(false);
+    setTheme(nextTheme);
+    applyTheme(nextTheme);
+    void setThemePreference(nextTheme);
   };
 
   return { theme, toggleTheme };

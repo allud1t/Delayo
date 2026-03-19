@@ -12,36 +12,38 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 
+import { setOnboardingCompleted } from '../utils/extensionStorage';
+
 interface OnboardingProps {
   onComplete: () => void;
 }
 
-const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
+function Onboarding({ onComplete }: OnboardingProps): React.ReactElement {
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const totalSteps = 5;
 
-  const nextStep = () => {
+  const nextStep = (): void => {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
-    } else {
-      completeOnboarding();
+      return;
     }
+
+    void completeOnboarding();
   };
 
-  const prevStep = () => {
+  const prevStep = (): void => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
 
-  const completeOnboarding = () => {
-    // Save to localStorage that the tutorial has been completed
-    localStorage.setItem('onboardingCompleted', 'true');
+  const completeOnboarding = async (): Promise<void> => {
+    await setOnboardingCompleted(true);
     onComplete();
   };
 
-  const renderStep = () => {
+  const renderStep = (): React.ReactElement | null => {
     switch (currentStep) {
       case 0:
         return (
@@ -138,7 +140,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 {t('onboarding.settings.gearClick')}
                 <br />
                 <br />
-                ou
+                {t('onboarding.settings.or')}
                 <br />
                 <br />
                 {t('onboarding.settings.rightClick')}
@@ -160,7 +162,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-base-100 bg-opacity-95 p-4'>
       <div className='relative w-full max-w-md rounded-lg border-2 border-primary bg-base-100 bg-base-200 p-6 shadow-lg'>
         <button
-          onClick={completeOnboarding}
+          type='button'
+          onClick={() => {
+            void completeOnboarding();
+          }}
           className='btn btn-circle btn-error btn-sm absolute right-2 top-2 text-white'
           aria-label={t('onboarding.close')}
         >
@@ -173,7 +178,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           <div className='mt-4 flex items-center justify-between'>
             <div>
               {currentStep > 0 && (
-                <button onClick={prevStep} className='btn btn-outline btn-sm'>
+                <button type='button' onClick={prevStep} className='btn btn-outline btn-sm'>
                   <FontAwesomeIcon icon={faArrowLeft} className='mr-2' />
                   {t('onboarding.back')}
                 </button>
@@ -190,7 +195,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             </div>
 
             <div>
-              <button onClick={nextStep} className='btn btn-primary btn-sm'>
+              <button type='button' onClick={nextStep} className='btn btn-primary btn-sm'>
                 {currentStep < totalSteps - 1
                   ? t('onboarding.next')
                   : t('onboarding.finish')}
@@ -204,6 +209,6 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       </div>
     </div>
   );
-};
+}
 
 export default Onboarding;

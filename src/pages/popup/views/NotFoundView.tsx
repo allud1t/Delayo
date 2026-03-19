@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 function NotFoundView(): React.ReactElement {
+  const { t } = useTranslation();
+
   return (
     <div className='card w-80 bg-base-100 shadow-xl'>
       <div className='card-body p-5'>
@@ -46,14 +49,13 @@ function NotFoundView(): React.ReactElement {
               d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
             />
           </svg>
-          <h3 className='mt-4 text-lg font-semibold'>Page Not Found</h3>
+          <h3 className='mt-4 text-lg font-semibold'>{t('popup.notFound.title')}</h3>
           <p className='mt-2 text-sm text-base-content/70'>
-            The page you&apos;re looking for doesn&apos;t exist or has been
-            moved.
+            {t('popup.notFound.description')}
           </p>
           <div className='mt-6'>
             <Link to='/' className='btn btn-primary'>
-              Return to Home
+              {t('popup.notFound.backHome')}
             </Link>
           </div>
         </div>

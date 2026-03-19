@@ -10,10 +10,26 @@
     "settings": "Configuración",
     "tabs": "Pestañas",
     "tabs.singular": "Pestaña",
+    "faviconAlt": "Favicon de la pestaña",
+    "languages": {
+      "en": "Inglés",
+      "pt": "Portugués",
+      "es": "Español"
+    },
+    "weekdaysShort": {
+      "sunday": "D",
+      "monday": "L",
+      "tuesday": "M",
+      "wednesday": "X",
+      "thursday": "J",
+      "friday": "V",
+      "saturday": "S"
+    },
     "theme": {
       "light": "Claro",
       "dark": "Oscuro",
-      "system": "Sistema"
+      "system": "Sistema",
+      "toggle": "Cambiar al modo {{theme}}"
     }
   },
   "popup": {
@@ -49,6 +65,11 @@
     "actions": {
       "manageTabs": "Pestañas aplazadas",
       "openSettings": "Configuración"
+    },
+    "notFound": {
+      "title": "Página no encontrada",
+      "description": "La página que buscas no existe o fue movida.",
+      "backHome": "Volver al inicio"
     }
   },
   "customDelay": {
@@ -65,7 +86,8 @@
     "monthly": "Mensual",
     "selectTime": "Seleccionar Hora",
     "selectDay": "Seleccionar Día",
-    "delayTab": "Programar repetición"
+    "delayTab": "Programar repetición",
+    "toggleDay": "Alternar {{day}}"
   },
   "settings": {
     "title": "Configuración",
@@ -89,7 +111,8 @@
     "specificDay": "Día específico",
     "someday": "Algún Día (aleatorio)",
     "minMonths": "Mínimo de meses",
-    "maxMonths": "Máximo de meses"
+    "maxMonths": "Máximo de meses",
+    "saved": "¡Configuración guardada correctamente!"
   },
   "manageTabs": {
     "title": "Gestión",
@@ -110,7 +133,15 @@
     "wakeUp": "Despertar",
     "remove": "Eliminar",
     "untitledTab": "Pestaña sin título",
-    "actions": "Acciones"
+    "unknownTab": "Pestaña desconocida",
+    "toggleSelection": "Alternar selección",
+    "actions": "Acciones",
+    "actionsWakeNow": "Despertar {{count}} {{label}} ahora",
+    "timeUnits": {
+      "day": "d",
+      "hour": "h",
+      "minute": "m"
+    }
   },
   "donation": {
     "title": "Apoya el Proyecto",
@@ -142,11 +173,19 @@
       "title": "Configuración y Gestión",
       "description": "Personaliza la extensión y gestiona tus pestañas aplazadas fácilmente.",
       "gearClick": "Haz clic en el icono de engranaje ⚙️",
+      "or": "o",
       "rightClick": "Haz clic derecho en el icono de la extensión y selecciona 'Opciones' para acceder a la configuración."
     },
     "next": "Siguiente",
     "back": "Volver",
     "finish": "Finalizar",
     "close": "Cerrar"
+  },
+  "options": {
+    "links": {
+      "repository": "Repositorio de GitHub",
+      "features": "Proponer Nuevas Funciones",
+      "issues": "Reportar Problemas"
+    }
   }
 }

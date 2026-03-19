@@ -10,10 +10,26 @@
     "settings": "Settings",
     "tabs": "Tabs",
     "tabs.singular": "Tab",
+    "faviconAlt": "Tab favicon",
+    "languages": {
+      "en": "English",
+      "pt": "Portuguese",
+      "es": "Spanish"
+    },
+    "weekdaysShort": {
+      "sunday": "S",
+      "monday": "M",
+      "tuesday": "T",
+      "wednesday": "W",
+      "thursday": "T",
+      "friday": "F",
+      "saturday": "S"
+    },
     "theme": {
       "light": "Light",
       "dark": "Dark",
-      "system": "System"
+      "system": "System",
+      "toggle": "Switch to {{theme}} mode"
     }
   },
   "popup": {
@@ -49,6 +65,11 @@
     "actions": {
       "manageTabs": "Manage Delayed Tabs",
       "openSettings": "Settings"
+    },
+    "notFound": {
+      "title": "Page Not Found",
+      "description": "The page you're looking for doesn't exist or has been moved.",
+      "backHome": "Return to Home"
     }
   },
   "customDelay": {
@@ -65,7 +86,8 @@
     "monthly": "Monthly",
     "selectTime": "Select Time",
     "selectDay": "Select Day",
-    "delayTab": "Schedule Recurring Delay"
+    "delayTab": "Schedule Recurring Delay",
+    "toggleDay": "Toggle {{day}}"
   },
   "settings": {
     "title": "Settings",
@@ -89,7 +111,8 @@
     "specificDay": "Specific day",
     "someday": "Someday (random)",
     "minMonths": "Minimum months",
-    "maxMonths": "Maximum months"
+    "maxMonths": "Maximum months",
+    "saved": "Settings saved successfully!"
   },
   "manageTabs": {
     "title": "Management",
@@ -110,7 +133,15 @@
     "wakeUp": "Wake Up",
     "remove": "Remove",
     "untitledTab": "Untitled tab",
-    "actions": "Actions"
+    "unknownTab": "Unknown tab",
+    "toggleSelection": "Toggle selection",
+    "actions": "Actions",
+    "actionsWakeNow": "Wake {{count}} {{label}} now",
+    "timeUnits": {
+      "day": "d",
+      "hour": "h",
+      "minute": "m"
+    }
   },
   "donation": {
     "title": "Support the Project",
@@ -142,11 +173,19 @@
       "title": "Settings & Management",
       "description": "Customize the extension and manage your delayed tabs easily.",
       "gearClick": "Click on the gear icon ⚙️",
+      "or": "or",
       "rightClick": "Right-click on the extension icon and select 'Options' to access settings."
     },
     "next": "Next",
     "back": "Back",
     "finish": "Finish",
     "close": "Close"
+  },
+  "options": {
+    "links": {
+      "repository": "GitHub Repository",
+      "features": "Propose New Features",
+      "issues": "Report Issues"
+    }
   }
 }

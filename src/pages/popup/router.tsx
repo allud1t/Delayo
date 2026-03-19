@@ -64,7 +64,6 @@ const router = createRouter({
   routeTree,
   history: memoryHistory,
   defaultPreload: 'render',
-  defaultViewTransition: true,
 });
 
 declare module '@tanstack/react-router' {

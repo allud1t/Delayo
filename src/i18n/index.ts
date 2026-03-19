@@ -1,58 +1,76 @@
 import i18n from 'i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
+import { normalizeLanguageCode, getSavedLanguage } from '@utils/extensionStorage';
 import translationEN from './locales/en/translation.json';
 import translationES from './locales/es/translation.json';
 import translationPT from './locales/pt/translation.json';
 
-const getSavedLanguage = async (): Promise<string | null> => {
-  try {
-    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-      const { savedLanguage } = await chrome.storage.local.get('savedLanguage');
-      return savedLanguage || null;
-    }
-  } catch (error) {
-    console.error('Error getting saved language:', error);
-  }
-  return null;
-};
+type TranslationResource = typeof translationEN;
+
+const namespaces = [
+  'common',
+  'popup',
+  'customDelay',
+  'recurringDelay',
+  'settings',
+  'manageTabs',
+  'donation',
+  'onboarding',
+  'options',
+] as const;
+
+function buildResources(translation: TranslationResource) {
+  return {
+    translation,
+    common: translation.common,
+    popup: translation.popup,
+    customDelay: translation.customDelay,
+    recurringDelay: translation.recurringDelay,
+    settings: translation.settings,
+    manageTabs: translation.manageTabs,
+    donation: translation.donation,
+    onboarding: translation.onboarding,
+    options: translation.options,
+  };
+}
 
 const resources = {
-  en: {
-    translation: translationEN
-  },
-  pt: {
-    translation: translationPT
-  },
-  es: {
-    translation: translationES
-  }
+  en: buildResources(translationEN),
+  pt: buildResources(translationPT),
+  es: buildResources(translationES),
 };
 
-const initI18n = async (): Promise<void> => {
+function getDefaultLanguage(): 'en' | 'pt' | 'es' {
+  return normalizeLanguageCode(navigator.language) ?? 'en';
+}
+
+function applyDocumentLanguage(language: string): void {
+  const normalizedLanguage = normalizeLanguageCode(language) ?? 'en';
+  document.documentElement.lang = normalizedLanguage;
+}
+
+async function initI18n(): Promise<void> {
   const savedLanguage = await getSavedLanguage();
-  
-  i18n
-    .use(LanguageDetector)
-    .use(initReactI18next)
-    .init({
-      resources,
-      lng: savedLanguage || undefined,
-      debug: process.env.NODE_ENV === 'development',
-      interpolation: {
-        escapeValue: false,
-      },
-      detection: {
-        order: ['navigator', 'localStorage'],
-        caches: ['localStorage'],
-        lookupQuerystring: 'lng',
-        lookupCookie: 'i18next',
-        lookupLocalStorage: 'i18nextLng',
-      }
-    });
-};
+  const initialLanguage = savedLanguage ?? getDefaultLanguage();
 
-initI18n();
+  await i18n.use(initReactI18next).init({
+    resources,
+    lng: initialLanguage,
+    fallbackLng: 'en',
+    defaultNS: 'translation',
+    ns: ['translation', ...namespaces],
+    fallbackNS: ['translation', 'common'],
+    debug: process.env.NODE_ENV === 'development',
+    interpolation: {
+      escapeValue: false,
+    },
+  });
+
+  applyDocumentLanguage(i18n.language);
+  i18n.on('languageChanged', applyDocumentLanguage);
+}
+
+void initI18n();
 
 export default i18n;
