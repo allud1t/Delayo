@@ -1,12 +1,24 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  calculateLaterTodayWakeTime,
   calculateNextMonthWakeTime,
   calculateNextWeekWakeTime,
   createPresetDelayOptions,
 } from './delayPresets';
 
 describe('delayPresets', () => {
+  it('uses hours and minutes when calculating later today wake time', () => {
+    const now = new Date('2026-03-18T10:15:00.000Z');
+
+    expect(calculateLaterTodayWakeTime(now, 0, 15)).toBe(
+      new Date('2026-03-18T10:30:00.000Z').getTime()
+    );
+    expect(calculateLaterTodayWakeTime(now, 1, 20)).toBe(
+      new Date('2026-03-18T11:35:00.000Z').getTime()
+    );
+  });
+
   it('uses the configured next week time when calculating the wake time', () => {
     const now = new Date('2026-03-18T10:15:00.000Z');
 
@@ -31,6 +43,7 @@ describe('delayPresets', () => {
       locale: 'en',
       settings: {
         laterToday: 3,
+        laterTodayMinutes: 15,
         tonightTime: '18:00',
         tomorrowTime: '09:00',
         weekendDay: 'saturday',
@@ -42,11 +55,32 @@ describe('delayPresets', () => {
         somedayMinMonths: 3,
         somedayMaxMonths: 12,
       },
-      translate: (key, values) =>
-        `${key}${values ? JSON.stringify(values) : ''}`,
+      translate: (key, values) => {
+        if (key === 'popup.delayOptions.laterToday') {
+          return `In ${String(values?.duration)}`;
+        }
+
+        if (key === 'popup.delayDuration.hours') {
+          return `${String(values?.count)} hours`;
+        }
+
+        if (key === 'popup.delayDuration.minutes') {
+          return `${String(values?.count)} minutes`;
+        }
+
+        return `${key}${values ? JSON.stringify(values) : ''}`;
+      },
     });
 
     expect(options).toHaveLength(7);
+    expect(options[0]).toEqual(
+      expect.objectContaining({
+        id: 'later_today',
+        hours: 3,
+        minutes: 15,
+        label: 'In 3 hours 15 minutes',
+      })
+    );
     expect(options.map((option) => option.id)).toEqual([
       'later_today',
       'tonight',

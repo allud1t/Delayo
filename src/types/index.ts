@@ -6,6 +6,7 @@ export type ThemePreference = 'light' | 'dark';
 
 export interface DelaySettings {
   laterToday: number;
+  laterTodayMinutes: number;
   tonightTime: string;
   tomorrowTime: string;
   weekendDay: 'saturday' | 'sunday';
@@ -22,6 +23,7 @@ export interface DelayOption {
   id: string;
   label: string;
   hours?: number;
+  minutes?: number;
   days?: number;
   custom?: boolean;
   calculateTime?: () => number;

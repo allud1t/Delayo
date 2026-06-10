@@ -11,6 +11,9 @@ const getRadioClasses = (isPopup: boolean): string =>
 const getSelectClasses = (isPopup: boolean): string =>
   `select select-bordered ${isPopup ? 'rounded-lg bg-base-100/70 shadow-sm transition-all duration-200 hover:bg-base-100' : ''}`;
 
+const parseNumberInput = (value: string, fallback: number): number =>
+  Number.parseInt(value, 10) || fallback;
+
 interface DelaySettingsComponentProps {
   isPopup?: boolean;
 }
@@ -61,20 +64,37 @@ function DelaySettingsComponent({
               </span>
             </label>
             <div className='flex items-center'>
-              <input
-                type='number'
-                className={`${getInputClasses(isPopup)} w-20`}
-                min='1'
-                max='12'
-                value={settings.laterToday}
-                onChange={(event) =>
-                  updateSetting(
-                    'laterToday',
-                    parseInt(event.target.value, 10) || 1
-                  )
-                }
-              />
-              <span className='ml-2'>{t('settings.hours')}</span>
+              <div className='flex flex-wrap items-center gap-2'>
+                <input
+                  type='number'
+                  className={`${getInputClasses(isPopup)} w-20`}
+                  min='0'
+                  max='12'
+                  value={settings.laterToday}
+                  onChange={(event) =>
+                    updateSetting(
+                      'laterToday',
+                      parseNumberInput(event.target.value, 0)
+                    )
+                  }
+                />
+                <span>{t('settings.hours')}</span>
+                <input
+                  type='number'
+                  className={`${getInputClasses(isPopup)} w-20`}
+                  min='0'
+                  max='59'
+                  step='5'
+                  value={settings.laterTodayMinutes}
+                  onChange={(event) =>
+                    updateSetting(
+                      'laterTodayMinutes',
+                      parseNumberInput(event.target.value, 0)
+                    )
+                  }
+                />
+                <span>{t('settings.minutes')}</span>
+              </div>
             </div>
           </div>
 

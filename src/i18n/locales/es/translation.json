@@ -43,7 +43,7 @@
       "window": "Ventana Actual"
     },
     "delayOptions": {
-      "laterToday": "Hoy más tarde (en {{hours}} horas)",
+      "laterToday": "En {{duration}}",
       "tonight": "Esta noche (a las {{time}})",
       "tomorrow": "Mañana ({{time}})",
       "weekend": "Fin de semana ({{day}}, {{time}})",
@@ -52,6 +52,12 @@
       "someday": "Algún Día (aleatorio)",
       "custom": "Fecha personalizada",
       "recurring": "Repetir"
+    },
+    "delayDuration": {
+      "hour": "{{count}} hora",
+      "hours": "{{count}} horas",
+      "minute": "{{count}} minuto",
+      "minutes": "{{count}} minutos"
     },
     "weekdays": {
       "sunday": "Domingo",
@@ -100,6 +106,7 @@
     "defaultDelayOptions": "Opciones predeterminadas de aplazamiento",
     "laterToday": "Hoy más tarde",
     "hours": "horas",
+    "minutes": "minutos",
     "tonight": "Esta noche",
     "tomorrow": "Mañana",
     "weekend": "Fin de semana",

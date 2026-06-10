@@ -24,9 +24,10 @@ export function parseTimeString(
 
 export function calculateLaterTodayWakeTime(
   now: Date,
-  hours: number
+  hours: number,
+  minutes = 0
 ): number {
-  return now.getTime() + hours * 60 * 60 * 1000;
+  return now.getTime() + (hours * 60 + minutes) * 60 * 1000;
 }
 
 export function calculateTonightWakeTime(
@@ -210,6 +211,36 @@ function getNextMonthLabel(
   return `${translate('popup.delayOptions.nextMonth')} (${formattedDate}, ${formatClockTime(now.getTime(), locale)})`;
 }
 
+function getDurationLabel(
+  hours: number,
+  minutes: number,
+  translate: TranslateFn
+): string {
+  const parts: string[] = [];
+
+  if (hours > 0) {
+    parts.push(
+      translate(
+        hours === 1 ? 'popup.delayDuration.hour' : 'popup.delayDuration.hours',
+        { count: hours }
+      )
+    );
+  }
+
+  if (minutes > 0) {
+    parts.push(
+      translate(
+        minutes === 1
+          ? 'popup.delayDuration.minute'
+          : 'popup.delayDuration.minutes',
+        { count: minutes }
+      )
+    );
+  }
+
+  return parts.join(' ');
+}
+
 export function createPresetDelayOptions(params: {
   locale: string;
   settings: DelaySettings;
@@ -222,11 +253,20 @@ export function createPresetDelayOptions(params: {
     {
       id: 'later_today',
       label: translate('popup.delayOptions.laterToday', {
-        hours: settings.laterToday,
+        duration: getDurationLabel(
+          settings.laterToday,
+          settings.laterTodayMinutes,
+          translate
+        ),
       }),
       hours: settings.laterToday,
+      minutes: settings.laterTodayMinutes,
       calculateTime: () =>
-        calculateLaterTodayWakeTime(new Date(), settings.laterToday),
+        calculateLaterTodayWakeTime(
+          new Date(),
+          settings.laterToday,
+          settings.laterTodayMinutes
+        ),
     },
     {
       id: 'tonight',

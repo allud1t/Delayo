@@ -56,6 +56,7 @@ function MainView(): React.ReactElement {
       option.calculateTime?.() ??
       Date.now() +
         (option.hours ? option.hours * 60 * 60 * 1000 : 0) +
+        (option.minutes ? option.minutes * 60 * 1000 : 0) +
         (option.days ? option.days * 24 * 60 * 60 * 1000 : 0);
 
     await scheduleTabs(tabsToDelay, wakeTime);
