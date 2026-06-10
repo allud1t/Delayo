@@ -10,6 +10,7 @@ import { calculateNextWakeTime } from '@utils/recurrence';
 const DELAYED_TABS_STORAGE_KEY = 'delayedTabs';
 const CONTEXT_MENU_ID = 'delay-tab';
 const ALARM_PREFIX = 'delayed-tab-';
+const NOTIFICATION_ICON_PATH = 'icons/icon128.png';
 
 type QueueJob<T> = () => Promise<T>;
 type DelayedTabStatus = NonNullable<DelayedTab['status']>;
@@ -29,6 +30,12 @@ function parseAlarmTabId(alarmName: string): string | null {
   }
 
   return alarmName.slice(ALARM_PREFIX.length);
+}
+
+function getNotificationIconUrl(chromeApi: typeof chrome): string {
+  return (
+    chromeApi.runtime?.getURL?.(NOTIFICATION_ICON_PATH) ?? NOTIFICATION_ICON_PATH
+  );
 }
 
 function getDelayedTabStatus(status?: DelayedTab['status']): DelayedTabStatus {
@@ -197,7 +204,7 @@ export function createDelayedTabsController(
       try {
         await chromeApi.notifications.create({
           type: 'basic',
-          iconUrl: tab.favicon || 'icons/icon128.png',
+          iconUrl: getNotificationIconUrl(chromeApi),
           title: 'Tab Awakened!',
           message: `Your ${tab.isRecurring ? 'recurring' : 'delayed'} tab "${tab.title}" is now open.`,
         });
