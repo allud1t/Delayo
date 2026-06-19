@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from '@tanstack/react-router';
 import useTabSelection from '@hooks/useTabSelection';
 import { scheduleTabs } from '@utils/delayedTabsRuntime';
+import { formatDateTimeLocalInput } from '@utils/dateTime';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -16,8 +17,9 @@ function CustomDelayView(): React.ReactElement {
     selectedMode,
     tabsToDelay,
   } = useTabSelection();
+  const minCustomDate = formatDateTimeLocalInput(new Date());
   const [customDate, setCustomDate] = useState(
-    new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16)
+    formatDateTimeLocalInput(new Date(Date.now() + 60 * 1000))
   );
 
   const handleDelay = async (): Promise<void> => {
@@ -115,7 +117,7 @@ function CustomDelayView(): React.ReactElement {
             className='input input-bordered w-full border-none bg-base-100/50 shadow-sm transition-all duration-200 focus:bg-base-100/80'
             value={customDate}
             onChange={(event) => setCustomDate(event.target.value)}
-            min={new Date().toISOString().slice(0, 16)}
+            min={minCustomDate}
           />
         </div>
 

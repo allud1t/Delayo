@@ -5,6 +5,10 @@ interface TimeLeftLabels {
   now: string;
 }
 
+function padDateTimeSegment(value: number): string {
+  return String(value).padStart(2, '0');
+}
+
 function shouldUseHour12(locale: string): boolean {
   return locale.startsWith('en');
 }
@@ -34,6 +38,16 @@ export function formatClockTime(timestamp: number, locale: string): string {
     minute: '2-digit',
     hour12: shouldUseHour12(locale),
   }).format(new Date(timestamp));
+}
+
+export function formatDateTimeLocalInput(date: Date): string {
+  const year = date.getFullYear();
+  const month = padDateTimeSegment(date.getMonth() + 1);
+  const day = padDateTimeSegment(date.getDate());
+  const hours = padDateTimeSegment(date.getHours());
+  const minutes = padDateTimeSegment(date.getMinutes());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
 export function formatTimeLeft(
