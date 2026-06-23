@@ -73,7 +73,11 @@ function Onboarding({ onComplete }: OnboardingProps): React.ReactElement {
             </p>
             <div className='w-full max-w-xs rounded-lg bg-base-200 p-3'>
               <ul className='space-y-2 text-left text-base'>
-                <li>{t('popup.delayOptions.laterToday', { hours: 3 })}</li>
+                <li>
+                  {t('popup.delayOptions.laterToday', {
+                    duration: t('popup.delayDuration.hours', { count: 3 }),
+                  })}
+                </li>
                 <li>{t('popup.delayOptions.tomorrow', { time: '09:00' })}</li>
                 <li>
                   {t('popup.delayOptions.weekend', {

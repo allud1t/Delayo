@@ -43,7 +43,7 @@
       "window": "Janela Atual"
     },
     "delayOptions": {
-      "laterToday": "Hoje Mais Tarde (em {{hours}} horas)",
+      "laterToday": "Em {{duration}}",
       "tonight": "Esta Noite (às {{time}})",
       "tomorrow": "Amanhã (às {{time}})",
       "weekend": "Este Fim de Semana ({{day}}, {{time}})",
@@ -52,6 +52,12 @@
       "someday": "Algum Dia (aleatório)",
       "custom": "Data e Hora Personalizada",
       "recurring": "Recorrente"
+    },
+    "delayDuration": {
+      "hour": "{{count}} hora",
+      "hours": "{{count}} horas",
+      "minute": "{{count}} minuto",
+      "minutes": "{{count}} minutos"
     },
     "weekdays": {
       "sunday": "Domingo",
@@ -75,6 +81,14 @@
   "customDelay": {
     "title": "Adiamento Personalizado",
     "selectDateTime": "Selecione Data e Hora",
+    "delayFor": "Adiar por",
+    "or": "ou",
+    "invalidDate": "Nao e possivel escolher um horario passado.",
+    "relative": {
+      "days": "Dias",
+      "hours": "Horas",
+      "minutes": "Minutos"
+    },
     "delayTab": "Adiar Aba"
   },
   "recurringDelay": {
@@ -100,6 +114,7 @@
     "defaultDelayOptions": "Opções de Adiamento Padrão",
     "laterToday": "Hoje Mais Tarde",
     "hours": "horas",
+    "minutes": "minutos",
     "tonight": "Esta Noite",
     "tomorrow": "Amanhã",
     "weekend": "Este Fim de Semana",

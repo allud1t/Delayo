@@ -43,7 +43,7 @@
       "window": "Current Window"
     },
     "delayOptions": {
-      "laterToday": "Later today (in {{hours}} hours)",
+      "laterToday": "In {{duration}}",
       "tonight": "Tonight (at {{time}})",
       "tomorrow": "Tomorrow (at {{time}})",
       "weekend": "This weekend ({{day}}, {{time}})",
@@ -52,6 +52,12 @@
       "someday": "Someday (random)",
       "custom": "Custom date & time",
       "recurring": "Recurring"
+    },
+    "delayDuration": {
+      "hour": "{{count}} hour",
+      "hours": "{{count}} hours",
+      "minute": "{{count}} minute",
+      "minutes": "{{count}} minutes"
     },
     "weekdays": {
       "sunday": "Sunday",
@@ -75,6 +81,14 @@
   "customDelay": {
     "title": "Custom Delay",
     "selectDateTime": "Select Date & Time",
+    "delayFor": "Delay For",
+    "or": "or",
+    "invalidDate": "It is not possible to choose a past time.",
+    "relative": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes"
+    },
     "delayTab": "Delay Tab"
   },
   "recurringDelay": {
@@ -100,6 +114,7 @@
     "defaultDelayOptions": "Default Delay Options",
     "laterToday": "Later Today",
     "hours": "hours",
+    "minutes": "minutes",
     "tonight": "Tonight",
     "tomorrow": "Tomorrow",
     "weekend": "This Weekend",

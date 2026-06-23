@@ -49,8 +49,23 @@ describe('extensionStorage', () => {
     await expect(getDelaySettings()).resolves.toEqual(
       expect.objectContaining({
         laterToday: 5,
+        laterTodayMinutes: 0,
         nextWeekSameDay: false,
         nextMonthSameDay: true,
+      })
+    );
+  });
+
+  it('normalizes quick delay settings to at least one minute', async () => {
+    localStorage.setItem(
+      'delaySettings',
+      JSON.stringify({ laterToday: 0, laterTodayMinutes: 0 })
+    );
+
+    await expect(getDelaySettings()).resolves.toEqual(
+      expect.objectContaining({
+        laterToday: 0,
+        laterTodayMinutes: 1,
       })
     );
   });
