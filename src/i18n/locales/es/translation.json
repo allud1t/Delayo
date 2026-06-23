@@ -83,6 +83,7 @@
     "selectDateTime": "Seleccionar Fecha y Hora",
     "delayFor": "Aplazar por",
     "or": "o",
+    "invalidDate": "No es posible elegir una hora pasada.",
     "relative": {
       "days": "Días",
       "hours": "Horas",

@@ -66,6 +66,7 @@ function CustomDelayView(): React.ReactElement {
   const [relativeDelay, setRelativeDelay] = useState<RelativeDelayInputValues>(
     toRelativeDelayInputValues(getRelativeDelayValues(initialDate, new Date()))
   );
+  const [dateError, setDateError] = useState<string | null>(null);
 
   const syncFromDate = (nextDate: Date): void => {
     const now = new Date();
@@ -81,6 +82,7 @@ function CustomDelayView(): React.ReactElement {
 
   const handleDateChange = (value: string): void => {
     setCustomDate(value);
+    setDateError(null);
 
     const nextDate = new Date(value);
 
@@ -95,12 +97,19 @@ function CustomDelayView(): React.ReactElement {
 
   const handleDateBlur = (): void => {
     const nextDate = new Date(customDate);
+    const minimumDate = getMinimumCustomDelayDate(new Date());
 
     if (!isDateValid(nextDate)) {
-      syncFromDate(getMinimumCustomDelayDate(new Date()));
+      setDateError(t('customDelay.invalidDate'));
       return;
     }
 
+    if (nextDate.getTime() < minimumDate.getTime()) {
+      setDateError(t('customDelay.invalidDate'));
+      return;
+    }
+
+    setDateError(null);
     syncFromDate(nextDate);
   };
 
@@ -108,6 +117,8 @@ function CustomDelayView(): React.ReactElement {
     field: keyof RelativeDelayInputValues,
     value: string
   ): void => {
+    setDateError(null);
+
     const sanitizedValue = value.replace(/\D/g, '');
     const nextRelativeDelay = {
       ...relativeDelay,
@@ -128,16 +139,16 @@ function CustomDelayView(): React.ReactElement {
   const handleDelay = async (): Promise<void> => {
     const nextDate = new Date(customDate);
 
-    if (tabsToDelay.length === 0 || !isDateValid(nextDate)) {
+    if (
+      tabsToDelay.length === 0 ||
+      !isDateValid(nextDate) ||
+      nextDate.getTime() < getMinimumCustomDelayDate(new Date()).getTime()
+    ) {
       return;
     }
 
-    const normalizedDate = new Date(
-      Math.max(nextDate.getTime(), getMinimumCustomDelayDate(new Date()).getTime())
-    );
-
     await persistSelectedMode();
-    await scheduleTabs(tabsToDelay, normalizedDate.getTime());
+    await scheduleTabs(tabsToDelay, nextDate.getTime());
     window.close();
   };
 
@@ -231,12 +242,15 @@ function CustomDelayView(): React.ReactElement {
           </label>
           <input
             type='datetime-local'
-            className='input input-bordered w-full border-none bg-base-100/50 shadow-sm transition-all duration-200 focus:bg-base-100/80'
+            className={`input input-bordered w-full border-none bg-base-100/50 shadow-sm transition-all duration-200 focus:bg-base-100/80 ${dateError ? 'input-error' : ''}`}
             value={customDate}
             onChange={(event) => handleDateChange(event.target.value)}
             onBlur={handleDateBlur}
             min={formatDateTimeLocalInput(minimumCustomDate)}
           />
+          {dateError && (
+            <span className='mt-2 text-xs text-error'>{dateError}</span>
+          )}
         </div>
 
         <div className='my-4 flex items-center gap-3'>
