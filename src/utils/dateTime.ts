@@ -5,8 +5,22 @@ interface TimeLeftLabels {
   now: string;
 }
 
+export interface RelativeDelayValues {
+  days: number;
+  hours: number;
+  minutes: number;
+}
+
 function padDateTimeSegment(value: number): string {
   return String(value).padStart(2, '0');
+}
+
+function getCurrentMinuteDate(now: Date): Date {
+  const currentMinuteDate = new Date(now);
+
+  currentMinuteDate.setSeconds(0, 0);
+
+  return currentMinuteDate;
 }
 
 function shouldUseHour12(locale: string): boolean {
@@ -48,6 +62,47 @@ export function formatDateTimeLocalInput(date: Date): string {
   const minutes = padDateTimeSegment(date.getMinutes());
 
   return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+export function getMinimumCustomDelayDate(now: Date): Date {
+  const minDate = new Date(now);
+
+  minDate.setSeconds(0, 0);
+  minDate.setMinutes(minDate.getMinutes() + 1);
+
+  return minDate;
+}
+
+export function getRelativeDelayValues(
+  targetDate: Date,
+  now: Date
+): RelativeDelayValues {
+  const baseDate = getCurrentMinuteDate(now);
+  const totalMinutes = Math.max(
+    0,
+    Math.round((targetDate.getTime() - baseDate.getTime()) / (1000 * 60))
+  );
+  const days = Math.floor(totalMinutes / (24 * 60));
+  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+  const minutes = totalMinutes % 60;
+
+  return { days, hours, minutes };
+}
+
+export function getDateFromRelativeDelay(
+  values: RelativeDelayValues,
+  now: Date
+): Date {
+  const totalMinutes = values.days * 24 * 60 + values.hours * 60 + values.minutes;
+  const baseDate = getCurrentMinuteDate(now);
+  const targetDate = new Date(baseDate.getTime() + totalMinutes * 60 * 1000);
+  const minimumDate = getMinimumCustomDelayDate(now);
+
+  if (targetDate.getTime() < minimumDate.getTime()) {
+    return minimumDate;
+  }
+
+  return targetDate;
 }
 
 export function formatTimeLeft(

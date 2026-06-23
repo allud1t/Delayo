@@ -81,6 +81,13 @@
   "customDelay": {
     "title": "Aplazamiento Personalizado",
     "selectDateTime": "Seleccionar Fecha y Hora",
+    "delayFor": "Aplazar por",
+    "or": "o",
+    "relative": {
+      "days": "Días",
+      "hours": "Horas",
+      "minutes": "Minutos"
+    },
     "delayTab": "Aplazar pestaña"
   },
   "recurringDelay": {

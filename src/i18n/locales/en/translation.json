@@ -81,6 +81,13 @@
   "customDelay": {
     "title": "Custom Delay",
     "selectDateTime": "Select Date & Time",
+    "delayFor": "Delay For",
+    "or": "or",
+    "relative": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes"
+    },
     "delayTab": "Delay Tab"
   },
   "recurringDelay": {
