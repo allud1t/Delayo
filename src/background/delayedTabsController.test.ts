@@ -176,7 +176,7 @@ describe('delayedTabsController', () => {
     );
     const controller = createDelayedTabsController(mock.chromeApi);
 
-    await Promise.all([
+    const wakePromise = Promise.all([
       controller.handleAlarm({
         name: `delayed-tab-${firstTab.id}`,
         scheduledTime: firstTab.wakeTime,
@@ -186,6 +186,8 @@ describe('delayedTabsController', () => {
         scheduledTime: secondTab.wakeTime,
       } as chrome.alarms.Alarm),
     ]);
+    await vi.advanceTimersByTimeAsync(6_000);
+    await wakePromise;
 
     expect(mock.tabsCreate).toHaveBeenCalledTimes(2);
     expect(mock.getStoredTabs()).toEqual([]);
@@ -198,17 +200,24 @@ describe('delayedTabsController', () => {
     const mock = createChromeMock([overdueTab], [`delayed-tab-${overdueTab.id}`]);
     const controller = createDelayedTabsController(mock.chromeApi);
 
-    await controller.handleAlarm({
+    const wakePromise = controller.handleAlarm({
       name: `delayed-tab-${overdueTab.id}`,
       scheduledTime: overdueTab.wakeTime,
     } as chrome.alarms.Alarm);
+    await vi.advanceTimersByTimeAsync(3_000);
+    await wakePromise;
 
     expect(mock.notificationsCreate).toHaveBeenCalledWith({
       type: 'basic',
       iconUrl: 'chrome-extension://delayo/icons/icon128.png',
-      title: 'Tab Awakened!',
-      message: 'Your delayed tab "Example" is now open.',
+      title: 'Tab Waking Up',
+      message: 'Your delayed tab "Example" will open in a few seconds.',
+      priority: 2,
+      requireInteraction: true,
     });
+    expect(mock.notificationsCreate.mock.invocationCallOrder[0]).toBeLessThan(
+      mock.tabsCreate.mock.invocationCallOrder[0]
+    );
   });
 
   it('does not show a notification when a tab is manually woken', async () => {
@@ -334,10 +343,12 @@ describe('delayedTabsController', () => {
     );
     const controller = createDelayedTabsController(mock.chromeApi);
 
-    await controller.handleAlarm({
+    const wakePromise = controller.handleAlarm({
       name: `delayed-tab-${recurringTab.id}`,
       scheduledTime: recurringTab.wakeTime,
     } as chrome.alarms.Alarm);
+    await vi.advanceTimersByTimeAsync(3_000);
+    await wakePromise;
 
     const storedTabs = mock.getStoredTabs();
     expect(mock.tabsCreate).toHaveBeenCalledTimes(1);
@@ -365,10 +376,12 @@ describe('delayedTabsController', () => {
     mock.alarmsCreate.mockRejectedValueOnce(new Error('Failed to create next alarm'));
     const controller = createDelayedTabsController(mock.chromeApi);
 
-    await controller.handleAlarm({
+    const wakePromise = controller.handleAlarm({
       name: `delayed-tab-${recurringTab.id}`,
       scheduledTime: recurringTab.wakeTime,
     } as chrome.alarms.Alarm);
+    await vi.advanceTimersByTimeAsync(3_000);
+    await wakePromise;
 
     expect(mock.tabsCreate).toHaveBeenCalledTimes(1);
     expect(mock.getStoredTabs()).toEqual([

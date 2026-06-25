@@ -11,6 +11,7 @@ const DELAYED_TABS_STORAGE_KEY = 'delayedTabs';
 const CONTEXT_MENU_ID = 'delay-tab';
 const ALARM_PREFIX = 'delayed-tab-';
 const NOTIFICATION_ICON_PATH = 'icons/icon128.png';
+const WAKE_NOTIFICATION_LEAD_TIME_MS = 3_000;
 
 type QueueJob<T> = () => Promise<T>;
 type DelayedTabStatus = NonNullable<DelayedTab['status']>;
@@ -18,6 +19,12 @@ type DelayedTabStatus = NonNullable<DelayedTab['status']>;
 interface WakeOptions {
   notify: boolean;
   rescheduleRecurring: boolean;
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 function getAlarmName(tabId: string): string {
@@ -198,20 +205,24 @@ export function createDelayedTabsController(
       return;
     }
 
-    await chromeApi.tabs.create({ url: tab.url });
-
     if (notify) {
       try {
         await chromeApi.notifications.create({
           type: 'basic',
           iconUrl: getNotificationIconUrl(chromeApi),
-          title: 'Tab Awakened!',
-          message: `Your ${tab.isRecurring ? 'recurring' : 'delayed'} tab "${tab.title}" is now open.`,
+          title: 'Tab Waking Up',
+          message: `Your ${tab.isRecurring ? 'recurring' : 'delayed'} tab "${tab.title}" will open in a few seconds.`,
+          priority: 2,
+          requireInteraction: true,
         });
       } catch {
         // Notification failures should not roll back the wake flow.
       }
+
+      await delay(WAKE_NOTIFICATION_LEAD_TIME_MS);
     }
+
+    await chromeApi.tabs.create({ url: tab.url });
   }
 
   async function reopenBrowserTabs(tabs: chrome.tabs.Tab[]): Promise<void> {
