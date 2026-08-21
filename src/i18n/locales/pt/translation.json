@@ -37,14 +37,19 @@
     "delay": "Adiar",
     "selected": "selecionadas",
     "inWindow": "na janela",
+    "quickTurbo": "Turbo (+1h)",
+    "quickTurboDesc": "Adiar rapidamente por 1 hora",
     "tabs": {
       "active": "Aba Ativa",
       "highlighted": "Abas Selecionadas",
       "window": "Janela Atual"
     },
     "delayOptions": {
-      "laterToday": "Hoje Mais Tarde (em {{hours}} horas)",
+      "laterToday": "Hoje Mais Tarde (em {{hours}}h)",
+      "laterTonight": "Madrugada (em {{hours}}h)",
       "tonight": "Esta Noite (às {{time}})",
+      "tomorrowNight": "Amanhã à Noite (às {{time}})",
+      "thisMorning": "Hoje de Manhã (às {{time}})",
       "tomorrow": "Amanhã (às {{time}})",
       "weekend": "Este Fim de Semana ({{day}}, {{time}})",
       "nextWeek": "Próxima Semana ({{day}}, {{time}})",
@@ -112,7 +117,22 @@
     "someday": "Algum Dia (aleatório)",
     "minMonths": "Mínimo de meses",
     "maxMonths": "Máximo de meses",
-    "saved": "Configurações salvas com sucesso!"
+    "saved": "Configurações salvas com sucesso!",
+    "analytics": {
+      "title": "Privacidade e Métricas",
+      "enable": "Contabilizar estatísticas locais de produtividade",
+      "description": "As métricas são armazenadas localmente no seu navegador para exibir seu histórico de uso."
+    }
+  },
+  "stats": {
+    "title": "Estatísticas de Produtividade",
+    "totalDelayed": "Abas adiadas",
+    "totalWoken": "Abas reabertas",
+    "favoritePreset": "Opção favorita",
+    "focusPreserved": "Foco protegido",
+    "noData": "Suas estatísticas de produtividade aparecerão aqui conforme você usar o Delayo.",
+    "minutes": "min",
+    "hours": "h"
   },
   "manageTabs": {
     "title": "Gerenciamento",

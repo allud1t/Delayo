@@ -6,6 +6,7 @@ import {
 import generateUniqueTabId from '@utils/generateUniqueTabId';
 import normalizeDelayedTabs from '@utils/normalizeDelayedTabs';
 import { calculateNextWakeTime } from '@utils/recurrence';
+import { trackTabDeleted, trackTabWoken } from '../services/analytics';
 
 const DELAYED_TABS_STORAGE_KEY = 'delayedTabs';
 const CONTEXT_MENU_ID = 'delay-tab';
@@ -283,6 +284,7 @@ export function createDelayedTabsController(
 
     try {
       await openTab(originalTab, { notify: options.notify });
+      void trackTabWoken(1);
     } catch {
       return saveDelayedTabs(replaceTab(workingTabs, originalTab.id, [originalTab]));
     }
@@ -465,6 +467,7 @@ export function createDelayedTabsController(
       const persistedTabs = await saveDelayedTabs(updatedTabs);
 
       await clearAlarms(removedIds);
+      void trackTabDeleted(removedIds.size);
 
       return {
         success: true,

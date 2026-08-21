@@ -6,6 +6,7 @@ import { formatDateTime, formatTimeLeft } from '@utils/dateTime';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { trackTabDeleted, trackTabWoken } from '../../../services/analytics';
 import useTheme from '../../../utils/useTheme';
 
 function ManageTabsView(): React.ReactElement {
@@ -29,11 +30,13 @@ function ManageTabsView(): React.ReactElement {
   );
 
   const wakeTabNow = async (tab: DelayedTab): Promise<void> => {
+    void trackTabWoken(1);
     await wakeDelayedTabs([tab.id]);
     setSelectedTabs((current) => current.filter((id) => id !== tab.id));
   };
 
   const removeTab = async (tab: DelayedTab): Promise<void> => {
+    void trackTabDeleted(1);
     await removeDelayedTabs([tab.id]);
     setSelectedTabs((current) => current.filter((id) => id !== tab.id));
   };
@@ -63,11 +66,13 @@ function ManageTabsView(): React.ReactElement {
   };
 
   const wakeSelectedTabs = async (): Promise<void> => {
+    void trackTabWoken(selectedTabs.length);
     await wakeDelayedTabs(selectedTabs);
     setSelectedTabs([]);
   };
 
   const removeSelectedTabs = async (): Promise<void> => {
+    void trackTabDeleted(selectedTabs.length);
     await removeDelayedTabs(selectedTabs);
     setSelectedTabs([]);
   };

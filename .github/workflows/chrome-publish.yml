@@ -1,27 +1,46 @@
-name: Publish to Chrome Web Store
+name: Chrome Web Store Release
 
 on:
   push:
-    branches:
-      - release
     tags:
       - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      release_mode:
+        description: 'validate_only skips the store, upload_only uploads only, upload_and_publish submits for review'
+        required: true
+        default: validate_only
+        type: choice
+        options:
+          - validate_only
+          - upload_only
+          - upload_and_publish
+
+concurrency:
+  group: chrome-web-store-release
+  cancel-in-progress: false
 
 jobs:
   release:
+    name: Validate and release Delayo
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: chrome-web-store
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
         with:
           version: 10.6.5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: pnpm
@@ -29,19 +48,103 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build extension
+      - name: Resolve release mode
+        id: release-mode
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_RELEASE_MODE: ${{ inputs.release_mode }}
+        run: |
+          RELEASE_MODE="${INPUT_RELEASE_MODE:-upload_and_publish}"
+          if [ "$EVENT_NAME" = "push" ]; then
+            RELEASE_MODE="upload_and_publish"
+          fi
+
+          echo "value=$RELEASE_MODE" >> "$GITHUB_OUTPUT"
+          echo "Resolved release mode: $RELEASE_MODE"
+
+      - name: Validate release version
+        id: release-version
+        run: |
+          node ./scripts/release/validate-release.mjs \
+            --event-name "${{ github.event_name }}" \
+            --ref-name "${{ github.ref_name }}" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
         run: pnpm build
 
-      - name: Zip extension
-        working-directory: dist
-        run: zip -r ../delayo.zip .
+      - name: Package extension
+        id: package-extension
+        shell: pwsh
+        run: |
+          & ./scripts/zip.ps1 `
+            -SourceDir "dist" `
+            -OutputDir "artifacts" `
+            -BaseName "delayo-chrome-web-store" `
+            -Version "${{ steps.release-version.outputs.version }}" `
+            -GithubOutput $env:GITHUB_OUTPUT
 
-      - name: Upload to Chrome Web Store
-        uses: ExtensionNinja/extension-publish@main
+      - name: Upload release artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          action: upload
-          extensionID: ${{ secrets.CWS_EXTENSION_ID }}
-          clientID: ${{ secrets.CWS_CLIENT_ID }}
-          clientSecret: ${{ secrets.CWS_CLIENT_SECRET }}
-          clientRefreshToken: ${{ secrets.CWS_REFRESH_TOKEN }}
-          extensionFile: ./delayo.zip
+          name: ${{ steps.package-extension.outputs.archive_name }}
+          path: ${{ steps.package-extension.outputs.archive_path }}
+          if-no-files-found: error
+
+      - name: Skip Chrome Web Store calls for validate-only mode
+        if: ${{ steps.release-mode.outputs.value == 'validate_only' }}
+        run: echo "Validation completed without store upload."
+
+      - name: Authenticate to Google Cloud with Workload Identity Federation
+        if: ${{ steps.release-mode.outputs.value != 'validate_only' && secrets.CWS_WORKLOAD_IDENTITY_PROVIDER != '' && secrets.CWS_SERVICE_ACCOUNT_EMAIL != '' }}
+        id: auth-wif
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ secrets.CWS_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.CWS_SERVICE_ACCOUNT_EMAIL }}
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
+
+      - name: Authenticate to Google Cloud with service account key fallback
+        if: ${{ steps.release-mode.outputs.value != 'validate_only' && steps.auth-wif.outcome == 'skipped' && secrets.CWS_SERVICE_ACCOUNT_KEY_JSON != '' && secrets.CWS_SERVICE_ACCOUNT_EMAIL != '' }}
+        id: auth-key
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          token_format: access_token
+          credentials_json: ${{ secrets.CWS_SERVICE_ACCOUNT_KEY_JSON }}
+          service_account: ${{ secrets.CWS_SERVICE_ACCOUNT_EMAIL }}
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
+
+      - name: Resolve Chrome Web Store access token
+        if: ${{ steps.release-mode.outputs.value != 'validate_only' }}
+        id: access-token
+        shell: bash
+        env:
+          TOKEN_WIF: ${{ steps.auth-wif.outputs.access_token }}
+          TOKEN_KEY: ${{ steps.auth-key.outputs.access_token }}
+        run: |
+          TOKEN="${TOKEN_WIF:-$TOKEN_KEY}"
+
+          if [ -z "$TOKEN" ]; then
+            echo "::error::No Chrome Web Store access token was generated. Configure Workload Identity Federation or the JSON key fallback."
+            exit 1
+          fi
+
+          echo "value=$TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: Upload and optionally publish to Chrome Web Store
+        if: ${{ steps.release-mode.outputs.value != 'validate_only' }}
+        env:
+          CWS_ACCESS_TOKEN: ${{ steps.access-token.outputs.value }}
+          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CWS_PUBLISH: ${{ steps.release-mode.outputs.value == 'upload_and_publish' }}
+          CWS_PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CWS_ZIP_FILE: ${{ steps.package-extension.outputs.archive_path }}
+        run: node ./scripts/release/publish-chrome-web-store.mjs

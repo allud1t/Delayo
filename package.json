@@ -9,12 +9,14 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "test": "vitest run",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext js,mjs,ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
     "release": "standard-version",
-    "zip": "powershell -ExecutionPolicy Bypass -File ./scripts/zip.ps1"
+    "release:validate": "node ./scripts/release/validate-release.mjs",
+    "release:cws": "node ./scripts/release/publish-chrome-web-store.mjs",
+    "zip": "pwsh -File ./scripts/zip.ps1"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -28,6 +30,8 @@
     "react-i18next": "^15.4.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
     "@crxjs/vite-plugin": "^1.0.14",
     "@eslint/js": "^9.23.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.2.1",

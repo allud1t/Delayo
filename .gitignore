@@ -11,6 +11,10 @@ build/
 out/
 *.local
 release/
+artifacts/
+delayo-*-chrome-web-store.zip
+*.timestamp*.mjs
+vite.config.ts.timestamp*
 
 # 🧪 Logs
 logs/

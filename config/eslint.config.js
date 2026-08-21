@@ -9,8 +9,26 @@ import pluginJsxA11y from 'eslint-plugin-jsx-a11y'
 import prettier from 'eslint-config-prettier'
 
 export default [
-  { ignores: ['dist/**'] },
+  { ignores: ['artifacts/**', 'dist/**'] },
   js.configs.recommended,
+
+  {
+    files: ['**/*.js', '**/*.mjs'],
+    languageOptions: {
+      sourceType: 'module',
+      ecmaVersion: 'latest',
+      globals: {
+        Buffer: 'readonly',
+        Response: 'readonly',
+        URL: 'readonly',
+        console: 'readonly',
+        clearTimeout: 'readonly',
+        fetch: 'readonly',
+        process: 'readonly',
+        setTimeout: 'readonly',
+      },
+    },
+  },
 
   {
     files: ['**/*.ts', '**/*.tsx'],

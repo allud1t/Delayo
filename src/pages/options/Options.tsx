@@ -5,6 +5,8 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DonationButton from '../../components/DonationButton';
 import LanguageSelector from '../../components/LanguageSelector';
+import ProductivityStats from '../../components/ProductivityStats';
+import { trackTabDeleted, trackTabWoken } from '../../services/analytics';
 import '../../i18n';
 
 import DelaySettingsComponent from './DelaySettings';
@@ -13,7 +15,7 @@ import './options.css';
 function Options(): React.ReactElement {
   const { delayedTabs, loading, removeDelayedTabs, wakeDelayedTabs } =
     useDelayedTabs();
-  const [activeTab, setActiveTab] = useState<'tabs' | 'settings'>('tabs');
+  const [activeTab, setActiveTab] = useState<'tabs' | 'settings' | 'stats'>('tabs');
   const [selectedTabs, setSelectedTabs] = useState<string[]>([]);
   const { theme, toggleTheme } = useTheme();
   const { t, i18n } = useTranslation();
@@ -31,16 +33,19 @@ function Options(): React.ReactElement {
   );
 
   const wakeTabNow = async (tabId: string): Promise<void> => {
+    void trackTabWoken(1);
     await wakeDelayedTabs([tabId]);
     setSelectedTabs((current) => current.filter((id) => id !== tabId));
   };
 
   const removeTab = async (tabId: string): Promise<void> => {
+    void trackTabDeleted(1);
     await removeDelayedTabs([tabId]);
     setSelectedTabs((current) => current.filter((id) => id !== tabId));
   };
 
   const wakeSelectedTabs = async (): Promise<void> => {
+    void trackTabWoken(selectedTabs.length);
     await wakeDelayedTabs(selectedTabs);
     setSelectedTabs([]);
   };
@@ -237,6 +242,13 @@ function Options(): React.ReactElement {
         </button>
         <button
           type='button'
+          className={`tab tab-bordered ${activeTab === 'stats' ? 'tab-active !border-delayo-orange !border-b-[3px]' : ''}`}
+          onClick={() => setActiveTab('stats')}
+        >
+          <span className='font-bold'>{t('stats.title')}</span>
+        </button>
+        <button
+          type='button'
           className={`tab tab-bordered ${activeTab === 'settings' ? 'tab-active !border-delayo-orange !border-b-[3px]' : ''}`}
           onClick={() => setActiveTab('settings')}
         >
@@ -246,9 +258,13 @@ function Options(): React.ReactElement {
 
       {activeTab === 'tabs' ? (
         content
-      ) : (
+      ) : activeTab === 'settings' ? (
         <div className='settings-width-850'>
           <DelaySettingsComponent isPopup={false} />
+        </div>
+      ) : (
+        <div className='settings-width-850'>
+          <ProductivityStats />
         </div>
       )}
 

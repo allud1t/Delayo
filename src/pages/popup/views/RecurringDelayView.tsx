@@ -6,6 +6,7 @@ import { scheduleTabs } from '@utils/delayedTabsRuntime';
 import { calculateNextWakeTime } from '@utils/recurrence';
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { trackTabDelayed } from '../../../services/analytics';
 
 function FormControl({
   label,
@@ -102,6 +103,11 @@ function RecurringDelayView(): React.ReactElement {
     }
 
     await persistSelectedMode();
+    void trackTabDelayed({
+      presetId: 'recurring',
+      count: tabsToDelay.length,
+      mode: selectedMode,
+    });
     await scheduleTabs(tabsToDelay, firstWakeTime, recurrencePattern);
     window.close();
   };

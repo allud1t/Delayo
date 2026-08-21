@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  calculateLaterTodayWakeTime,
   calculateNextMonthWakeTime,
   calculateNextWeekWakeTime,
+  calculateTonightWakeTime,
+  calculateTomorrowWakeTime,
   createPresetDelayOptions,
 } from './delayPresets';
 
@@ -24,6 +27,54 @@ describe('delayPresets', () => {
     const wakeTime = calculateNextMonthWakeTime(now, true);
 
     expect(wakeTime).toBe(new Date(2026, 1, 28, 8, 30).getTime());
+  });
+
+  it('calculates tonight wake time for today when time has not passed', () => {
+    const now = new Date(2026, 5, 15, 14, 0); // 14:00
+    const wakeTime = calculateTonightWakeTime(now, '18:00');
+    const wakeDate = new Date(wakeTime);
+
+    expect(wakeDate.getDate()).toBe(15);
+    expect(wakeDate.getHours()).toBe(18);
+    expect(wakeDate.getMinutes()).toBe(0);
+  });
+
+  it('rolls over tonight to tomorrow when tonight time has already passed today', () => {
+    const now = new Date(2026, 5, 15, 20, 30); // 20:30 (after 18:00)
+    const wakeTime = calculateTonightWakeTime(now, '18:00');
+    const wakeDate = new Date(wakeTime);
+
+    expect(wakeDate.getDate()).toBe(16); // Tomorrow
+    expect(wakeDate.getHours()).toBe(18);
+    expect(wakeDate.getMinutes()).toBe(0);
+  });
+
+  it('schedules for today morning when user is in early morning (madrugada)', () => {
+    const earlyMorning = new Date(2026, 5, 15, 2, 0); // 02:00 AM
+    const wakeTime = calculateTomorrowWakeTime(earlyMorning, '09:00');
+    const wakeDate = new Date(wakeTime);
+
+    expect(wakeDate.getDate()).toBe(15); // Same day morning
+    expect(wakeDate.getHours()).toBe(9);
+    expect(wakeDate.getMinutes()).toBe(0);
+  });
+
+  it('schedules for next day morning when called during the day', () => {
+    const daytime = new Date(2026, 5, 15, 14, 0); // 14:00
+    const wakeTime = calculateTomorrowWakeTime(daytime, '09:00');
+    const wakeDate = new Date(wakeTime);
+
+    expect(wakeDate.getDate()).toBe(16); // Next day
+    expect(wakeDate.getHours()).toBe(9);
+    expect(wakeDate.getMinutes()).toBe(0);
+  });
+
+  it('calculates later today correctly', () => {
+    const now = new Date(2026, 5, 15, 10, 0);
+    const wakeTime = calculateLaterTodayWakeTime(now, 3);
+    const wakeDate = new Date(wakeTime);
+
+    expect(wakeDate.getHours()).toBe(13);
   });
 
   it('builds the preset list with all default delay options', () => {

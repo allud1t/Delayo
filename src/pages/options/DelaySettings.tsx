@@ -1,6 +1,7 @@
 import useDelaySettings from '@hooks/useDelaySettings';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isAnalyticsEnabled, setAnalyticsEnabled } from '../../services/analytics';
 
 const getInputClasses = (isPopup: boolean): string =>
   `input input-bordered ${isPopup ? 'h-12 rounded-lg bg-base-100/70 p-4 shadow-sm transition-all duration-200 hover:bg-base-100' : ''}`;
@@ -19,9 +20,15 @@ function DelaySettingsComponent({
   isPopup = false,
 }: DelaySettingsComponentProps): React.ReactElement {
   const { t } = useTranslation();
+  const analyticsToggleId = useId();
   const { loading, resetSettings, saveSettings, settings, updateSetting } =
     useDelaySettings();
   const [saved, setSaved] = useState(false);
+  const [analyticsActive, setAnalyticsActive] = useState(true);
+
+  useEffect(() => {
+    void isAnalyticsEnabled().then(setAnalyticsActive);
+  }, []);
 
   useEffect(() => {
     if (!saved) {
@@ -35,6 +42,7 @@ function DelaySettingsComponent({
 
   const handleSave = async (): Promise<void> => {
     await saveSettings();
+    await setAnalyticsEnabled(analyticsActive);
     setSaved(true);
   };
 
@@ -284,6 +292,27 @@ function DelaySettingsComponent({
                 />
               </div>
             </div>
+          </div>
+
+          <div className='form-control pt-2 border-t border-base-200'>
+            <label htmlFor={analyticsToggleId} className='label cursor-pointer justify-between'>
+              <div className='flex flex-col pr-4'>
+                <span className='label-text font-medium'>
+                  {t('settings.analytics.title')}
+                </span>
+                <span className='text-xs text-base-content/60'>
+                  {t('settings.analytics.description')}
+                </span>
+              </div>
+              <input
+                id={analyticsToggleId}
+                type='checkbox'
+                className='toggle toggle-primary'
+                checked={analyticsActive}
+                onChange={(e) => setAnalyticsActive(e.target.checked)}
+                aria-label={t('settings.analytics.title')}
+              />
+            </label>
           </div>
         </div>
 

@@ -37,14 +37,19 @@
     "delay": "Delay",
     "selected": "selected",
     "inWindow": "in this window",
+    "quickTurbo": "Turbo (+1h)",
+    "quickTurboDesc": "Quickly delay for 1 hour",
     "tabs": {
       "active": "Active Tab",
       "highlighted": "Selected Tabs",
       "window": "Current Window"
     },
     "delayOptions": {
-      "laterToday": "Later today (in {{hours}} hours)",
+      "laterToday": "Later today (+{{hours}}h)",
+      "laterTonight": "Late night (+{{hours}}h)",
       "tonight": "Tonight (at {{time}})",
+      "tomorrowNight": "Tomorrow Night (at {{time}})",
+      "thisMorning": "This Morning (at {{time}})",
       "tomorrow": "Tomorrow (at {{time}})",
       "weekend": "This weekend ({{day}}, {{time}})",
       "nextWeek": "Next week ({{day}}, {{time}})",
@@ -112,7 +117,22 @@
     "someday": "Someday (random)",
     "minMonths": "Minimum months",
     "maxMonths": "Maximum months",
-    "saved": "Settings saved successfully!"
+    "saved": "Settings saved successfully!",
+    "analytics": {
+      "title": "Privacy & Telemetry",
+      "enable": "Enable anonymous local usage metrics",
+      "description": "Metrics are stored locally in your browser to display your productivity dashboard."
+    }
+  },
+  "stats": {
+    "title": "Productivity Insights",
+    "totalDelayed": "Tabs delayed",
+    "totalWoken": "Tabs restored",
+    "favoritePreset": "Top preset",
+    "focusPreserved": "Focus preserved",
+    "noData": "Your productivity stats will appear here as you use Delayo.",
+    "minutes": "min",
+    "hours": "h"
   },
   "manageTabs": {
     "title": "Management",

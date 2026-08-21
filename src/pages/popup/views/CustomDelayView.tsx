@@ -5,6 +5,8 @@ import { scheduleTabs } from '@utils/delayedTabsRuntime';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { trackTabDelayed } from '../../../services/analytics';
+
 function CustomDelayView(): React.ReactElement {
   const { t } = useTranslation();
   const {
@@ -26,6 +28,11 @@ function CustomDelayView(): React.ReactElement {
     }
 
     await persistSelectedMode();
+    void trackTabDelayed({
+      presetId: 'custom',
+      count: tabsToDelay.length,
+      mode: selectedMode,
+    });
     await scheduleTabs(tabsToDelay, new Date(customDate).getTime());
     window.close();
   };

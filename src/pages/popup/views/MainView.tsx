@@ -9,6 +9,8 @@ import { createPresetDelayOptions } from '@utils/delayPresets';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import DonationButton from '../../../components/DonationButton';
+import { trackTabDelayed } from '../../../services/analytics';
 import useTheme from '../../../utils/useTheme';
 
 function MainView(): React.ReactElement {
@@ -57,6 +59,31 @@ function MainView(): React.ReactElement {
       Date.now() +
         (option.hours ? option.hours * 60 * 60 * 1000 : 0) +
         (option.days ? option.days * 24 * 60 * 60 * 1000 : 0);
+
+    void trackTabDelayed({
+      presetId: option.id,
+      count: tabsToDelay.length,
+      mode: selectedMode,
+    });
+
+    await scheduleTabs(tabsToDelay, wakeTime);
+    window.close();
+  };
+
+  const handleQuickTurbo = async (): Promise<void> => {
+    if (tabsToDelay.length === 0) {
+      return;
+    }
+
+    await persistSelectedMode();
+
+    const wakeTime = Date.now() + 60 * 60 * 1000;
+
+    void trackTabDelayed({
+      presetId: 'quick_turbo',
+      count: tabsToDelay.length,
+      mode: selectedMode,
+    });
 
     await scheduleTabs(tabsToDelay, wakeTime);
     window.close();
@@ -120,34 +147,45 @@ function MainView(): React.ReactElement {
         </div>
 
         <div className='mb-5 flex flex-col space-y-3'>
-          <div className='flex items-center justify-between'>
+          <div className='flex items-center justify-between gap-2'>
             <div className='text-sm font-medium text-base-content/80'>
               {t('popup.delay')}:
             </div>
-            <div className='flex space-x-2'>
+            <div className='flex items-center space-x-2'>
+              <div className='flex space-x-1.5'>
+                <button
+                  type='button'
+                  className={`btn btn-sm ${selectedMode === 'active' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => handleModeChange('active')}
+                >
+                  {t('popup.tabs.active')}
+                </button>
+                <button
+                  type='button'
+                  className={`btn btn-sm ${selectedMode === 'highlighted' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => handleModeChange('highlighted')}
+                  disabled={highlightedTabs.length <= 1}
+                >
+                  {t('popup.tabs.highlighted')}{' '}
+                  {highlightedTabs.length > 1 ? `(${highlightedTabs.length})` : ''}
+                </button>
+                <button
+                  type='button'
+                  className={`btn btn-sm ${selectedMode === 'window' ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => handleModeChange('window')}
+                >
+                  {t('popup.tabs.window')}{' '}
+                  {allWindowTabs.length > 0 ? `(${allWindowTabs.length})` : ''}
+                </button>
+              </div>
               <button
                 type='button'
-                className={`btn btn-sm ${selectedMode === 'active' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => handleModeChange('active')}
+                className='btn btn-sm border-none bg-gradient-to-r from-amber-500 to-delayo-orange text-white shadow-sm transition-all hover:scale-105 hover:opacity-95'
+                onClick={() => void handleQuickTurbo()}
+                title={t('popup.quickTurboDesc')}
               >
-                {t('popup.tabs.active')}
-              </button>
-              <button
-                type='button'
-                className={`btn btn-sm ${selectedMode === 'highlighted' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => handleModeChange('highlighted')}
-                disabled={highlightedTabs.length <= 1}
-              >
-                {t('popup.tabs.highlighted')}{' '}
-                {highlightedTabs.length > 1 ? `(${highlightedTabs.length})` : ''}
-              </button>
-              <button
-                type='button'
-                className={`btn btn-sm ${selectedMode === 'window' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => handleModeChange('window')}
-              >
-                {t('popup.tabs.window')}{' '}
-                {allWindowTabs.length > 0 ? `(${allWindowTabs.length})` : ''}
+                <FontAwesomeIcon icon='bolt' className='h-3.5 w-3.5 text-white' />
+                <span className='font-bold'>{t('popup.quickTurbo')}</span>
               </button>
             </div>
           </div>
@@ -265,7 +303,7 @@ function MainView(): React.ReactElement {
           </div>
         </div>
 
-        <div className='mt-6 flex justify-center'>
+        <div className='mt-6 flex items-center justify-between border-t border-base-200 pt-3'>
           <Link
             to='/manage-tabs'
             className='btn btn-ghost btn-sm text-sm font-medium text-base-content/70 transition-all duration-200 hover:text-delayo-orange'
@@ -273,6 +311,7 @@ function MainView(): React.ReactElement {
             <FontAwesomeIcon icon='list-ul' className='mr-2 h-4 w-4' />
             {t('popup.actions.manageTabs')}
           </Link>
+          <DonationButton isCompact={true} />
         </div>
       </div>
     </div>

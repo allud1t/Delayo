@@ -37,8 +37,10 @@ export function calculateTonightWakeTime(
   const today = new Date(now);
   today.setHours(hours, minutes, 0, 0);
 
-  if (today.getTime() < now.getTime()) {
-    return now.getTime() + 60 * 60 * 1000;
+  if (today.getTime() <= now.getTime()) {
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.getTime();
   }
 
   return today.getTime();
@@ -49,6 +51,17 @@ export function calculateTomorrowWakeTime(
   timeString: string
 ): number {
   const { hours, minutes } = parseTimeString(timeString);
+  const currentHour = now.getHours();
+
+  // If in early morning (00:00 - 05:59) and target time is in the upcoming morning of today
+  if (currentHour < 6) {
+    const todayMorning = new Date(now);
+    todayMorning.setHours(hours, minutes, 0, 0);
+    if (todayMorning.getTime() > now.getTime()) {
+      return todayMorning.getTime();
+    }
+  }
+
   const tomorrow = new Date(now);
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(hours, minutes, 0, 0);
@@ -64,8 +77,16 @@ export function calculateWeekendWakeTime(
   const { hours, minutes } = parseTimeString(timeString);
   const currentDay = now.getDay();
   const targetDay = weekendDay === 'saturday' ? 6 : 0;
-  let daysUntilTarget = 7;
 
+  if (currentDay === targetDay) {
+    const today = new Date(now);
+    today.setHours(hours, minutes, 0, 0);
+    if (today.getTime() > now.getTime()) {
+      return today.getTime();
+    }
+  }
+
+  let daysUntilTarget = 7;
   if (currentDay < targetDay) {
     daysUntilTarget = targetDay - currentDay;
   } else if (currentDay > targetDay) {
@@ -187,6 +208,69 @@ export function calculateSomedayWakeTime(
   return targetDate.getTime();
 }
 
+function getLaterTodayLabel(
+  settings: DelaySettings,
+  locale: string,
+  translate: TranslateFn,
+  now: Date
+): string {
+  const targetTime = calculateLaterTodayWakeTime(now, settings.laterToday);
+  const targetDate = new Date(targetTime);
+  const formattedTime = formatClockTime(targetTime, locale);
+
+  if (targetDate.getDate() !== now.getDate()) {
+    return `${translate('popup.delayOptions.laterTonight', {
+      hours: settings.laterToday,
+    })} (${formattedTime})`;
+  }
+
+  return `${translate('popup.delayOptions.laterToday', {
+    hours: settings.laterToday,
+  })} (${formattedTime})`;
+}
+
+function getTonightLabel(
+  settings: DelaySettings,
+  locale: string,
+  translate: TranslateFn,
+  now: Date
+): string {
+  const targetTime = calculateTonightWakeTime(now, settings.tonightTime);
+  const targetDate = new Date(targetTime);
+  const formattedTime = formatClockTime(targetTime, locale);
+
+  if (targetDate.getDate() !== now.getDate()) {
+    return translate('popup.delayOptions.tomorrowNight', {
+      time: formattedTime,
+    });
+  }
+
+  return translate('popup.delayOptions.tonight', {
+    time: formattedTime,
+  });
+}
+
+function getTomorrowLabel(
+  settings: DelaySettings,
+  locale: string,
+  translate: TranslateFn,
+  now: Date
+): string {
+  const targetTime = calculateTomorrowWakeTime(now, settings.tomorrowTime);
+  const targetDate = new Date(targetTime);
+  const formattedTime = formatClockTime(targetTime, locale);
+
+  if (targetDate.getDate() === now.getDate()) {
+    return translate('popup.delayOptions.thisMorning', {
+      time: formattedTime,
+    });
+  }
+
+  return translate('popup.delayOptions.tomorrow', {
+    time: formattedTime,
+  });
+}
+
 function getNextMonthLabel(
   settings: DelaySettings,
   locale: string,
@@ -221,27 +305,21 @@ export function createPresetDelayOptions(params: {
   return [
     {
       id: 'later_today',
-      label: translate('popup.delayOptions.laterToday', {
-        hours: settings.laterToday,
-      }),
+      label: getLaterTodayLabel(settings, locale, translate, renderTime),
       hours: settings.laterToday,
       calculateTime: () =>
         calculateLaterTodayWakeTime(new Date(), settings.laterToday),
     },
     {
       id: 'tonight',
-      label: translate('popup.delayOptions.tonight', {
-        time: settings.tonightTime,
-      }),
+      label: getTonightLabel(settings, locale, translate, renderTime),
       custom: true,
       calculateTime: () =>
         calculateTonightWakeTime(new Date(), settings.tonightTime),
     },
     {
       id: 'tomorrow',
-      label: translate('popup.delayOptions.tomorrow', {
-        time: settings.tomorrowTime,
-      }),
+      label: getTomorrowLabel(settings, locale, translate, renderTime),
       custom: true,
       calculateTime: () =>
         calculateTomorrowWakeTime(new Date(), settings.tomorrowTime),

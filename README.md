@@ -86,6 +86,13 @@ pnpm dev
 pnpm build
 ```
 
+## 🚚 Release Automation
+
+Chrome Web Store releases are validated, packaged, and submitted by GitHub Actions using the official Chrome Web Store API.
+
+- Runbook: [docs/CHROME_WEB_STORE_RELEASE.md](docs/CHROME_WEB_STORE_RELEASE.md)
+- Engineering spec: [docs/specs/chrome-web-store-release.md](docs/specs/chrome-web-store-release.md)
+
 ## 📋 Contributing
 
 We welcome contributions! Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) to get started.
@@ -173,6 +180,13 @@ pnpm dev
 # 4. Build para produção
 pnpm build
 ```
+
+## 🚚 Automação de Release
+
+As releases para a Chrome Web Store agora podem ser validadas, empacotadas e submetidas pelo GitHub Actions usando a API oficial da Chrome Web Store.
+
+- Runbook: [docs/CHROME_WEB_STORE_RELEASE.md](docs/CHROME_WEB_STORE_RELEASE.md)
+- Spec de engenharia: [docs/specs/chrome-web-store-release.md](docs/specs/chrome-web-store-release.md)
 
 ## 📋 Como Contribuir
 

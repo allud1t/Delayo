@@ -1,8 +1,10 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faArrowLeft,
+  faBolt,
   faBriefcase,
   faCalendarDays,
+  faChartLine,
   faCheck,
   faCheckSquare,
   faClock,
@@ -11,6 +13,7 @@ import {
   faEnvelope,
   faFire,
   faGear,
+  faHeart,
   faHourglassEmpty,
   faHourglassHalf,
   faLeaf,
@@ -31,8 +34,10 @@ import {
 
 library.add(
   faArrowLeft,
+  faBolt,
   faBriefcase,
   faCalendarDays,
+  faChartLine,
   faCheck,
   faCheckSquare,
   faClock,
@@ -41,6 +46,7 @@ library.add(
   faEnvelope,
   faFire,
   faGear,
+  faHeart,
   faHourglassEmpty,
   faHourglassHalf,
   faLeaf,

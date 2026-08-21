@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { trackPixCopied, trackSupportOpened } from '../services/analytics';
 
 import pixQrCode from '../assets/img/pix_qr_code.svg';
 
@@ -14,7 +15,11 @@ function DonationButton({
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDonationOptions = () => {
-    setIsOpen(!isOpen);
+    const nextState = !isOpen;
+    setIsOpen(nextState);
+    if (nextState) {
+      void trackSupportOpened();
+    }
   };
 
   const paypalLink =
@@ -28,6 +33,7 @@ function DonationButton({
 
   const copyPixKey = () => {
     navigator.clipboard.writeText(pixKey);
+    void trackPixCopied();
     setShowCopyNotification(true);
     setTimeout(() => {
       setShowCopyNotification(false);

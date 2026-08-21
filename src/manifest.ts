@@ -1,9 +1,10 @@
+import packageJson from '../package.json';
 import { ManifestV3Export } from '@crxjs/vite-plugin';
 
 const manifest: ManifestV3Export = {
   manifest_version: 3,
   name: '__MSG_appName__',
-  version: '1.1.2',
+  version: packageJson.version,
   description: '__MSG_appDesc__',
   default_locale: 'en',
   permissions: ['storage', 'tabs', 'alarms', 'notifications', 'contextMenus'],

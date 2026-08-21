@@ -20,7 +20,7 @@
       "sunday": "D",
       "monday": "L",
       "tuesday": "M",
-      "wednesday": "X",
+      "wednesday": "M",
       "thursday": "J",
       "friday": "V",
       "saturday": "S"
@@ -34,24 +34,29 @@
   },
   "popup": {
     "title": "Delayo",
-    "delay": "Aplazar",
+    "delay": "Posponer",
     "selected": "seleccionadas",
     "inWindow": "en esta ventana",
+    "quickTurbo": "Turbo (+1h)",
+    "quickTurboDesc": "Posponer rápidamente por 1 hora",
     "tabs": {
       "active": "Pestaña Activa",
       "highlighted": "Pestañas Seleccionadas",
       "window": "Ventana Actual"
     },
     "delayOptions": {
-      "laterToday": "Hoy más tarde (en {{hours}} horas)",
-      "tonight": "Esta noche (a las {{time}})",
-      "tomorrow": "Mañana ({{time}})",
-      "weekend": "Fin de semana ({{day}}, {{time}})",
-      "nextWeek": "Próxima semana ({{day}}, {{time}})",
-      "nextMonth": "Próximo mes",
+      "laterToday": "Más tarde hoy (+{{hours}}h)",
+      "laterTonight": "Madrugada (+{{hours}}h)",
+      "tonight": "Esta Noche (a las {{time}})",
+      "tomorrowNight": "Mañana por la Noche (a las {{time}})",
+      "thisMorning": "Esta Mañana (a las {{time}})",
+      "tomorrow": "Mañana (a las {{time}})",
+      "weekend": "Este Fin de Semana ({{day}}, {{time}})",
+      "nextWeek": "Próxima Semana ({{day}}, {{time}})",
+      "nextMonth": "Próximo Mes",
       "someday": "Algún Día (aleatorio)",
-      "custom": "Fecha personalizada",
-      "recurring": "Repetir"
+      "custom": "Fecha y Hora Personalizada",
+      "recurring": "Recurrente"
     },
     "weekdays": {
       "sunday": "Domingo",
@@ -63,30 +68,30 @@
       "saturday": "Sábado"
     },
     "actions": {
-      "manageTabs": "Pestañas aplazadas",
+      "manageTabs": "Gestionar Pestañas Pospuestas",
       "openSettings": "Configuración"
     },
     "notFound": {
       "title": "Página no encontrada",
-      "description": "La página que buscas no existe o fue movida.",
+      "description": "La página que buscas no existe o ha sido movida.",
       "backHome": "Volver al inicio"
     }
   },
   "customDelay": {
-    "title": "Aplazamiento Personalizado",
-    "selectDateTime": "Seleccionar Fecha y Hora",
-    "delayTab": "Aplazar pestaña"
+    "title": "Posponer Personalizado",
+    "selectDateTime": "Seleccione Fecha y Hora",
+    "delayTab": "Posponer Pestaña"
   },
   "recurringDelay": {
-    "title": "Aplazamiento Recurrente",
+    "title": "Horario Recurrente",
     "frequency": "Frecuencia",
     "daily": "Diario",
-    "weekdays": "En días laborable",
+    "weekdays": "En Días Laborables",
     "weekly": "Semanal",
     "monthly": "Mensual",
-    "selectTime": "Seleccionar Hora",
-    "selectDay": "Seleccionar Día",
-    "delayTab": "Programar repetición",
+    "selectTime": "Seleccione la Hora",
+    "selectDay": "Seleccione el Día",
+    "delayTab": "Programar Posposición Recurrente",
     "toggleDay": "Alternar {{day}}"
   },
   "settings": {
@@ -96,13 +101,13 @@
     "theme": "Tema",
     "reset": "Restablecer",
     "notifications": "Notificaciones",
-    "enableNotifications": "Activar Notificaciones",
-    "defaultDelayOptions": "Opciones predeterminadas de aplazamiento",
-    "laterToday": "Hoy más tarde",
+    "enableNotifications": "Habilitar Notificaciones",
+    "defaultDelayOptions": "Opciones de Posposición Predeterminadas",
+    "laterToday": "Más Tarde Hoy",
     "hours": "horas",
-    "tonight": "Esta noche",
+    "tonight": "Esta Noche",
     "tomorrow": "Mañana",
-    "weekend": "Fin de semana",
+    "weekend": "Este Fin de Semana",
     "day": "Día",
     "nextWeek": "Próxima Semana",
     "nextMonth": "Próximo Mes",
@@ -110,24 +115,39 @@
     "sameDayOfWeek": "Mismo día de la semana",
     "specificDay": "Día específico",
     "someday": "Algún Día (aleatorio)",
-    "minMonths": "Mínimo de meses",
-    "maxMonths": "Máximo de meses",
-    "saved": "¡Configuración guardada correctamente!"
+    "minMonths": "Meses mínimos",
+    "maxMonths": "Meses máximos",
+    "saved": "¡Configuración guardada con éxito!",
+    "analytics": {
+      "title": "Privacidad y Métricas",
+      "enable": "Habilitar estadísticas locales de productividad",
+      "description": "Las métricas se guardan localmente en su navegador para mostrar su historial de uso."
+    }
+  },
+  "stats": {
+    "title": "Estadísticas de Productividad",
+    "totalDelayed": "Pestañas pospuestas",
+    "totalWoken": "Pestañas restauradas",
+    "favoritePreset": "Opción favorita",
+    "focusPreserved": "Enfoque protegido",
+    "noData": "Sus estadísticas de productividad aparecerán aquí a medida que use Delayo.",
+    "minutes": "min",
+    "hours": "h"
   },
   "manageTabs": {
     "title": "Gestión",
-    "tabsDelayed": "Aplazados",
-    "noTabs": "No hay pestañas aplazadas",
-    "noDelayedTabs": "No tienes ninguna pestaña aplazada en este momento. Aplaza una pestaña haciendo clic en el icono de la extensión.",
+    "tabsDelayed": "Pospuestas",
+    "noTabs": "No hay pestañas pospuestas",
+    "noDelayedTabs": "No tienes pestañas pospuestas en este momento. Pospon una pestaña haciendo clic en el icono de la extensión.",
     "wakeUpTime": "Hora de despertar",
     "timeLeft": "Tiempo restante",
-    "delayedUntil": "Aplazada hasta",
-    "endDate": "Fecha de finalización",
+    "delayedUntil": "Pospuesta hasta",
+    "endDate": "Fecha final",
     "now": "Ahora",
     "select": "Seleccionar",
     "cancel": "Cancelar",
     "selectAll": "Seleccionar Todos",
-    "deselectAll": "Desmarcar Todos",
+    "deselectAll": "Deseleccionar Todos",
     "selectMode": "Activar modo de selección múltiple",
     "cancelSelection": "Cancelar selección",
     "wakeUp": "Despertar",
@@ -144,9 +164,9 @@
     }
   },
   "donation": {
-    "title": "Apoya el Proyecto",
-    "description": "Si te gusta Delayo y quieres ayudar a mantenerlo, considera hacer una donación. ¡Cualquier cantidad es muy apreciada!",
-    "supportProject": "Apoya el Proyecto",
+    "title": "Apoye el Proyecto",
+    "description": "Si le gusta Delayo y desea ayudar a mantenerlo, considere hacer una donación. ¡Cualquier cantidad es muy apreciada!",
+    "supportProject": "Apoye el Proyecto",
     "support": "Apoyar",
     "copyKey": "Copiar Clave",
     "copiedSuccess": "¡Clave PIX copiada con éxito!",
@@ -155,37 +175,37 @@
   "onboarding": {
     "welcome": {
       "title": "Bienvenido a Delayo",
-      "description": "Delayo es una extensión que te permite aplazar pestañas para verlas más tarde, ayudándote a mantener tu navegador organizado."
+      "description": "Delayo es una extensión que le permite posponer pestañas para verlas más tarde, ayudándole a mantener su navegador organizado."
     },
     "delayOptions": {
-      "title": "Opciones de Aplazamiento",
-      "description": "Elige entre varias opciones predefinidas para aplazar tus pestañas a un momento más conveniente."
+      "title": "Opciones de Posposición",
+      "description": "Elija entre varias opciones predefinidas para posponer sus pestañas para un momento más conveniente."
     },
     "customDelay": {
-      "title": "Aplazamiento Personalizado",
-      "description": "Establece una fecha y hora específicas para cuando quieras que la pestaña reaparezca."
+      "title": "Posposición Personalizada",
+      "description": "Establezca una fecha y hora específicas para cuando desee que reaparezca la pestaña."
     },
     "recurring": {
-      "title": "Aplazamiento Recurrente",
-      "description": "Configura pestañas para que reaparezcan en un horario regular: diario, semanal o mensual."
+      "title": "Posposición Recurrente",
+      "description": "Configure pestañas para que reaparezcan en un horario regular: diario, semanal o mensual."
     },
     "settings": {
       "title": "Configuración y Gestión",
-      "description": "Personaliza la extensión y gestiona tus pestañas aplazadas fácilmente.",
-      "gearClick": "Haz clic en el icono de engranaje ⚙️",
+      "description": "Personalice la extensión y administre sus pestañas pospuestas fácilmente.",
+      "gearClick": "Haga clic en el icono de engranaje ⚙️",
       "or": "o",
-      "rightClick": "Haz clic derecho en el icono de la extensión y selecciona 'Opciones' para acceder a la configuración."
+      "rightClick": "Haga clic derecho en el icono de la extensión y seleccione 'Opciones' para acceder a la configuración."
     },
     "next": "Siguiente",
-    "back": "Volver",
+    "back": "Atrás",
     "finish": "Finalizar",
     "close": "Cerrar"
   },
   "options": {
     "links": {
-      "repository": "Repositorio de GitHub",
-      "features": "Proponer Nuevas Funciones",
-      "issues": "Reportar Problemas"
+      "repository": "Repositorio en GitHub",
+      "features": "Proponer Nuevas Funcionalidades",
+      "issues": "Informar Problemas"
     }
   }
 }

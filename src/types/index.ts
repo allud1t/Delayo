@@ -80,6 +80,18 @@ export interface DelayedTabsRuntimeResponse {
   error?: string;
 }
 
+export interface AnalyticsStats {
+  totalDelayedTabs: number;
+  presetUsageCount: Record<string, number>;
+  modeUsageCount: Record<TabSelectionMode, number>;
+  totalWokenTabs: number;
+  totalDeletedTabs: number;
+  supportModalOpened: number;
+  pixKeyCopied: number;
+  firstUsedAt?: number;
+  lastUsedAt?: number;
+}
+
 export interface ExtensionStorageSchema {
   delayedTabs: DelayedTab[];
   delaySettings: DelaySettings;
@@ -87,4 +99,6 @@ export interface ExtensionStorageSchema {
   savedLanguage: SupportedLanguage;
   theme: ThemePreference;
   onboardingCompleted: boolean;
+  analyticsStats: AnalyticsStats;
+  analyticsEnabled: boolean;
 }
