@@ -18,7 +18,7 @@ function FormControl({
 }): React.ReactElement {
   return (
     <div className='form-control'>
-      <span className='mb-2 block text-sm font-medium'>{label}</span>
+      <span className='mb-1.5 block text-xs font-bold text-base-content/80'>{label}</span>
       {children}
     </div>
   );
@@ -121,159 +121,177 @@ function RecurringDelayView(): React.ReactElement {
   }
 
   return (
-    <div className='card w-80 rounded-none bg-base-300 shadow-xl'>
-      <div className='card-body p-5'>
-        <div className='mb-4 flex items-center'>
-          <Link
-            to='/'
-            className='btn btn-circle btn-ghost btn-sm mr-3 transition-all duration-200 hover:bg-base-100'
-            aria-label={t('common.back')}
-          >
-            <FontAwesomeIcon icon='arrow-left' />
-          </Link>
-          <h2 className='card-title font-bold text-delayo-orange'>
-            {t('recurringDelay.title')}
-          </h2>
-        </div>
-
-        <div className='mb-4'>
-          <div className='mb-2 text-sm font-medium text-base-content/80'>
-            {t('popup.delay')}:
-          </div>
-          <div className='rounded-lg bg-base-100/70 p-4 shadow-sm transition-all duration-200 hover:bg-base-100'>
-            {selectedMode === 'active' && activeTab && (
-              <div className='flex items-center'>
-                {activeTab.favIconUrl && (
-                  <img
-                    src={activeTab.favIconUrl}
-                    alt={t('common.faviconAlt')}
-                    className='mr-3 h-5 w-5'
-                    onError={(event) => {
-                      event.currentTarget.style.display = 'none';
-                    }}
-                  />
-                )}
-                <div className='overflow-hidden'>
-                  <div className='truncate text-sm font-medium text-base-content/80'>
-                    {activeTab.title}
-                  </div>
-                  <div className='truncate text-xs text-base-content/60'>
-                    {activeTab.url}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {selectedMode === 'highlighted' && (
-              <div className='text-sm font-medium text-base-content/80'>
-                {highlightedTabs.length}{' '}
-                {highlightedTabs.length === 1
-                  ? t('common.tabs.singular')
-                  : t('common.tabs')}{' '}
-                {t('popup.selected')}
-              </div>
-            )}
-
-            {selectedMode === 'window' && (
-              <div className='text-sm font-medium text-base-content/80'>
-                {allWindowTabs.length}{' '}
-                {allWindowTabs.length === 1
-                  ? t('common.tabs.singular')
-                  : t('common.tabs')}{' '}
-                {t('popup.inWindow')}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <FormControl label={t('recurringDelay.frequency')}>
-          <select
-            id={patternId}
-            className='select select-bordered w-full border-none bg-base-100/50 shadow-sm transition-all duration-200 focus:bg-base-100/80'
-            value={recurrenceType}
-            onChange={(event) =>
-              setRecurrenceType(event.target.value as RecurrencePattern['type'])
-            }
-          >
-            <option value='daily'>{t('recurringDelay.daily')}</option>
-            <option value='weekdays'>{t('recurringDelay.weekdays')}</option>
-            <option value='weekly'>{t('recurringDelay.weekly')}</option>
-            <option value='monthly'>{t('recurringDelay.monthly')}</option>
-            <option value='custom'>{t('customDelay.title')}</option>
-          </select>
-        </FormControl>
-
-        <FormControl label={t('recurringDelay.selectTime')}>
-          <TimePicker
-            value={time}
-            onChange={setTime}
-            isPopup={true}
-          />
-        </FormControl>
-
-        {(recurrenceType === 'weekly' || recurrenceType === 'custom') && (
-          <FormControl label={t('recurringDelay.selectDay')}>
-            <div
-              id={daysOfWeekId}
-              className='mt-1 flex flex-wrap justify-between gap-1'
+    <div className='card w-[40rem] rounded-none bg-base-300 shadow-md'>
+      <div className='card-body p-4 sm:p-5'>
+        {/* Header */}
+        <div className='mb-3 flex items-center justify-between'>
+          <div className='flex items-center'>
+            <Link
+              to='/'
+              className='btn btn-circle btn-ghost btn-sm mr-2.5 transition-all duration-200 hover:bg-base-100'
+              aria-label={t('common.back')}
             >
-              {weekDays.map((day) => (
-                <button
-                  key={day.value}
-                  type='button'
-                  className={`btn btn-circle btn-sm ${selectedDays.includes(day.value) ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => toggleDay(day.value)}
-                  aria-label={t('recurringDelay.toggleDay', { day: day.label })}
-                  aria-pressed={selectedDays.includes(day.value)}
-                >
-                  {day.label}
-                </button>
-              ))}
+              <FontAwesomeIcon icon='arrow-left' />
+            </Link>
+            <h2 className='card-title text-base sm:text-lg font-bold text-delayo-orange'>
+              {t('recurringDelay.title')}
+            </h2>
+          </div>
+
+          <div className='text-xs font-semibold text-base-content/70'>
+            {tabsToDelay.length}{' '}
+            {tabsToDelay.length === 1
+              ? t('common.tabs.singular')
+              : t('common.tabs')}
+          </div>
+        </div>
+
+        {/* Tab Summary Preview */}
+        <div className='mb-3 rounded-lg bg-base-100/70 px-3 py-2 shadow-sm'>
+          {selectedMode === 'active' && activeTab && (
+            <div className='flex items-center'>
+              {activeTab.favIconUrl && (
+                <img
+                  src={activeTab.favIconUrl}
+                  alt={t('common.faviconAlt')}
+                  className='mr-2.5 h-4 w-4 rounded-sm'
+                  onError={(event) => {
+                    event.currentTarget.style.display = 'none';
+                  }}
+                />
+              )}
+              <div className='truncate text-xs font-medium text-base-content/80 sm:text-sm'>
+                {activeTab.title}
+              </div>
             </div>
-          </FormControl>
-        )}
+          )}
 
-        {recurrenceType === 'monthly' && (
-          <FormControl label={t('recurringDelay.selectDay')}>
-            <input
-              id={dayOfMonthId}
-              type='number'
-              className='input input-bordered w-full border-none bg-base-100/50 shadow-sm transition-all duration-200 focus:bg-base-100/80'
-              min='1'
-              max='31'
-              value={dayOfMonth}
-              onChange={(event) =>
-                setDayOfMonth(
-                  Math.min(31, Math.max(1, parseInt(event.target.value, 10) || 1))
-                )
-              }
-            />
-          </FormControl>
-        )}
+          {selectedMode === 'highlighted' && (
+            <div className='text-xs font-medium text-base-content/80 sm:text-sm'>
+              {highlightedTabs.length}{' '}
+              {highlightedTabs.length === 1
+                ? t('common.tabs.singular')
+                : t('common.tabs')}{' '}
+              {t('popup.selected')}
+            </div>
+          )}
 
-        <FormControl label={t('manageTabs.endDate')}>
-          <input
-            id={endDateId}
-            type='date'
-            className='input input-bordered w-full border-none bg-base-100/50 shadow-sm transition-all duration-200 focus:bg-base-100/80'
-            value={endDate}
-            onChange={(event) => setEndDate(event.target.value)}
-            min={new Date().toISOString().split('T')[0]}
-          />
-        </FormControl>
+          {selectedMode === 'window' && (
+            <div className='text-xs font-medium text-base-content/80 sm:text-sm'>
+              {allWindowTabs.length}{' '}
+              {allWindowTabs.length === 1
+                ? t('common.tabs.singular')
+                : t('common.tabs')}{' '}
+              {t('popup.inWindow')}
+            </div>
+          )}
+        </div>
 
-        <div className='card-actions mt-4 justify-end'>
-          <button
-            type='button'
-            className='btn btn-primary'
-            onClick={() => void handleDelay()}
-            disabled={
-              tabsToDelay.length === 0 ||
-              (recurrenceType === 'custom' && selectedDays.length === 0)
-            }
-          >
-            {t('recurringDelay.delayTab')}
-          </button>
+        {/* Main 2-Column Content */}
+        <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+          {/* Left Column: Frequency & Day Selectors */}
+          <div className='flex flex-col gap-3 rounded-xl bg-base-100/50 p-3 border border-base-200/60'>
+            <FormControl label={t('recurringDelay.frequency')}>
+              <select
+                id={patternId}
+                className='select select-bordered select-sm w-full bg-base-200 font-semibold focus:outline-none'
+                value={recurrenceType}
+                onChange={(event) =>
+                  setRecurrenceType(event.target.value as RecurrencePattern['type'])
+                }
+              >
+                <option value='daily'>{t('recurringDelay.daily')}</option>
+                <option value='weekdays'>{t('recurringDelay.weekdays')}</option>
+                <option value='weekly'>{t('recurringDelay.weekly')}</option>
+                <option value='monthly'>{t('recurringDelay.monthly')}</option>
+                <option value='custom'>{t('customDelay.title')}</option>
+              </select>
+            </FormControl>
+
+            {(recurrenceType === 'weekly' || recurrenceType === 'custom') && (
+              <FormControl label={t('recurringDelay.selectDay')}>
+                <div
+                  id={daysOfWeekId}
+                  className='flex flex-wrap justify-between gap-1'
+                >
+                  {weekDays.map((day) => (
+                    <button
+                      key={day.value}
+                      type='button'
+                      className={`btn btn-circle btn-xs h-7 w-7 ${selectedDays.includes(day.value) ? 'btn-primary font-bold' : 'btn-outline'}`}
+                      onClick={() => toggleDay(day.value)}
+                      aria-label={t('recurringDelay.toggleDay', { day: day.label })}
+                      aria-pressed={selectedDays.includes(day.value)}
+                    >
+                      {day.label}
+                    </button>
+                  ))}
+                </div>
+              </FormControl>
+            )}
+
+            {recurrenceType === 'monthly' && (
+              <FormControl label={t('recurringDelay.selectDay')}>
+                <div className='flex items-center gap-2'>
+                  <span className='text-xs text-base-content/70'>Dia:</span>
+                  <input
+                    id={dayOfMonthId}
+                    type='number'
+                    className='input input-bordered input-sm w-20 bg-base-200 font-bold'
+                    min='1'
+                    max='31'
+                    value={dayOfMonth}
+                    onChange={(event) =>
+                      setDayOfMonth(
+                        Math.min(31, Math.max(1, parseInt(event.target.value, 10) || 1))
+                      )
+                    }
+                  />
+                  <span className='text-xs text-base-content/70'>de cada mês</span>
+                </div>
+              </FormControl>
+            )}
+
+            <FormControl label={t('manageTabs.endDate')}>
+              <input
+                id={endDateId}
+                type='date'
+                className='input input-bordered input-sm w-full bg-base-200 font-medium'
+                value={endDate}
+                onChange={(event) => setEndDate(event.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </FormControl>
+          </div>
+
+          {/* Right Column: Time & CTA Action */}
+          <div className='flex flex-col justify-between rounded-xl bg-base-100/50 p-3 border border-base-200/60'>
+            <div>
+              <span className='mb-2 block text-xs font-bold text-base-content/80'>
+                {t('recurringDelay.selectTime')}
+              </span>
+
+              <TimePicker
+                value={time}
+                onChange={setTime}
+                isPopup={true}
+              />
+            </div>
+
+            <div className='mt-4 flex flex-col gap-2 border-t border-base-200/60 pt-3'>
+              <button
+                type='button'
+                className='btn btn-primary btn-sm w-full border-none font-bold shadow-md transition-all duration-200 hover:opacity-90 hover:scale-[1.01]'
+                onClick={() => void handleDelay()}
+                disabled={
+                  tabsToDelay.length === 0 ||
+                  (recurrenceType === 'custom' && selectedDays.length === 0)
+                }
+              >
+                {t('recurringDelay.delayTab')}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
