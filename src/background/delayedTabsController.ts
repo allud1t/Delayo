@@ -463,11 +463,14 @@ export function createDelayedTabsController(
     return enqueue(async () => {
       const removedIds = new Set(tabIds.map(String));
       const delayedTabs = await loadDelayedTabs();
+      const removedTabs = delayedTabs.filter((tab) => removedIds.has(tab.id));
       const updatedTabs = delayedTabs.filter((tab) => !removedIds.has(tab.id));
       const persistedTabs = await saveDelayedTabs(updatedTabs);
 
       await clearAlarms(removedIds);
-      void trackTabDeleted(removedIds.size);
+      if (removedTabs.length > 0) {
+        void trackTabDeleted(removedTabs.length);
+      }
 
       return {
         success: true,

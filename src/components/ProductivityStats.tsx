@@ -6,9 +6,19 @@ import {
   isAnalyticsEnabled,
   setAnalyticsEnabled,
 } from '../services/analytics';
+import {
+  formatAnalyticsNumber,
+  getAnalyticsPresetLabel,
+} from '../utils/analyticsPresentation';
 
-function ProductivityStats(): React.ReactElement {
-  const { t } = useTranslation();
+interface ProductivityStatsProps {
+  showAnalyticsToggle?: boolean;
+}
+
+function ProductivityStats({
+  showAnalyticsToggle = true,
+}: ProductivityStatsProps): React.ReactElement {
+  const { i18n, t } = useTranslation();
   const toggleId = useId();
   const [stats, setStats] = useState<AnalyticsStats | null>(null);
   const [enabled, setEnabled] = useState(true);
@@ -33,6 +43,11 @@ function ProductivityStats(): React.ReactElement {
   const estimatedFocusMinutes = totalDelayed * 15; // Estimativa média de 15 min de foco preservado por aba adiada
   const focusHours = Math.floor(estimatedFocusMinutes / 60);
   const focusRemainingMinutes = estimatedFocusMinutes % 60;
+  const formattedTotalDelayed = formatAnalyticsNumber(
+    totalDelayed,
+    i18n.language
+  );
+  const formattedTotalWoken = formatAnalyticsNumber(totalWoken, i18n.language);
 
   let topPresetName = '-';
   if (stats && stats.presetUsageCount) {
@@ -40,34 +55,17 @@ function ProductivityStats(): React.ReactElement {
     if (entries.length > 0) {
       entries.sort((a, b) => b[1] - a[1]);
       const topPresetKey = entries[0][0];
-      topPresetName =
-        topPresetKey === 'quick_turbo'
-          ? t('popup.quickTurbo')
-          : topPresetKey === 'later_today'
-            ? t('settings.laterToday')
-            : topPresetKey === 'tonight'
-              ? t('settings.tonight')
-              : topPresetKey === 'tomorrow'
-                ? t('settings.tomorrow')
-                : topPresetKey === 'weekend'
-                  ? t('settings.weekend')
-                  : topPresetKey === 'next_week'
-                    ? t('settings.nextWeek')
-                    : topPresetKey === 'next_month'
-                      ? t('settings.nextMonth')
-                      : topPresetKey === 'someday'
-                        ? t('settings.someday')
-                        : topPresetKey;
+      topPresetName = getAnalyticsPresetLabel(topPresetKey, t);
     }
   }
 
   return (
-    <div className='card w-full border border-base-300 bg-base-300 shadow-sm transition-shadow duration-300 hover:shadow-md'>
+    <div className='card w-full border border-base-300 bg-base-300 shadow-sm transition-shadow duration-300 motion-reduce:transition-none hover:shadow-md'>
       <div className='card-body p-6'>
         <h2 className='card-title mb-4 flex items-center justify-between'>
           <span>{t('stats.title')}</span>
           <span className='badge badge-primary badge-outline text-xs'>
-            {totalDelayed} {t('common.tabs')}
+            {formattedTotalDelayed} {t('common.tabs')}
           </span>
         </h2>
 
@@ -81,8 +79,8 @@ function ProductivityStats(): React.ReactElement {
               <div className='text-xs text-base-content/70'>
                 {t('stats.totalDelayed')}
               </div>
-              <div className='mt-1 text-2xl font-extrabold text-delayo-orange'>
-                {totalDelayed}
+              <div className='mt-1 text-2xl font-extrabold tabular-nums text-delayo-orange'>
+                {formattedTotalDelayed}
               </div>
             </div>
 
@@ -90,8 +88,8 @@ function ProductivityStats(): React.ReactElement {
               <div className='text-xs text-base-content/70'>
                 {t('stats.totalWoken')}
               </div>
-              <div className='mt-1 text-2xl font-extrabold text-success'>
-                {totalWoken}
+              <div className='mt-1 text-2xl font-extrabold tabular-nums text-success'>
+                {formattedTotalWoken}
               </div>
             </div>
 
@@ -99,10 +97,10 @@ function ProductivityStats(): React.ReactElement {
               <div className='text-xs text-base-content/70'>
                 {t('stats.focusPreserved')}
               </div>
-              <div className='mt-1 text-2xl font-extrabold text-info'>
+              <div className='mt-1 text-2xl font-extrabold tabular-nums text-info'>
                 {focusHours > 0
-                  ? `~${focusHours}${t('stats.hours')} ${focusRemainingMinutes}${t('stats.minutes')}`
-                  : `~${focusRemainingMinutes}${t('stats.minutes')}`}
+                  ? `~${formatAnalyticsNumber(focusHours, i18n.language)}${t('stats.hours')} ${formatAnalyticsNumber(focusRemainingMinutes, i18n.language)}${t('stats.minutes')}`
+                  : `~${formatAnalyticsNumber(focusRemainingMinutes, i18n.language)}${t('stats.minutes')}`}
               </div>
             </div>
 
@@ -117,28 +115,36 @@ function ProductivityStats(): React.ReactElement {
           </div>
         )}
 
-        <div className='mt-6 border-t border-base-200 pt-4'>
-          <div className='form-control'>
-            <label htmlFor={toggleId} className='label cursor-pointer justify-between'>
-              <div className='flex flex-col pr-4'>
-                <span className='label-text font-medium'>
-                  {t('settings.analytics.enable')}
-                </span>
-                <span className='text-xs text-base-content/60'>
-                  {t('settings.analytics.description')}
-                </span>
-              </div>
-              <input
-                id={toggleId}
-                type='checkbox'
-                className='toggle toggle-primary'
-                checked={enabled}
-                onChange={(e) => void handleToggleAnalytics(e.target.checked)}
-                aria-label={t('settings.analytics.enable')}
-              />
-            </label>
+        {totalDelayed > 0 && (
+          <p className='mt-4 text-xs text-base-content/60'>
+            {t('stats.focusPreservedDescription')}
+          </p>
+        )}
+
+        {showAnalyticsToggle && (
+          <div className='mt-6 border-t border-base-200 pt-4'>
+            <div className='form-control'>
+              <label htmlFor={toggleId} className='label cursor-pointer justify-between'>
+                <div className='flex flex-col pr-4'>
+                  <span className='label-text font-medium'>
+                    {t('settings.analytics.enable')}
+                  </span>
+                  <span className='text-xs text-base-content/60'>
+                    {t('settings.analytics.description')}
+                  </span>
+                </div>
+                <input
+                  id={toggleId}
+                  type='checkbox'
+                  className='toggle toggle-primary'
+                  checked={enabled}
+                  onChange={(e) => void handleToggleAnalytics(e.target.checked)}
+                  aria-label={t('settings.analytics.enable')}
+                />
+              </label>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

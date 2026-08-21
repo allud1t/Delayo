@@ -82,6 +82,13 @@
     "selectDateTime": "Select Date & Time",
     "delayTab": "Delay Tab"
   },
+  "calendar": {
+    "openNavigation": "Open calendar navigation",
+    "closeNavigation": "Close calendar navigation",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "year": "Year"
+  },
   "recurringDelay": {
     "title": "Recurring Schedule",
     "frequency": "Frequency",
@@ -98,7 +105,15 @@
     "title": "Settings",
     "general": "General",
     "language": "Language",
+    "languageDescription": "The interface changes immediately and your choice is saved in this browser.",
+    "saveDescription": "Delay options and local metrics are applied after you click Save.",
     "theme": "Theme",
+    "tabs": {
+      "label": "Settings sections",
+      "general": "General",
+      "stats": "Statistics",
+      "about": "About & support"
+    },
     "reset": "Reset",
     "notifications": "Notifications",
     "enableNotifications": "Enable Notifications",
@@ -122,6 +137,10 @@
       "title": "Privacy & Telemetry",
       "enable": "Enable anonymous local usage metrics",
       "description": "Metrics are stored locally in your browser to display your productivity dashboard."
+    },
+    "about": {
+      "title": "About & support",
+      "description": "Explore the project, suggest improvements, or report a problem."
     }
   },
   "stats": {
@@ -130,6 +149,7 @@
     "totalWoken": "Tabs restored",
     "favoritePreset": "Top preset",
     "focusPreserved": "Focus preserved",
+    "focusPreservedDescription": "An estimate based on 15 minutes per delayed tab, not a measurement of actual focus time.",
     "noData": "Your productivity stats will appear here as you use Delayo.",
     "minutes": "min",
     "hours": "h"

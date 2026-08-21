@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black" alt="React 19" />
   <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white" alt="TypeScript 5" />
   <img src="https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Chrome_Web_Store-v1.2.0-orange?logo=googlechrome&logoColor=white" alt="Chrome Web Store" />
+  <img src="https://img.shields.io/badge/Chrome_Web_Store-v1.3.0-orange?logo=googlechrome&logoColor=white" alt="Chrome Web Store" />
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@ Ideal for engineers, researchers, students, and power users who want a clean tab
 
 ---
 
-## ⚡ What's New in v1.2.0
+## ⚡ What's New in v1.3.0
 
 - ⚡ **Turbo Snooze (+1h)**: Instantly delay selected tabs by 1 hour with a single click.
 - 🕒 **Context-Aware Dynamic Presets**: Smart time calculations that adapt dynamically (e.g., auto-shifting to "Tomorrow Night" if the evening deadline has already passed).

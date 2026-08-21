@@ -36,7 +36,7 @@ describe('chrome-web-store', () => {
       version: 'v1.1',
       itemName: 'extension-456',
       upload:
-        'https://www.googleapis.com/upload/chromewebstore/v1.1/items/extension-456',
+        'https://www.googleapis.com/upload/chromewebstore/v1.1/items/extension-456?uploadType=media',
       publish:
         'https://www.googleapis.com/chromewebstore/v1.1/items/extension-456/publish',
       status:
@@ -45,11 +45,18 @@ describe('chrome-web-store', () => {
   });
 
   it('exchanges OAuth2 refresh token for access token', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify({ access_token: 'new-access-token', expires_in: 3600 }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            access_token: 'new-access-token',
+            expires_in: 3600,
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        )
     );
 
     const token = await fetchOAuthAccessToken({
@@ -61,7 +68,7 @@ describe('chrome-web-store', () => {
 
     expect(token).toBe('new-access-token');
     expect(fetchImpl).toHaveBeenCalledWith(
-      'https://accounts.google.com/o/oauth2/token',
+      'https://oauth2.googleapis.com/token',
       expect.objectContaining({
         method: 'POST',
         headers: {
@@ -79,13 +86,14 @@ describe('chrome-web-store', () => {
   });
 
   it('uploads a zip package with the v1.1 PUT endpoint when publisherId is omitted', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify({ uploadState: 'SUCCESS' }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ uploadState: 'SUCCESS' }), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
     );
 
     const result = await uploadExtensionPackage({
@@ -96,7 +104,7 @@ describe('chrome-web-store', () => {
     });
 
     expect(fetchImpl).toHaveBeenCalledWith(
-      'https://www.googleapis.com/upload/chromewebstore/v1.1/items/extension-456',
+      'https://www.googleapis.com/upload/chromewebstore/v1.1/items/extension-456?uploadType=media',
       expect.objectContaining({
         method: 'PUT',
         headers: expect.objectContaining({
@@ -110,14 +118,15 @@ describe('chrome-web-store', () => {
   });
 
   it('raises a useful error when publish fails', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify({ error: { message: 'denied' } }), {
-        status: 403,
-        statusText: 'Forbidden',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ error: { message: 'denied' } }), {
+          status: 403,
+          statusText: 'Forbidden',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
     );
 
     await expect(

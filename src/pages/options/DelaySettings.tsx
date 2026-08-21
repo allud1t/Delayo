@@ -5,13 +5,13 @@ import TimePicker from '../../components/TimePicker';
 import { isAnalyticsEnabled, setAnalyticsEnabled } from '../../services/analytics';
 
 const getInputClasses = (isPopup: boolean): string =>
-  `input input-bordered ${isPopup ? 'h-12 rounded-lg bg-base-100/70 p-4 shadow-sm transition-all duration-200 hover:bg-base-100' : ''}`;
+  `input input-bordered ${isPopup ? 'h-12 rounded-lg bg-base-100/70 p-4 shadow-sm transition-colors duration-200 motion-reduce:transition-none hover:bg-base-100' : ''}`;
 
 const getRadioClasses = (isPopup: boolean): string =>
-  `radio radio-primary ${isPopup ? 'transition-all duration-200' : ''}`;
+  `radio radio-primary ${isPopup ? 'transition-colors duration-200 motion-reduce:transition-none' : ''}`;
 
 const getSelectClasses = (isPopup: boolean): string =>
-  `select select-bordered ${isPopup ? 'rounded-lg bg-base-100/70 shadow-sm transition-all duration-200 hover:bg-base-100' : ''}`;
+  `select select-bordered ${isPopup ? 'rounded-lg bg-base-100/70 shadow-sm transition-colors duration-200 motion-reduce:transition-none hover:bg-base-100' : ''}`;
 
 interface DelaySettingsComponentProps {
   isPopup?: boolean;
@@ -115,7 +115,7 @@ function DelaySettingsComponent({
             <label className='label'>
               <span className='label-text font-medium'>{t('settings.weekend')}</span>
             </label>
-            <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
+            <div className='flex flex-col gap-2 sm:flex-row sm:items-end'>
               <select
                 className={`${getSelectClasses(isPopup)} w-full max-w-72`}
                 value={settings.weekendDay}
@@ -172,7 +172,7 @@ function DelaySettingsComponent({
               </div>
             </div>
 
-            <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
+            <div className='flex flex-col gap-2 sm:flex-row sm:items-end'>
               {!settings.nextWeekSameDay && (
                 <select
                   className={`${getSelectClasses(isPopup)} w-full max-w-72`}
@@ -317,7 +317,11 @@ function DelaySettingsComponent({
         </div>
 
         {saved && (
-          <div className='mt-4 text-center text-success'>
+          <div
+            className='mt-4 text-center text-success'
+            role='status'
+            aria-live='polite'
+          >
             {t('settings.saved')}
           </div>
         )}

@@ -51,15 +51,16 @@ The repository already has CI and a publish workflow, but the release path has f
 
 ### Chrome Web Store API integration
 
-- A first-party Node script uploads the release zip through `upload/v2/publishers/*/items/*:upload`.
-- The same script can optionally submit the uploaded revision with `v2/publishers/*/items/*:publish`.
+- A first-party Node script uses the Chrome Web Store API v2 when `CWS_PUBLISHER_ID` is configured.
+- Until the v1 API retirement date, the script keeps a tested v1.1 fallback for the repository's existing OAuth secrets.
+- The same script can optionally submit the uploaded revision for review.
 - Status fetches are best-effort and used for observability, not as a separate source of truth.
 
 ### Authentication
 
 - Preferred path: GitHub OIDC -> Google Workload Identity Federation -> service account -> Chrome Web Store API access token.
 - Supported fallback: GitHub secret containing a service account key JSON.
-- Rejected path: refresh-token based workflow credentials stored long-term in the repository.
+- Compatibility fallback: the repository's existing OAuth refresh-token secrets, used when service-account secrets are not configured.
 
 ### Workflow modes
 

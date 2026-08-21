@@ -80,12 +80,14 @@ describe('analytics service', () => {
   });
 
   it('respects analytics disabled setting', async () => {
+    await trackTabDelayed({ presetId: 'tonight', count: 1, mode: 'active' });
     await setAnalyticsEnabled(false);
     expect(await isAnalyticsEnabled()).toBe(false);
 
     await trackTabDelayed({ presetId: 'tonight', count: 1, mode: 'active' });
 
     const stats = await getAnalyticsStats();
-    expect(stats.totalDelayedTabs).toBe(0);
+    expect(stats.totalDelayedTabs).toBe(1);
+    expect(stats.presetUsageCount.tonight).toBe(1);
   });
 });

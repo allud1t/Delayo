@@ -82,6 +82,13 @@
     "selectDateTime": "Seleccione Fecha y Hora",
     "delayTab": "Posponer Pestaña"
   },
+  "calendar": {
+    "openNavigation": "Abrir navegación del calendario",
+    "closeNavigation": "Cerrar navegación del calendario",
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Próximo mes",
+    "year": "Año"
+  },
   "recurringDelay": {
     "title": "Horario Recurrente",
     "frequency": "Frecuencia",
@@ -98,7 +105,15 @@
     "title": "Configuración",
     "general": "General",
     "language": "Idioma",
+    "languageDescription": "La interfaz cambia inmediatamente y su elección queda guardada en este navegador.",
+    "saveDescription": "Las opciones de posposición y las métricas locales se aplican después de hacer clic en “Guardar”.",
     "theme": "Tema",
+    "tabs": {
+      "label": "Secciones de configuración",
+      "general": "General",
+      "stats": "Estadísticas",
+      "about": "Acerca de y apoyo"
+    },
     "reset": "Restablecer",
     "notifications": "Notificaciones",
     "enableNotifications": "Habilitar Notificaciones",
@@ -122,6 +137,10 @@
       "title": "Privacidad y Métricas",
       "enable": "Habilitar estadísticas locales de productividad",
       "description": "Las métricas se guardan localmente en su navegador para mostrar su historial de uso."
+    },
+    "about": {
+      "title": "Acerca de y apoyo",
+      "description": "Conozca el proyecto, sugiera mejoras o informe un problema."
     }
   },
   "stats": {
@@ -130,6 +149,7 @@
     "totalWoken": "Pestañas restauradas",
     "favoritePreset": "Opción favorita",
     "focusPreserved": "Enfoque protegido",
+    "focusPreservedDescription": "Una estimación basada en 15 minutos por pestaña pospuesta, no una medición del tiempo real de enfoque.",
     "noData": "Sus estadísticas de productividad aparecerán aquí a medida que use Delayo.",
     "minutes": "min",
     "hours": "h"

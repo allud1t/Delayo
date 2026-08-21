@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 
@@ -26,6 +26,11 @@ function CustomCalendar({
   const [viewDate, setViewDate] = useState<Date>(
     () => new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
   );
+  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const [yearDraft, setYearDraft] = useState(
+    String(selectedDate.getFullYear())
+  );
+  const navigationId = useId();
 
   const startOfMinDate = useMemo(() => {
     const d = new Date(minDate);
@@ -39,6 +44,21 @@ function CustomCalendar({
       year: 'numeric',
     });
   }, [viewDate, locale]);
+
+  const monthOptions = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_, month) => ({
+        value: month,
+        label: new Date(2020, month, 1).toLocaleDateString(locale, {
+          month: 'short',
+        }),
+      })),
+    [locale]
+  );
+
+  useEffect(() => {
+    setYearDraft(String(viewDate.getFullYear()));
+  }, [viewDate]);
 
   const weekdays = useMemo(() => {
     // Generate short weekday labels starting from Sunday (0) to Saturday (6)
@@ -123,6 +143,23 @@ function CustomCalendar({
     setViewDate((curr) => new Date(curr.getFullYear(), curr.getMonth() + 1, 1));
   };
 
+  const handleMonthSelect = (month: number) => {
+    setViewDate((curr) => new Date(curr.getFullYear(), month, 1));
+    setIsNavigationOpen(false);
+  };
+
+  const commitYear = (rawYear: string) => {
+    const parsedYear = Number.parseInt(rawYear, 10);
+    if (Number.isNaN(parsedYear)) {
+      setYearDraft(String(viewDate.getFullYear()));
+      return;
+    }
+
+    const nextYear = Math.min(9999, Math.max(1, parsedYear));
+    setYearDraft(String(nextYear));
+    setViewDate((curr) => new Date(nextYear, curr.getMonth(), 1));
+  };
+
   const handleSelect = (d: Date) => {
     // Preserve hours and minutes from selectedDate
     const newSelected = new Date(d);
@@ -132,12 +169,13 @@ function CustomCalendar({
       selectedDate.getSeconds(),
       0
     );
+    setViewDate(new Date(newSelected.getFullYear(), newSelected.getMonth(), 1));
     onSelectDate(newSelected);
   };
 
   return (
     <div
-      className={`rounded-lg border border-base-200/60 bg-base-100/70 p-3 ${className}`}
+      className={`relative rounded-lg border border-base-200/60 bg-base-100/70 p-3 ${className}`}
     >
       {/* Calendar Header */}
       <div className='mb-2 flex items-center justify-between px-1'>
@@ -145,7 +183,7 @@ function CustomCalendar({
           type='button'
           className='btn btn-circle btn-ghost btn-xs touch-manipulation text-base-content/70 hover:bg-base-200 hover:text-delayo-orange focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
           onClick={handlePrevMonth}
-          aria-label={t('common.previous') || 'Anterior'}
+          aria-label={t('calendar.previousMonth')}
         >
           <FontAwesomeIcon
             icon='chevron-left'
@@ -154,15 +192,31 @@ function CustomCalendar({
           />
         </button>
 
-        <span className='text-xs font-bold capitalize text-base-content'>
+        <button
+          type='button'
+          className='btn btn-ghost btn-xs h-7 min-h-0 touch-manipulation gap-1 rounded-md px-2 text-xs font-bold capitalize text-base-content hover:bg-base-200 hover:text-delayo-orange focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
+          onClick={() => setIsNavigationOpen((current) => !current)}
+          aria-expanded={isNavigationOpen}
+          aria-controls={navigationId}
+          aria-label={t(
+            isNavigationOpen
+              ? 'calendar.closeNavigation'
+              : 'calendar.openNavigation'
+          )}
+        >
           {monthYearLabel}
-        </span>
+          <FontAwesomeIcon
+            icon='chevron-down'
+            className={`h-2.5 w-2.5 transition-transform duration-150 ${isNavigationOpen ? 'rotate-180' : ''}`}
+            aria-hidden='true'
+          />
+        </button>
 
         <button
           type='button'
           className='btn btn-circle btn-ghost btn-xs touch-manipulation text-base-content/70 hover:bg-base-200 hover:text-delayo-orange focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
           onClick={handleNextMonth}
-          aria-label={t('common.next') || 'Próximo'}
+          aria-label={t('calendar.nextMonth')}
         >
           <FontAwesomeIcon
             icon='chevron-right'
@@ -171,6 +225,50 @@ function CustomCalendar({
           />
         </button>
       </div>
+
+      {isNavigationOpen && (
+        <div
+          id={navigationId}
+          className='absolute left-3 right-3 top-[5.25rem] z-20 rounded-lg border border-base-200/60 bg-base-200 p-2 shadow-lg'
+        >
+          <div className='mb-2 flex items-center justify-between gap-2'>
+            <span className='text-[10px] font-semibold text-base-content/60'>
+              {t('calendar.year')}
+            </span>
+            <input
+              type='number'
+              min='1'
+              max='9999'
+              step='1'
+              inputMode='numeric'
+              autoComplete='off'
+              className='input input-xs input-bordered h-7 w-20 bg-base-100 text-center text-xs font-semibold text-base-content focus:outline-none focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
+              value={yearDraft}
+              onChange={(event) => setYearDraft(event.target.value)}
+              onBlur={(event) => commitYear(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  commitYear(event.currentTarget.value);
+                }
+              }}
+              aria-label={t('calendar.year')}
+            />
+          </div>
+
+          <div className='grid grid-cols-4 gap-1'>
+            {monthOptions.map((month) => (
+              <button
+                key={month.value}
+                type='button'
+                className={`btn btn-xs h-7 min-h-0 touch-manipulation rounded-md px-1 text-[10px] font-semibold capitalize focus-visible:ring-2 focus-visible:ring-delayo-orange/60 ${viewDate.getMonth() === month.value ? 'btn-primary' : 'btn-ghost border border-base-300 bg-transparent hover:bg-base-100'}`}
+                onClick={() => handleMonthSelect(month.value)}
+              >
+                {month.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Weekday headers */}
       <div className='mb-1 grid grid-cols-7 text-center'>

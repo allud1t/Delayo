@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import DonationButton from '../../components/DonationButton';
 import LanguageSelector from '../../components/LanguageSelector';
 import ProductivityStats from '../../components/ProductivityStats';
-import { trackTabDeleted, trackTabWoken } from '../../services/analytics';
+import { PROJECT_LINKS } from '../../utils/projectLinks';
 import '../../i18n';
 
 import DelaySettingsComponent from './DelaySettings';
@@ -33,19 +33,16 @@ function Options(): React.ReactElement {
   );
 
   const wakeTabNow = async (tabId: string): Promise<void> => {
-    void trackTabWoken(1);
     await wakeDelayedTabs([tabId]);
     setSelectedTabs((current) => current.filter((id) => id !== tabId));
   };
 
   const removeTab = async (tabId: string): Promise<void> => {
-    void trackTabDeleted(1);
     await removeDelayedTabs([tabId]);
     setSelectedTabs((current) => current.filter((id) => id !== tabId));
   };
 
   const wakeSelectedTabs = async (): Promise<void> => {
-    void trackTabWoken(selectedTabs.length);
     await wakeDelayedTabs(selectedTabs);
     setSelectedTabs([]);
   };
@@ -281,7 +278,7 @@ function Options(): React.ReactElement {
             <DonationButton isCompact={false} />
           </div>
           <a
-            href='https://github.com/allud1t/delayo'
+            href={PROJECT_LINKS.repository}
             target='_blank'
             rel='noopener noreferrer'
             className='link link-primary flex items-center gap-2'
@@ -301,7 +298,7 @@ function Options(): React.ReactElement {
           </a>
           <div className='flex gap-4'>
             <a
-              href='https://github.com/allud1t/delayo/discussions/new?category=ideas'
+              href={PROJECT_LINKS.features}
               target='_blank'
               rel='noopener noreferrer'
               className='link link-accent'
@@ -309,7 +306,7 @@ function Options(): React.ReactElement {
               {t('options.links.features')}
             </a>
             <a
-              href='https://github.com/allud1t/delayo/issues/new'
+              href={PROJECT_LINKS.issues}
               target='_blank'
               rel='noopener noreferrer'
               className='link link-accent'

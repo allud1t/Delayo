@@ -82,6 +82,13 @@
     "selectDateTime": "Selecione Data e Hora",
     "delayTab": "Adiar Aba"
   },
+  "calendar": {
+    "openNavigation": "Abrir navegação do calendário",
+    "closeNavigation": "Fechar navegação do calendário",
+    "previousMonth": "Mês anterior",
+    "nextMonth": "Próximo mês",
+    "year": "Ano"
+  },
   "recurringDelay": {
     "title": "Adiamento Recorrente",
     "frequency": "Frequência",
@@ -98,7 +105,15 @@
     "title": "Configurações",
     "general": "Geral",
     "language": "Idioma",
+    "languageDescription": "A interface muda imediatamente e sua escolha fica salva neste navegador.",
+    "saveDescription": "As opções de adiamento e as métricas locais só são aplicadas depois de clicar em “Salvar”.",
     "theme": "Tema",
+    "tabs": {
+      "label": "Seções de configurações",
+      "general": "Geral",
+      "stats": "Estatísticas",
+      "about": "Sobre e apoio"
+    },
     "reset": "Redefinir",
     "notifications": "Notificações",
     "enableNotifications": "Ativar Notificações",
@@ -122,6 +137,10 @@
       "title": "Privacidade e Métricas",
       "enable": "Contabilizar estatísticas locais de produtividade",
       "description": "As métricas são armazenadas localmente no seu navegador para exibir seu histórico de uso."
+    },
+    "about": {
+      "title": "Sobre e apoio",
+      "description": "Conheça o projeto, sugira melhorias ou informe um problema."
     }
   },
   "stats": {
@@ -130,6 +149,7 @@
     "totalWoken": "Abas reabertas",
     "favoritePreset": "Opção favorita",
     "focusPreserved": "Foco protegido",
+    "focusPreservedDescription": "Estimativa baseada em 15 minutos por aba adiada; não mede o tempo real de foco.",
     "noData": "Suas estatísticas de produtividade aparecerão aqui conforme você usar o Delayo.",
     "minutes": "min",
     "hours": "h"

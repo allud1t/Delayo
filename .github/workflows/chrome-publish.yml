@@ -27,16 +27,17 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: pnpm
@@ -88,16 +89,62 @@ jobs:
             -GithubOutput $env:GITHUB_OUTPUT
 
       - name: Upload release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ${{ steps.package-extension.outputs.archive_name }}
           path: ${{ steps.package-extension.outputs.archive_path }}
           if-no-files-found: error
 
+      - name: Resolve Chrome Web Store authentication
+        if: ${{ steps.release-mode.outputs.value != 'validate_only' }}
+        id: cws-auth-mode
+        shell: bash
+        env:
+          WIF_PROVIDER: ${{ secrets.CWS_WORKLOAD_IDENTITY_PROVIDER }}
+          SERVICE_ACCOUNT_EMAIL: ${{ secrets.CWS_SERVICE_ACCOUNT_EMAIL }}
+          SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.CWS_SERVICE_ACCOUNT_KEY_JSON }}
+          OAUTH_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          OAUTH_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          OAUTH_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: |
+          if [ -n "$WIF_PROVIDER" ] && [ -n "$SERVICE_ACCOUNT_EMAIL" ]; then
+            echo "value=wif" >> "$GITHUB_OUTPUT"
+            echo "Using Workload Identity Federation authentication."
+          elif [ -n "$SERVICE_ACCOUNT_KEY_JSON" ] && [ -n "$SERVICE_ACCOUNT_EMAIL" ]; then
+            echo "value=service_account_key" >> "$GITHUB_OUTPUT"
+            echo "Using service account key authentication."
+          elif [ -n "$OAUTH_CLIENT_ID" ] && [ -n "$OAUTH_CLIENT_SECRET" ] && [ -n "$OAUTH_REFRESH_TOKEN" ]; then
+            echo "value=oauth" >> "$GITHUB_OUTPUT"
+            echo "Using OAuth2 refresh-token authentication."
+          else
+            echo "::error::Configure either CWS_WORKLOAD_IDENTITY_PROVIDER plus CWS_SERVICE_ACCOUNT_EMAIL, CWS_SERVICE_ACCOUNT_KEY_JSON plus CWS_SERVICE_ACCOUNT_EMAIL, or the CWS_CLIENT_ID/CWS_CLIENT_SECRET/CWS_REFRESH_TOKEN trio."
+            exit 1
+          fi
+
+      - name: Authenticate with Workload Identity Federation
+        if: ${{ steps.cws-auth-mode.outputs.value == 'wif' }}
+        id: auth-wif
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ secrets.CWS_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.CWS_SERVICE_ACCOUNT_EMAIL }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
+
+      - name: Authenticate with service account key
+        if: ${{ steps.cws-auth-mode.outputs.value == 'service_account_key' }}
+        id: auth-key
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          credentials_json: ${{ secrets.CWS_SERVICE_ACCOUNT_KEY_JSON }}
+          service_account: ${{ secrets.CWS_SERVICE_ACCOUNT_EMAIL }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
+
       - name: Upload and optionally publish to Chrome Web Store
         if: ${{ steps.release-mode.outputs.value != 'validate_only' }}
         env:
-          CWS_ACCESS_TOKEN: ${{ secrets.CWS_ACCESS_TOKEN }}
+          CWS_ACCESS_TOKEN: ${{ steps.auth-wif.outputs.access_token || steps.auth-key.outputs.access_token || secrets.CWS_ACCESS_TOKEN }}
           CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
           CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
           CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}

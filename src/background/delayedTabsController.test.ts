@@ -11,6 +11,13 @@ import {
 
 import { createDelayedTabsController } from './delayedTabsController';
 
+const analyticsMocks = vi.hoisted(() => ({
+  trackTabDeleted: vi.fn(),
+  trackTabWoken: vi.fn(),
+}));
+
+vi.mock('../services/analytics', () => analyticsMocks);
+
 interface ChromeMock {
   chromeApi: typeof chrome;
   getStoredTabs: () => DelayedTab[];
@@ -122,6 +129,8 @@ describe('delayedTabsController', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-03-18T10:00:00.000Z'));
+    analyticsMocks.trackTabDeleted.mockClear();
+    analyticsMocks.trackTabWoken.mockClear();
   });
 
   afterEach(() => {
@@ -220,6 +229,39 @@ describe('delayedTabsController', () => {
 
     expect(mock.tabsCreate).toHaveBeenCalledTimes(1);
     expect(mock.notificationsCreate).not.toHaveBeenCalled();
+  });
+
+  it('records a successful manual wake once in the background', async () => {
+    const tab = createDelayedTab();
+    const mock = createChromeMock([tab], [`delayed-tab-${tab.id}`]);
+    const controller = createDelayedTabsController(mock.chromeApi);
+
+    await controller.wakeTabs([tab.id]);
+
+    expect(analyticsMocks.trackTabWoken).toHaveBeenCalledTimes(1);
+    expect(analyticsMocks.trackTabWoken).toHaveBeenCalledWith(1);
+  });
+
+  it('does not record a wake when reopening the tab fails', async () => {
+    const tab = createDelayedTab();
+    const mock = createChromeMock([tab], [`delayed-tab-${tab.id}`]);
+    mock.tabsCreate.mockRejectedValueOnce(new Error('Failed to reopen tab'));
+    const controller = createDelayedTabsController(mock.chromeApi);
+
+    await controller.wakeTabs([tab.id]);
+
+    expect(analyticsMocks.trackTabWoken).not.toHaveBeenCalled();
+  });
+
+  it('counts only existing tabs when removing tabs', async () => {
+    const tab = createDelayedTab();
+    const mock = createChromeMock([tab], [`delayed-tab-${tab.id}`]);
+    const controller = createDelayedTabsController(mock.chromeApi);
+
+    await controller.removeTabs([tab.id, 'missing-tab']);
+
+    expect(analyticsMocks.trackTabDeleted).toHaveBeenCalledTimes(1);
+    expect(analyticsMocks.trackTabDeleted).toHaveBeenCalledWith(1);
   });
 
   it('keeps the tab scheduled when manual wake fails to reopen it', async () => {

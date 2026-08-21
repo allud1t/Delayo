@@ -2,7 +2,7 @@ import { URLSearchParams } from 'node:url';
 
 const CHROME_WEB_STORE_V2_BASE_URL = 'https://chromewebstore.googleapis.com';
 const CHROME_WEB_STORE_V1_BASE_URL = 'https://www.googleapis.com';
-const GOOGLE_OAUTH2_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token';
+const GOOGLE_OAUTH2_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
 function assertNonEmpty(value, label) {
   if (!value || typeof value !== 'string') {
@@ -107,7 +107,7 @@ export function buildChromeWebStoreUrls({ publisherId, extensionId }) {
   return {
     version: 'v1.1',
     itemName: extensionId,
-    upload: `${CHROME_WEB_STORE_V1_BASE_URL}/upload/chromewebstore/v1.1/items/${extensionId}`,
+    upload: `${CHROME_WEB_STORE_V1_BASE_URL}/upload/chromewebstore/v1.1/items/${extensionId}?uploadType=media`,
     publish: `${CHROME_WEB_STORE_V1_BASE_URL}/chromewebstore/v1.1/items/${extensionId}/publish`,
     status: `${CHROME_WEB_STORE_V1_BASE_URL}/chromewebstore/v1.1/items/${extensionId}?projection=DRAFT`,
   };

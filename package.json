@@ -1,9 +1,9 @@
 {
-  "name": "chrome-ext-starter",
-  "displayName": "Chrome Extension Starter",
-  "description": "Get started with building your dream Chrome extension effortlessly! Our starter kit combines the power of cutting-edge technologies like Vite, TypeScript, React, CRX, Tailwind CSS, and DaisyUI, making extension development a breeze.",
+  "name": "delayo",
+  "displayName": "Delayo",
+  "description": "Snooze tabs, boost focus, and declutter your browser. Fast, modern, and 100% privacy-first Chrome extension.",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -29,6 +29,17 @@ function appendStepSummary(lines) {
   appendFileSync(summaryPath, `${lines.join('\n')}\n`, 'utf8');
 }
 
+function assertUploadSucceeded(body) {
+  if (body?.uploadState !== 'FAILURE') {
+    return;
+  }
+
+  const details = Array.isArray(body.itemError)
+    ? body.itemError.join('; ')
+    : JSON.stringify(body);
+  throw new Error(`Chrome Web Store rejected the upload: ${details}`);
+}
+
 async function tryFetchStatus(params, label) {
   try {
     return await fetchItemStatus(params);
@@ -48,7 +59,9 @@ async function resolveAccessToken() {
   const refreshToken = process.env.CWS_REFRESH_TOKEN;
 
   if (clientId && clientSecret && refreshToken) {
-    console.log('Exchanging OAuth2 refresh token for Chrome Web Store access token...');
+    console.log(
+      'Exchanging OAuth2 refresh token for Chrome Web Store access token...'
+    );
     return await fetchOAuthAccessToken({
       clientId,
       clientSecret,
@@ -73,7 +86,9 @@ async function main() {
   }
 
   const zipBuffer = await readFile(zipFile);
-  console.log(`Uploading release package to Chrome Web Store (Extension ID: ${extensionId})...`);
+  console.log(
+    `Uploading release package to Chrome Web Store (Extension ID: ${extensionId})...`
+  );
   const uploadResult = await uploadExtensionPackage({
     accessToken,
     extensionId,
@@ -81,6 +96,7 @@ async function main() {
     zipBuffer,
   });
   console.log('Upload result:', JSON.stringify(uploadResult.body, null, 2));
+  assertUploadSucceeded(uploadResult.body);
 
   const statusAfterUpload = await tryFetchStatus(
     {
