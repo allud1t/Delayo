@@ -102,9 +102,10 @@ function MainView(): React.ReactElement {
   }
 
   return (
-    <div className='card max-h-[600px] w-[40rem] overflow-hidden rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-6'>
-        <div className='mb-5 flex items-center justify-between'>
+    <div className='card w-[40rem] rounded-none bg-base-300 shadow-md'>
+      <div className='card-body p-4 sm:p-5'>
+        {/* Header */}
+        <div className='mb-3 flex items-center justify-between'>
           <h2 className='card-title flex items-center font-bold text-delayo-orange'>
             <FontAwesomeIcon
               icon={faHourglassHalf}
@@ -146,7 +147,8 @@ function MainView(): React.ReactElement {
           </div>
         </div>
 
-        <div className='mb-4 flex flex-col space-y-3'>
+        {/* Tab Selection & Tab Info */}
+        <div className='mb-3 flex flex-col space-y-2'>
           <div className='flex items-center justify-between'>
             <div className='text-sm font-medium text-base-content/80'>
               {t('popup.delay')}:
@@ -179,27 +181,27 @@ function MainView(): React.ReactElement {
             </div>
           </div>
 
-          <div className='rounded-lg bg-base-100/70 p-4 shadow-sm transition-all duration-200 hover:bg-base-100'>
+          <div className='rounded-lg bg-base-100/70 px-3 py-2 shadow-sm transition-all duration-200 hover:bg-base-100'>
             {selectedMode === 'active' && activeTab && (
               <div className='flex items-center'>
                 {activeTab.favIconUrl && (
                   <img
                     src={activeTab.favIconUrl}
                     alt={t('common.faviconAlt')}
-                    className='mr-3 h-5 w-5 rounded-sm'
+                    className='mr-2.5 h-4 w-4 rounded-sm'
                     onError={(event) => {
                       event.currentTarget.style.display = 'none';
                     }}
                   />
                 )}
-                <div className='truncate text-sm font-medium text-base-content/80'>
+                <div className='truncate text-xs font-medium text-base-content/80 sm:text-sm'>
                   {activeTab.title}
                 </div>
               </div>
             )}
 
             {selectedMode === 'highlighted' && (
-              <div className='text-sm font-medium text-base-content/80'>
+              <div className='text-xs font-medium text-base-content/80 sm:text-sm'>
                 {highlightedTabs.length}{' '}
                 {highlightedTabs.length === 1
                   ? t('common.tabs.singular')
@@ -209,7 +211,7 @@ function MainView(): React.ReactElement {
             )}
 
             {selectedMode === 'window' && (
-              <div className='text-sm font-medium text-base-content/80'>
+              <div className='text-xs font-medium text-base-content/80 sm:text-sm'>
                 {allWindowTabs.length}{' '}
                 {allWindowTabs.length === 1
                   ? t('common.tabs.singular')
@@ -219,11 +221,11 @@ function MainView(): React.ReactElement {
             )}
           </div>
 
-          {/* Turbo Quick Action Button */}
-          <div className='flex items-center'>
+          {/* Centered Turbo Quick Action Button */}
+          <div className='flex items-center justify-center pt-0.5'>
             <button
               type='button'
-              className='btn btn-sm border-none bg-gradient-to-r from-amber-500 to-delayo-orange text-white shadow-sm transition-all duration-200 hover:scale-[1.02] hover:opacity-95'
+              className='btn btn-sm border-none bg-gradient-to-r from-amber-500 to-delayo-orange px-5 text-white shadow-sm transition-all duration-200 hover:scale-[1.02] hover:opacity-95'
               onClick={() => void handleQuickTurbo()}
               title={t('popup.quickTurboDesc')}
             >
@@ -233,12 +235,13 @@ function MainView(): React.ReactElement {
           </div>
         </div>
 
-        <div className='grid grid-cols-3 gap-2.5'>
+        {/* 3x3 Delay Presets Grid */}
+        <div className='grid grid-cols-3 gap-2'>
           {delayOptions.map((option) => (
             <div key={option.id} className='card'>
               <button
                 type='button'
-                className='group btn h-24 flex-col items-center justify-center rounded-xl border-none bg-base-100/70 p-3 shadow-sm transition-all duration-200 hover:bg-base-100'
+                className='group btn h-20 flex-col items-center justify-center rounded-xl border-none bg-base-100/70 p-2 shadow-sm transition-all duration-200 hover:bg-base-100'
                 onClick={() => void handleDelay(option)}
               >
                 <FontAwesomeIcon
@@ -259,7 +262,7 @@ function MainView(): React.ReactElement {
                                   ? 'umbrella-beach'
                                   : 'clock'
                   }
-                  className='mb-3 h-5 w-5 transform text-neutral-400 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-delayo-orange'
+                  className='mb-1.5 h-4 w-4 transform text-neutral-400 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-delayo-orange'
                 />
                 <span className='text-center text-xs font-medium text-base-content/80 group-hover:text-base-content'>
                   {option.label}
@@ -271,14 +274,14 @@ function MainView(): React.ReactElement {
           <div className='card'>
             <Link
               to='/custom-delay'
-              className='group btn h-24 flex-col items-center justify-center rounded-xl border-none bg-base-100/70 p-3 shadow-sm transition-all duration-200 hover:bg-base-100'
+              className='group btn h-20 flex-col items-center justify-center rounded-xl border-none bg-base-100/70 p-2 shadow-sm transition-all duration-200 hover:bg-base-100'
               onClick={() => {
                 void persistSelectedMode();
               }}
             >
               <FontAwesomeIcon
                 icon='calendar-days'
-                className='mb-3 h-5 w-5 transform text-neutral-400 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-delayo-orange'
+                className='mb-1.5 h-4 w-4 transform text-neutral-400 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-delayo-orange'
               />
               <span className='text-center text-xs font-medium text-base-content/80 group-hover:text-base-content'>
                 {t('popup.delayOptions.custom')}
@@ -289,14 +292,14 @@ function MainView(): React.ReactElement {
           <div className='card'>
             <Link
               to='/recurring-delay'
-              className='group btn h-24 flex-col items-center justify-center rounded-xl border-none bg-base-100/70 p-3 shadow-sm transition-all duration-200 hover:bg-base-100'
+              className='group btn h-20 flex-col items-center justify-center rounded-xl border-none bg-base-100/70 p-2 shadow-sm transition-all duration-200 hover:bg-base-100'
               onClick={() => {
                 void persistSelectedMode();
               }}
             >
               <FontAwesomeIcon
                 icon='repeat'
-                className='mb-3 h-5 w-5 transform text-neutral-400 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-delayo-orange'
+                className='mb-1.5 h-4 w-4 transform text-neutral-400 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-delayo-orange'
               />
               <span className='text-center text-xs font-medium text-base-content/80 group-hover:text-base-content'>
                 {t('popup.delayOptions.recurring')}
@@ -306,12 +309,12 @@ function MainView(): React.ReactElement {
         </div>
 
         {/* Centered Manage Tabs & Centered Donation Button */}
-        <div className='mt-5 flex flex-col items-center justify-center gap-1 border-t border-base-200 pt-3'>
+        <div className='mt-3 flex flex-col items-center justify-center gap-1 border-t border-base-200 pt-2'>
           <Link
             to='/manage-tabs'
-            className='btn btn-ghost btn-sm text-sm font-medium text-base-content/70 transition-all duration-200 hover:text-delayo-orange'
+            className='btn btn-ghost btn-xs text-xs font-medium text-base-content/70 transition-all duration-200 hover:text-delayo-orange sm:btn-sm'
           >
-            <FontAwesomeIcon icon='list-ul' className='mr-2 h-4 w-4' />
+            <FontAwesomeIcon icon='list-ul' className='mr-1.5 h-3.5 w-3.5' />
             {t('popup.actions.manageTabs')}
           </Link>
           <DonationButton isCompact={true} />
