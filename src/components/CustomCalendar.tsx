@@ -181,10 +181,10 @@ function CustomCalendar({
           const dayNumber = item.date.getDate();
 
           let btnClass =
-            'h-7 w-7 rounded-lg text-xs font-medium transition-all duration-150 flex items-center justify-center mx-auto';
+            'h-7 w-7 rounded-lg text-xs font-medium flex items-center justify-center mx-auto';
 
           if (item.isSelected) {
-            btnClass += ' bg-delayo-orange text-white font-bold shadow-sm scale-105';
+            btnClass += ' bg-delayo-orange text-white font-bold shadow-sm';
           } else if (item.isDisabled) {
             btnClass += ' opacity-25 cursor-not-allowed text-base-content/40';
           } else if (item.isToday) {

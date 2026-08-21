@@ -238,7 +238,7 @@ function CustomDelayView(): React.ReactElement {
 
               <button
                 type='button'
-                className='btn btn-primary btn-sm w-full border-none font-bold shadow-md transition-all duration-200 hover:opacity-90 hover:scale-[1.01]'
+                className='btn btn-primary btn-sm w-full font-semibold'
                 onClick={() => void handleDelay()}
                 disabled={tabsToDelay.length === 0}
               >

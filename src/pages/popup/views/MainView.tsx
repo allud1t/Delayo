@@ -221,16 +221,16 @@ function MainView(): React.ReactElement {
             )}
           </div>
 
-          {/* Centered Turbo Quick Action Button */}
-          <div className='flex items-center justify-center pt-0.5'>
+          {/* Turbo Quick Action Button - Alinhado à esquerda com espaçamento vertical equilibrado */}
+          <div className='flex items-center justify-start py-1'>
             <button
               type='button'
-              className='btn btn-sm border-none bg-gradient-to-r from-amber-500 to-delayo-orange px-5 text-white shadow-sm transition-all duration-200 hover:scale-[1.02] hover:opacity-95'
+              className='btn btn-sm border-none bg-delayo-orange text-white hover:bg-[#e67300] font-medium'
               onClick={() => void handleQuickTurbo()}
               title={t('popup.quickTurboDesc')}
             >
               <FontAwesomeIcon icon='bolt' className='mr-1.5 h-3.5 w-3.5 text-white' />
-              <span className='font-bold'>{t('popup.quickTurbo')}</span>
+              <span>{t('popup.quickTurbo')}</span>
             </button>
           </div>
         </div>
