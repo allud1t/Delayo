@@ -27,7 +27,6 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
-      id-token: write
 
     steps:
       - name: Checkout
@@ -97,34 +96,10 @@ jobs:
           path: ${{ steps.package-extension.outputs.archive_path }}
           if-no-files-found: error
 
-      - name: Skip Chrome Web Store calls for validate-only mode
-        if: ${{ steps.release-mode.outputs.value == 'validate_only' }}
-        run: echo "Validation completed without store upload."
-
-      - name: Authenticate to Google Cloud with Workload Identity Federation (Optional)
-        if: ${{ steps.release-mode.outputs.value != 'validate_only' && secrets.CWS_WORKLOAD_IDENTITY_PROVIDER != '' && secrets.CWS_SERVICE_ACCOUNT_EMAIL != '' }}
-        id: auth-wif
-        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
-        with:
-          token_format: access_token
-          workload_identity_provider: ${{ secrets.CWS_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.CWS_SERVICE_ACCOUNT_EMAIL }}
-          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
-
-      - name: Authenticate to Google Cloud with service account key fallback (Optional)
-        if: ${{ steps.release-mode.outputs.value != 'validate_only' && steps.auth-wif.outcome == 'skipped' && secrets.CWS_SERVICE_ACCOUNT_KEY_JSON != '' && secrets.CWS_SERVICE_ACCOUNT_EMAIL != '' }}
-        id: auth-key
-        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
-        with:
-          token_format: access_token
-          credentials_json: ${{ secrets.CWS_SERVICE_ACCOUNT_KEY_JSON }}
-          service_account: ${{ secrets.CWS_SERVICE_ACCOUNT_EMAIL }}
-          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
-
       - name: Upload and optionally publish to Chrome Web Store
         if: ${{ steps.release-mode.outputs.value != 'validate_only' }}
         env:
-          CWS_ACCESS_TOKEN: ${{ steps.auth-wif.outputs.access_token || steps.auth-key.outputs.access_token }}
+          CWS_ACCESS_TOKEN: ${{ secrets.CWS_ACCESS_TOKEN }}
           CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
           CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
           CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
