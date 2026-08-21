@@ -13,9 +13,15 @@
   <img src="https://img.shields.io/badge/Chrome_Web_Store-v1.2.0-orange?logo=googlechrome&logoColor=white" alt="Chrome Web Store" />
 </p>
 
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=github&utm_medium=readme&utm_campaign=organic"><strong>Install Delayo from the Chrome Web Store ↗</strong></a>
+  ·
+  <a href="https://allud1t.github.io/Delayo/">Visit the project site</a>
+</p>
+
 **Delayo** is a modern, privacy-focused open-source Chrome extension that lets you "snooze tabs," hiding them temporarily from your browser clutter and reopening them automatically right when you need them.
 
-Ideal for engineers, researchers, students, and power users who want a clean tab bar without losing important links or overloading their computer's RAM.
+Ideal for engineers, researchers, students, and power users who want a clean tab bar without losing important links or keeping every possible task open at once.
 
 ---
 
@@ -57,7 +63,7 @@ Ideal for engineers, researchers, students, and power users who want a clean tab
 ## 📦 Installation
 
 ### From Chrome Web Store
-Install directly from the official [Chrome Web Store](https://chrome.google.com/webstore) listing.
+Install directly from the official [Delayo listing](https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=github&utm_medium=readme&utm_campaign=organic) in the Chrome Web Store.
 
 ### Local Development / Manual Load
 1. Clone this repository:
@@ -105,3 +111,4 @@ Hard-forked from [Snoozr](https://github.com/hardchor/snoozr) with unique archit
 ---
 
 <p align="center">Made with ❤️ for a distraction-free browsing experience.</p>
+

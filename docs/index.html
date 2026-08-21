@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#081326" />
+    <meta name="description" content="Delayo is a free, open-source Chrome extension that lets you postpone tabs and bring them back when you need them." />
+    <link rel="canonical" href="https://allud1t.github.io/Delayo/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Delayo, a calmer tab bar" />
+    <meta property="og:description" content="Snooze tabs, boost focus, and bring useful pages back at the right time." />
+    <meta property="og:url" content="https://allud1t.github.io/Delayo/" />
+    <meta property="og:image" content="https://allud1t.github.io/Delayo/assets/delayo-banner.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>Delayo, a calmer tab bar</title>
+    <style>
+      :root {
+        --night: #081326;
+        --ink: #f7f3ef;
+        --muted: #b7c0cf;
+        --quiet: #8290a6;
+        --line: rgba(247, 243, 239, 0.14);
+        --orange: #ff8a2a;
+        --orange-soft: #ffc083;
+        --purple: #8b6cff;
+        --max: 1160px;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 88% 4%, rgba(255, 138, 42, 0.2), transparent 28rem),
+          radial-gradient(circle at 4% 45%, rgba(139, 108, 255, 0.13), transparent 25rem),
+          var(--night);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.55;
+      }
+
+      a { color: inherit; }
+      .wrap { width: min(calc(100% - 40px), var(--max)); margin: 0 auto; }
+      .header { border-bottom: 1px solid var(--line); }
+      .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 76px; }
+      .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 850; letter-spacing: 0.12em; text-decoration: none; }
+      .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--orange); }
+      .brand-mark svg { width: 22px; height: 22px; }
+      .nav-links { display: flex; align-items: center; gap: 24px; color: var(--muted); font-size: 14px; }
+      .nav-links a { text-decoration: none; }
+      .nav-links a:hover, .nav-links a:focus-visible { color: var(--ink); }
+      .button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 46px; padding: 0 19px; border: 1px solid transparent; border-radius: 999px; font-weight: 800; text-decoration: none; transition: transform 160ms ease, background 160ms ease, border-color 160ms ease; }
+      .button:hover { transform: translateY(-2px); }
+      .button:focus-visible, a:focus-visible { outline: 3px solid var(--orange-soft); outline-offset: 4px; }
+      .primary { background: var(--orange); color: #291300; }
+      .primary:hover { background: #ffa45c; }
+      .quiet-button { border-color: var(--line); }
+      .quiet-button:hover { border-color: rgba(255, 192, 131, 0.7); background: rgba(255, 255, 255, 0.05); }
+
+      .hero { display: grid; grid-template-columns: 0.88fr 1.12fr; gap: 68px; align-items: center; padding: 92px 0 106px; }
+      .eyebrow { margin: 0 0 20px; color: var(--orange-soft); font-size: 12px; font-weight: 850; letter-spacing: 0.18em; text-transform: uppercase; }
+      h1, h2, h3, p { margin-top: 0; }
+      h1 { max-width: 620px; margin-bottom: 25px; font-size: clamp(50px, 7vw, 88px); line-height: 0.98; letter-spacing: -0.075em; }
+      h1 span, .orange { color: var(--orange-soft); }
+      .hero-copy { max-width: 540px; color: var(--muted); font-size: 19px; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 31px; }
+      .note { margin: 18px 0 0; color: var(--quiet); font-size: 13px; }
+      .note strong { color: var(--muted); }
+      .hero-art { overflow: hidden; border: 1px solid rgba(255, 192, 131, 0.34); border-radius: 25px; background: rgba(255, 255, 255, 0.06); box-shadow: 0 32px 80px rgba(0, 0, 0, 0.25); transform: rotate(1deg); }
+      .hero-art img { display: block; width: 100%; height: auto; }
+      .art-caption { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 20px; color: var(--muted); font-size: 12px; }
+      .art-caption strong { color: var(--orange-soft); }
+
+      .proof { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .proof-item { padding: 22px 24px; }
+      .proof-item + .proof-item { border-left: 1px solid var(--line); }
+      .proof-item strong { display: block; margin-bottom: 3px; font-size: 15px; }
+      .proof-item span { color: var(--quiet); font-size: 13px; }
+
+      .section { padding: 108px 0; }
+      .section-heading { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 52px; align-items: end; margin-bottom: 50px; }
+      h2 { max-width: 570px; margin-bottom: 0; font-size: clamp(38px, 5vw, 64px); line-height: 0.99; letter-spacing: -0.065em; }
+      .section-intro { max-width: 500px; margin-bottom: 0; color: var(--muted); font-size: 17px; }
+      .flow { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .flow-item { position: relative; min-height: 235px; padding: 28px 28px 30px 0; }
+      .flow-item + .flow-item { padding-left: 28px; border-left: 1px solid var(--line); }
+      .flow-item::after { content: "→"; position: absolute; top: 24px; right: 20px; color: var(--orange); font-size: 25px; }
+      .flow-item:last-child::after { content: ""; }
+      .flow-label { display: block; margin-bottom: 44px; color: var(--orange-soft); font-size: 11px; font-weight: 850; letter-spacing: 0.17em; }
+      .flow-item h3 { margin-bottom: 9px; font-size: 24px; letter-spacing: -0.04em; }
+      .flow-item p { max-width: 245px; margin-bottom: 0; color: var(--muted); font-size: 14px; }
+
+      .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .feature { min-height: 215px; padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(140deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015)); }
+      .feature:nth-child(2) { background: linear-gradient(140deg, rgba(255, 138, 42, 0.16), rgba(255, 255, 255, 0.015)); }
+      .feature:nth-child(3) { background: linear-gradient(140deg, rgba(139, 108, 255, 0.16), rgba(255, 255, 255, 0.015)); }
+      .feature:nth-child(4) { background: linear-gradient(140deg, rgba(255, 192, 131, 0.12), rgba(255, 255, 255, 0.015)); }
+      .feature-icon { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 29px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); color: var(--orange-soft); font-size: 20px; }
+      .feature h3 { margin-bottom: 8px; font-size: 22px; letter-spacing: -0.04em; }
+      .feature p { max-width: 390px; margin-bottom: 0; color: var(--muted); font-size: 14px; }
+
+      .closing { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: center; padding: 64px; border-radius: 28px; background: linear-gradient(120deg, #ff7b22, #ffad68 55%, #ffd1a5); color: #291300; }
+      .closing h2 { max-width: 530px; }
+      .closing p { max-width: 430px; margin-bottom: 0; font-size: 17px; }
+      .closing-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+      .closing .button { border-color: #291300; background: #291300; color: var(--ink); }
+      .closing .button:hover { background: #47230b; }
+
+      .footer { padding: 32px 0 52px; border-top: 1px solid var(--line); color: var(--quiet); font-size: 13px; }
+      .footer-inner { display: flex; justify-content: space-between; gap: 20px; }
+      .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+      .footer-links a:hover { color: var(--ink); }
+
+      @media (max-width: 900px) {
+        .hero, .section-heading, .closing { grid-template-columns: 1fr; }
+        .hero { gap: 50px; padding-top: 70px; }
+        .hero-art { max-width: 700px; margin: 0 auto; }
+        .closing-actions { justify-content: flex-start; }
+      }
+
+      @media (max-width: 620px) {
+        .wrap { width: min(calc(100% - 28px), var(--max)); }
+        .nav { min-height: 64px; }
+        .nav-links { display: none; }
+        h1 { font-size: clamp(48px, 16vw, 76px); }
+        .hero-copy { font-size: 17px; }
+        .proof, .flow, .features { grid-template-columns: 1fr; }
+        .proof-item + .proof-item, .flow-item + .flow-item { border-left: 0; border-top: 1px solid var(--line); }
+        .flow-item, .flow-item + .flow-item { min-height: 0; padding: 24px 0 28px; }
+        .flow-label { margin-bottom: 22px; }
+        .flow-item::after { top: 17px; right: 3px; content: "↓"; }
+        .closing { padding: 34px 25px; }
+        .footer-inner { flex-direction: column; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after { transition-duration: 0.01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="wrap nav">
+        <a class="brand" href="./" aria-label="Delayo home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 14h38v8H13zM18 48h28v8H18z" fill="#081326"/>
+              <path d="M21 23c1 10 6 14 11 18-5 4-10 9-11 15h22c-1-6-6-11-11-15 5-4 10-8 11-18H21Z" fill="#081326"/>
+              <path d="M24 24h16c-1 6-4 9-8 12-4-3-7-6-8-12Zm0 24h16c-1-5-4-8-8-11-4 3-7 6-8 11Z" fill="#FFF4E9"/>
+            </svg>
+          </span>
+          <span>DELAYO</span>
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#how">How it works</a>
+          <a href="#features">Features</a>
+          <a href="https://github.com/allud1t/Delayo">Source code</a>
+        </nav>
+        <a class="button primary" href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=delayo-site&utm_medium=referral&utm_campaign=organic">Install free</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="wrap hero">
+        <div>
+          <p class="eyebrow">Focus now · return later</p>
+          <h1>Your tabs do not need to be <span>right now.</span></h1>
+          <p class="hero-copy">Delayo is a free, open-source Chrome extension that lets you postpone tabs and bring them back when the moment is right. Keep the useful page. Lose the visual noise.</p>
+          <div class="actions">
+            <a class="button primary" href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=delayo-site&utm_medium=referral&utm_campaign=organic">Add Delayo to Chrome <span aria-hidden="true">↗</span></a>
+            <a class="button quiet-button" href="https://github.com/allud1t/Delayo">Inspect the source</a>
+          </div>
+          <p class="note"><strong>No account inside Delayo.</strong> Delayed tabs and settings stay local in the browser.</p>
+        </div>
+        <figure class="hero-art">
+          <img src="assets/delayo-banner.jpg" alt="Delayo interface illustration with tabs, scheduling controls, and Turbo mode" />
+          <figcaption class="art-caption"><span><strong>Delayo 1.2.0</strong> · built for calmer browsing</span><span>MIT open source</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="wrap proof" aria-label="Delayo principles">
+        <div class="proof-item"><strong>Free to use</strong><span>Open source and available from the Chrome Web Store.</span></div>
+        <div class="proof-item"><strong>Local by design</strong><span>Core tab data stays in your browser storage.</span></div>
+        <div class="proof-item"><strong>Built for the next moment</strong><span>Turn an open tab into a scheduled decision.</span></div>
+      </section>
+
+      <section class="wrap section" id="how">
+        <div class="section-heading">
+          <h2>Make room for the work in front of you.</h2>
+          <p class="section-intro">Bookmarks are for things you may need someday. Delayo is for the page you already know you want, just not in this moment.</p>
+        </div>
+        <div class="flow" aria-label="How Delayo works">
+          <article class="flow-item"><span class="flow-label">THE FIND</span><h3>Keep the useful page</h3><p>Choose the active tab, selected tabs, or the whole window.</p></article>
+          <article class="flow-item"><span class="flow-label">THE PAUSE</span><h3>Pick a better time</h3><p>Use a quick preset, a custom date and time, or a recurring schedule.</p></article>
+          <article class="flow-item"><span class="flow-label">THE RETURN</span><h3>Let it come back</h3><p>When the alarm arrives, the tab wakes up with a notification.</p></article>
+        </div>
+      </section>
+
+      <section class="wrap section" id="features">
+        <div class="section-heading">
+          <h2>A tiny tool for a very familiar problem.</h2>
+          <p class="section-intro">Delayo keeps the interaction quick, visible, and easy to undo. It is made for articles, research, comparisons, and the pages that should not become permanent furniture.</p>
+        </div>
+        <div class="features">
+          <article class="feature"><div class="feature-icon" aria-hidden="true">◷</div><h3>Quick timing</h3><p>Postpone a tab for later today, tonight, tomorrow, next week, or a custom date and time.</p></article>
+          <article class="feature"><div class="feature-icon" aria-hidden="true">✦</div><h3>Turbo Snooze</h3><p>Give selected tabs a one hour pause when you need an immediate focus block.</p></article>
+          <article class="feature"><div class="feature-icon" aria-hidden="true">▤</div><h3>Recurring tabs</h3><p>Bring a tab back daily, on weekdays, weekly, monthly, or on a custom rhythm.</p></article>
+          <article class="feature"><div class="feature-icon" aria-hidden="true">◐</div><h3>Delay manager</h3><p>See queued tabs in one place, then wake or remove them in batches.</p></article>
+        </div>
+      </section>
+
+      <section class="wrap section" id="open-source">
+        <div class="closing">
+          <div><p class="eyebrow">Open source, easy to inspect</p><h2>Less tab guilt. More intentional browsing.</h2></div>
+          <div><p>Delayo is maintained in public. Read the code, report a problem, suggest an improvement, or install the extension from the Chrome Web Store.</p><div class="closing-actions"><a class="button" href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=delayo-site&utm_medium=referral&utm_campaign=organic">Install free ↗</a><a class="button" href="https://github.com/allud1t/Delayo">GitHub ↗</a></div></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap footer-inner"><span>Delayo · focus now, return later.</span><div class="footer-links"><a href="https://github.com/allud1t/Delayo/blob/main/docs/PRIVACY.md">Privacy</a><a href="https://github.com/allud1t/Delayo">GitHub</a><a href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh">Chrome Web Store</a></div></div>
+    </footer>
+  </body>
+</html>
+
