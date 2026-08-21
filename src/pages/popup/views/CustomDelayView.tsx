@@ -5,6 +5,7 @@ import { scheduleTabs } from '@utils/delayedTabsRuntime';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import DateTimePicker from '../../../components/DateTimePicker';
 import { trackTabDelayed } from '../../../services/analytics';
 
 function CustomDelayView(): React.ReactElement {
@@ -111,20 +112,10 @@ function CustomDelayView(): React.ReactElement {
           </div>
         </div>
 
-        <div className='form-control'>
-          <label className='label'>
-            <span className='label-text font-medium'>
-              {t('customDelay.selectDateTime')}
-            </span>
-          </label>
-          <input
-            type='datetime-local'
-            className='input input-bordered w-full border-none bg-base-100/50 shadow-sm transition-all duration-200 focus:bg-base-100/80'
-            value={customDate}
-            onChange={(event) => setCustomDate(event.target.value)}
-            min={new Date().toISOString().slice(0, 16)}
-          />
-        </div>
+        <DateTimePicker
+          value={customDate}
+          onChange={setCustomDate}
+        />
 
         <div className='card-actions mt-6 justify-end'>
           <button

@@ -6,6 +6,7 @@ import { scheduleTabs } from '@utils/delayedTabsRuntime';
 import { calculateNextWakeTime } from '@utils/recurrence';
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import TimePicker from '../../../components/TimePicker';
 import { trackTabDelayed } from '../../../services/analytics';
 
 function FormControl({
@@ -26,7 +27,6 @@ function FormControl({
 function RecurringDelayView(): React.ReactElement {
   const { t } = useTranslation();
   const patternId = useId();
-  const timeId = useId();
   const daysOfWeekId = useId();
   const dayOfMonthId = useId();
   const endDateId = useId();
@@ -204,12 +204,10 @@ function RecurringDelayView(): React.ReactElement {
         </FormControl>
 
         <FormControl label={t('recurringDelay.selectTime')}>
-          <input
-            id={timeId}
-            type='time'
-            className='input input-bordered w-full border-none bg-base-100/50 shadow-sm transition-all duration-200 focus:bg-base-100/80'
+          <TimePicker
             value={time}
-            onChange={(event) => setTime(event.target.value)}
+            onChange={setTime}
+            isPopup={true}
           />
         </FormControl>
 

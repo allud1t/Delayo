@@ -1,6 +1,7 @@
 import useDelaySettings from '@hooks/useDelaySettings';
 import React, { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import TimePicker from '../../components/TimePicker';
 import { isAnalyticsEnabled, setAnalyticsEnabled } from '../../services/analytics';
 
 const getInputClasses = (isPopup: boolean): string =>
@@ -90,12 +91,10 @@ function DelaySettingsComponent({
             <label className='label'>
               <span className='label-text font-medium'>{t('settings.tonight')}</span>
             </label>
-            <input
-              type='time'
-              className={`${getInputClasses(isPopup)} w-full max-w-72`}
+            <TimePicker
               value={settings.tonightTime}
-              onChange={(event) => updateSetting('tonightTime', event.target.value)}
-              style={{ appearance: 'none' }}
+              onChange={(newTime) => updateSetting('tonightTime', newTime)}
+              isPopup={isPopup}
             />
           </div>
 
@@ -105,14 +104,10 @@ function DelaySettingsComponent({
                 {t('settings.tomorrow')}
               </span>
             </label>
-            <input
-              type='time'
-              className={`${getInputClasses(isPopup)} w-full max-w-72`}
+            <TimePicker
               value={settings.tomorrowTime}
-              onChange={(event) =>
-                updateSetting('tomorrowTime', event.target.value)
-              }
-              style={{ appearance: 'none' }}
+              onChange={(newTime) => updateSetting('tomorrowTime', newTime)}
+              isPopup={isPopup}
             />
           </div>
 
@@ -134,14 +129,10 @@ function DelaySettingsComponent({
                 <option value='saturday'>{t('popup.weekdays.saturday')}</option>
                 <option value='sunday'>{t('popup.weekdays.sunday')}</option>
               </select>
-              <input
-                type='time'
-                className={`${getInputClasses(isPopup)} w-full max-w-72`}
+              <TimePicker
                 value={settings.weekendTime}
-                onChange={(event) =>
-                  updateSetting('weekendTime', event.target.value)
-                }
-                style={{ appearance: 'none' }}
+                onChange={(newTime) => updateSetting('weekendTime', newTime)}
+                isPopup={isPopup}
               />
             </div>
           </div>
@@ -199,14 +190,10 @@ function DelaySettingsComponent({
                   <option value='6'>{t('popup.weekdays.saturday')}</option>
                 </select>
               )}
-              <input
-                type='time'
-                className={`${getInputClasses(isPopup)} w-full max-w-72`}
+              <TimePicker
                 value={settings.nextWeekTime}
-                onChange={(event) =>
-                  updateSetting('nextWeekTime', event.target.value)
-                }
-                style={{ appearance: 'none' }}
+                onChange={(newTime) => updateSetting('nextWeekTime', newTime)}
+                isPopup={isPopup}
               />
             </div>
           </div>
