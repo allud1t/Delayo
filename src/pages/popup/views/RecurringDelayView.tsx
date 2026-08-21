@@ -124,17 +124,17 @@ function RecurringDelayView(): React.ReactElement {
   }
 
   return (
-    <div className='card w-[32rem] max-w-full rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-4'>
+    <div className='card w-[40rem] max-w-full rounded-none bg-base-300 shadow-md'>
+      <div className='card-body p-6'>
         {/* Header */}
-        <div className='mb-4 flex items-center justify-between'>
+        <div className='mb-5 flex items-center justify-between'>
           <div className='flex items-center'>
             <Link
               to='/'
-              className='btn btn-circle btn-ghost btn-sm mr-2.5 transition-all duration-200 hover:bg-base-100'
+              className='btn btn-circle btn-ghost btn-sm mr-2.5 touch-manipulation transition-colors duration-200 hover:bg-base-100 focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
               aria-label={t('common.back')}
             >
-              <FontAwesomeIcon icon='arrow-left' />
+              <FontAwesomeIcon icon='arrow-left' aria-hidden='true' />
             </Link>
             <h2 className='card-title text-base font-bold text-delayo-orange sm:text-lg'>
               {t('recurringDelay.title')}
@@ -157,6 +157,8 @@ function RecurringDelayView(): React.ReactElement {
                 <img
                   src={activeTab.favIconUrl}
                   alt={t('common.faviconAlt')}
+                  width={16}
+                  height={16}
                   className='mr-2.5 h-4 w-4 rounded-sm'
                   onError={(event) => {
                     event.currentTarget.style.display = 'none';
@@ -197,7 +199,7 @@ function RecurringDelayView(): React.ReactElement {
             <FormControl label={t('recurringDelay.frequency')}>
               <select
                 id={patternId}
-                className='select select-bordered select-sm w-full bg-base-200 font-semibold focus:outline-none'
+                className='select select-bordered select-sm w-full bg-base-200 font-semibold text-base-content focus:outline-none focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
                 value={recurrenceType}
                 onChange={(event) =>
                   setRecurrenceType(
@@ -223,7 +225,7 @@ function RecurringDelayView(): React.ReactElement {
                     <button
                       key={day.value}
                       type='button'
-                      className={`btn btn-circle btn-xs h-7 w-7 ${selectedDays.includes(day.value) ? 'btn-primary font-bold' : 'btn-outline'}`}
+                      className={`btn btn-circle btn-xs h-7 w-7 focus-visible:ring-2 focus-visible:ring-delayo-orange/60 ${selectedDays.includes(day.value) ? 'btn-primary font-bold' : 'btn-outline'}`}
                       onClick={() => toggleDay(day.value)}
                       aria-label={t('recurringDelay.toggleDay', {
                         day: day.label,
@@ -288,7 +290,7 @@ function RecurringDelayView(): React.ReactElement {
         <div className='mt-3 border-t border-base-200 pt-3'>
           <button
             type='button'
-            className='btn btn-primary btn-sm w-full font-semibold'
+            className='btn btn-primary btn-sm w-full font-semibold focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
             onClick={() => void handleDelay()}
             disabled={
               tabsToDelay.length === 0 ||

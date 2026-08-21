@@ -143,11 +143,15 @@ function CustomCalendar({
       <div className='mb-2 flex items-center justify-between px-1'>
         <button
           type='button'
-          className='btn btn-circle btn-ghost btn-xs text-base-content/70 hover:bg-base-200 hover:text-delayo-orange'
+          className='btn btn-circle btn-ghost btn-xs touch-manipulation text-base-content/70 hover:bg-base-200 hover:text-delayo-orange focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
           onClick={handlePrevMonth}
           aria-label={t('common.previous') || 'Anterior'}
         >
-          <FontAwesomeIcon icon='chevron-left' className='h-3 w-3' />
+          <FontAwesomeIcon
+            icon='chevron-left'
+            className='h-3 w-3'
+            aria-hidden='true'
+          />
         </button>
 
         <span className='text-xs font-bold capitalize text-base-content'>
@@ -156,11 +160,15 @@ function CustomCalendar({
 
         <button
           type='button'
-          className='btn btn-circle btn-ghost btn-xs text-base-content/70 hover:bg-base-200 hover:text-delayo-orange'
+          className='btn btn-circle btn-ghost btn-xs touch-manipulation text-base-content/70 hover:bg-base-200 hover:text-delayo-orange focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
           onClick={handleNextMonth}
           aria-label={t('common.next') || 'Próximo'}
         >
-          <FontAwesomeIcon icon='chevron-right' className='h-3 w-3' />
+          <FontAwesomeIcon
+            icon='chevron-right'
+            className='h-3 w-3'
+            aria-hidden='true'
+          />
         </button>
       </div>
 

@@ -98,17 +98,17 @@ function CustomDelayView(): React.ReactElement {
     selectedDate.toDateString();
 
   return (
-    <div className='card w-[32rem] max-w-full rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-4'>
+    <div className='card w-[40rem] max-w-full rounded-none bg-base-300 shadow-md'>
+      <div className='card-body p-6'>
         {/* Header */}
-        <div className='mb-4 flex items-center justify-between'>
+        <div className='mb-5 flex items-center justify-between'>
           <div className='flex items-center'>
             <Link
               to='/'
-              className='btn btn-circle btn-ghost btn-sm mr-2.5 transition-all duration-200 hover:bg-base-100'
+              className='btn btn-circle btn-ghost btn-sm mr-2.5 touch-manipulation transition-colors duration-200 hover:bg-base-100 focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
               aria-label={t('common.back')}
             >
-              <FontAwesomeIcon icon='arrow-left' />
+              <FontAwesomeIcon icon='arrow-left' aria-hidden='true' />
             </Link>
             <h2 className='card-title text-base font-bold text-delayo-orange sm:text-lg'>
               {t('customDelay.title')}
@@ -131,6 +131,8 @@ function CustomDelayView(): React.ReactElement {
                 <img
                   src={activeTab.favIconUrl}
                   alt={t('common.faviconAlt')}
+                  width={16}
+                  height={16}
                   className='mr-2.5 h-4 w-4 rounded-sm'
                   onError={(event) => {
                     event.currentTarget.style.display = 'none';
@@ -165,41 +167,39 @@ function CustomDelayView(): React.ReactElement {
         </div>
 
         {/* Main 2-Column Content */}
-        <div className='grid grid-cols-2 items-start gap-3'>
+        <div className='grid grid-cols-2 items-stretch gap-3'>
           {/* Left Column: Quick Chips + Calendar */}
-          <div className='flex flex-col gap-2'>
-            <div className='flex items-center justify-between'>
-              <span className='text-xs font-bold text-base-content/80'>
-                {t('customDelay.selectDateTime')}
-              </span>
-            </div>
+          <div className='flex h-full flex-col gap-2 rounded-lg border border-base-200/60 bg-base-100/70 p-3'>
+            <span className='text-xs font-bold text-base-content/80'>
+              {t('customDelay.selectDateTime')}
+            </span>
 
             {/* Quick Date Chips */}
             <div className='grid grid-cols-2 gap-1'>
               <button
                 type='button'
-                className={`btn btn-xs ${isToday ? 'btn-primary' : 'btn-outline'}`}
+                className={`btn btn-xs h-7 min-h-0 touch-manipulation rounded-full px-2 text-xs focus-visible:ring-2 focus-visible:ring-delayo-orange/60 ${isToday ? 'btn-primary' : 'btn-ghost border border-base-300 bg-transparent hover:bg-base-200'}`}
                 onClick={() => setOffsetDays(0)}
               >
                 {t('settings.laterToday')}
               </button>
               <button
                 type='button'
-                className={`btn btn-xs ${isTomorrow ? 'btn-primary' : 'btn-outline'}`}
+                className={`btn btn-xs h-7 min-h-0 touch-manipulation rounded-full px-2 text-xs focus-visible:ring-2 focus-visible:ring-delayo-orange/60 ${isTomorrow ? 'btn-primary' : 'btn-ghost border border-base-300 bg-transparent hover:bg-base-200'}`}
                 onClick={() => setOffsetDays(1)}
               >
                 {t('settings.tomorrow')}
               </button>
               <button
                 type='button'
-                className='btn btn-outline btn-xs'
+                className='btn btn-xs h-7 min-h-0 touch-manipulation rounded-full border border-base-300 bg-transparent px-2 text-xs hover:bg-base-200 focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
                 onClick={() => setOffsetDays(2)}
               >
                 +2d
               </button>
               <button
                 type='button'
-                className='btn btn-outline btn-xs'
+                className='btn btn-xs h-7 min-h-0 touch-manipulation rounded-full border border-base-300 bg-transparent px-2 text-xs hover:bg-base-200 focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
                 onClick={() => setOffsetDays(7)}
               >
                 +7d
@@ -210,10 +210,11 @@ function CustomDelayView(): React.ReactElement {
             <CustomCalendar
               selectedDate={selectedDate}
               onSelectDate={handleDateChange}
+              className='border-0 bg-transparent p-0'
             />
           </div>
 
-          <div className='rounded-lg border border-base-200/60 bg-base-100/50 p-3'>
+          <div className='flex h-full flex-col rounded-lg border border-base-200/60 bg-base-100/70 p-3'>
             <span className='mb-2 block text-xs font-bold text-base-content/80'>
               {t('recurringDelay.selectTime')}
             </span>
@@ -238,7 +239,7 @@ function CustomDelayView(): React.ReactElement {
 
           <button
             type='button'
-            className='btn btn-primary btn-sm shrink-0 font-semibold'
+            className='btn btn-primary btn-sm shrink-0 font-semibold focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
             onClick={() => void handleDelay()}
             disabled={tabsToDelay.length === 0}
           >

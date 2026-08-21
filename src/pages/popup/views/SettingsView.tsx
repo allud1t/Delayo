@@ -13,14 +13,15 @@ function SettingsView(): React.ReactElement {
 
   return (
     <div className='card w-[40rem] max-w-full rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-4 sm:p-5'>
-        <div className='mb-4 flex items-center justify-between'>
+      <div className='card-body p-6'>
+        <div className='mb-5 flex items-center justify-between'>
           <div className='flex items-center'>
             <Link
               to='/'
-              className='btn btn-circle btn-ghost btn-sm mr-3 transition-all duration-200 hover:bg-base-100'
+              className='btn btn-circle btn-ghost btn-sm mr-3 touch-manipulation transition-colors duration-200 hover:bg-base-100 focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
+              aria-label={t('common.back')}
             >
-              <FontAwesomeIcon icon='arrow-left' />
+              <FontAwesomeIcon icon='arrow-left' aria-hidden='true' />
             </Link>
             <h2 className='card-title font-bold text-delayo-orange'>
               {t('common.settings')}
@@ -28,7 +29,7 @@ function SettingsView(): React.ReactElement {
           </div>
           <button
             type='button'
-            className='btn btn-circle btn-ghost btn-sm transition-all duration-200 hover:bg-base-100'
+            className='btn btn-circle btn-ghost btn-sm touch-manipulation transition-colors duration-200 hover:bg-base-100 focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
             onClick={toggleTheme}
             aria-label={t('common.theme.toggle', {
               theme:
@@ -42,6 +43,7 @@ function SettingsView(): React.ReactElement {
               className={
                 theme === 'light' ? 'text-delayo-purple' : 'text-delayo-yellow'
               }
+              aria-hidden='true'
             />
           </button>
         </div>

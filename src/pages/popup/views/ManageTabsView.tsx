@@ -92,15 +92,15 @@ function ManageTabsView(): React.ReactElement {
 
   return (
     <div className='card w-[40rem] max-w-full rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-4 sm:p-5'>
-        <div className='mb-4 flex items-center justify-between'>
+      <div className='card-body p-6'>
+        <div className='mb-5 flex items-center justify-between'>
           <div className='flex items-center'>
             <Link
               to='/'
-              className='btn btn-circle btn-ghost btn-sm mr-3 transition-all duration-200 hover:bg-base-100'
+              className='btn btn-circle btn-ghost btn-sm mr-3 touch-manipulation transition-colors duration-200 hover:bg-base-100 focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
               aria-label={t('common.back')}
             >
-              <FontAwesomeIcon icon='arrow-left' />
+              <FontAwesomeIcon icon='arrow-left' aria-hidden='true' />
             </Link>
             <h2 className='card-title font-bold text-delayo-orange'>
               {t('manageTabs.title')}
@@ -108,7 +108,7 @@ function ManageTabsView(): React.ReactElement {
           </div>
           <button
             type='button'
-            className='btn btn-circle btn-ghost btn-sm transition-all duration-200 hover:bg-base-100'
+            className='btn btn-circle btn-ghost btn-sm touch-manipulation transition-colors duration-200 hover:bg-base-100 focus-visible:ring-2 focus-visible:ring-delayo-orange/60'
             onClick={toggleTheme}
             aria-label={t('common.theme.toggle', {
               theme:
@@ -122,6 +122,7 @@ function ManageTabsView(): React.ReactElement {
               className={
                 theme === 'light' ? 'text-delayo-purple' : 'text-delayo-yellow'
               }
+              aria-hidden='true'
             />
           </button>
         </div>
@@ -131,6 +132,7 @@ function ManageTabsView(): React.ReactElement {
             <FontAwesomeIcon
               icon='hourglass-empty'
               className='mb-4 h-12 w-12 text-neutral-400'
+              aria-hidden='true'
             />
             <h3 className='mb-2 text-lg font-medium'>
               {t('manageTabs.noTabs')}
@@ -161,6 +163,7 @@ function ManageTabsView(): React.ReactElement {
                   <FontAwesomeIcon
                     icon={selectMode ? 'times' : 'check-square'}
                     className='mr-2'
+                    aria-hidden='true'
                   />
                   {selectMode ? t('manageTabs.cancel') : t('manageTabs.select')}
                 </button>
@@ -201,7 +204,7 @@ function ManageTabsView(): React.ReactElement {
               {delayedTabs.map((tab) => (
                 <div
                   key={tab.id}
-                  className='flex items-center justify-between rounded-lg border border-base-200/60 bg-base-100/70 p-3 transition-colors duration-150 hover:bg-base-100'
+                  className='flex items-center justify-between rounded-lg border border-base-200/60 bg-base-100/70 p-4 transition-colors duration-150 hover:bg-base-100'
                 >
                   <div className='flex items-center'>
                     {selectMode && (
@@ -223,6 +226,7 @@ function ManageTabsView(): React.ReactElement {
                               : 'text-base-content/50'
                           }
                           style={{ fontSize: 'large' }}
+                          aria-hidden='true'
                         />
                       </button>
                     )}
@@ -230,6 +234,8 @@ function ManageTabsView(): React.ReactElement {
                       <img
                         src={tab.favicon}
                         alt={t('common.faviconAlt')}
+                        width={20}
+                        height={20}
                         className='mr-3 h-5 w-5 rounded-sm'
                         onError={(event) => {
                           event.currentTarget.style.display = 'none';

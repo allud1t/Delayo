@@ -1,202 +1,107 @@
-# Delayo Chrome Extension 💤
+# Delayo 💤 — Snooze Tabs, Boost Focus
 
-**Delay your tabs in style—and get back to them at the right time.**
-Delayo is a Chrome extension that lets you "snooze tabs," hiding them temporarily and reopening them when you choose.
-Ideal for those who want focus, organization and a tidier tab bar.
+<p align="center">
+  <img src="docs/assets/delayo-banner.jpg" alt="Delayo - Snooze Tabs, Boost Focus" width="100%" />
+</p>
 
-> 📌 This project is a *hard fork* of [Snoozr](https://github.com/hardchor/snoozr) with new ideas, its own identity
-> and distinct plans for evolution.
+<p align="center">
+  <a href="https://github.com/allud1t/Delayo/releases"><img src="https://img.shields.io/github/v/release/allud1t/Delayo?color=FF8000&label=version" alt="GitHub Release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/allud1t/Delayo?color=blue" alt="License MIT" /></a>
+  <img src="https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black" alt="React 19" />
+  <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white" alt="TypeScript 5" />
+  <img src="https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Chrome_Web_Store-v1.2.0-orange?logo=googlechrome&logoColor=white" alt="Chrome Web Store" />
+</p>
 
----
+**Delayo** is a modern, privacy-focused open-source Chrome extension that lets you "snooze tabs," hiding them temporarily from your browser clutter and reopening them automatically right when you need them.
 
-## 🚀 Features
-
-- 💤 **Delay Tabs**: Temporarily snooze tabs so you can focus on what matters now
-- ⏰ **Flexible Timing**: Choose from preset times (tonight, tomorrow, next week) or set a custom date/time
-- 🔔 **Notifications**: Be alerted when tabs "wake up"
-- 📋 **Delay Manager**: Manage all your snoozed tabs in one place
-- 🌙 **Dark Mode**: Automatic dark theme based on your system settings
-
----
-
-## 🧰 Tech Stack
-
-| Technology       | Purpose                                          |
-|------------------|--------------------------------------------------|
-| **Vite**         | Fast development with hot reload                 |
-| **TypeScript**   | Safe typing and coding productivity              |
-| **React**        | Dynamic and responsive interfaces                |
-| **CRX**          | Modern Chrome extension packaging                |
-| **Tailwind CSS** | Agile and scalable styling                       |
-| **DaisyUI**      | Elegant components with theme support            |
+Ideal for engineers, researchers, students, and power users who want a clean tab bar without losing important links or overloading their computer's RAM.
 
 ---
 
-## 🛠 Requirements
+## ⚡ What's New in v1.2.0
 
-- Node.js >=20
-- pnpm >=8.15.0
-
----
-
-## 📂 Project Structure
-
-```
-config/         # Build and tooling configurations
-docs/           # Documentation and guides
-public/
-  html/         # Extension HTML entry points
-  icons/        # Browser action icons
-  _locales/     # i18n message files
-src/
-  assets/       # Fonts, images and global styles
-  background/   # Background service worker
-  components/   # Reusable React components
-  pages/        # Options and popup React apps
-  utils/        # Shared utilities
-```
+- ⚡ **Turbo Snooze (+1h)**: Instantly delay selected tabs by 1 hour with a single click.
+- 🕒 **Context-Aware Dynamic Presets**: Smart time calculations that adapt dynamically (e.g., auto-shifting to "Tomorrow Night" if the evening deadline has already passed).
+- 📅 **Integrated Custom Calendar & Time Picker**: Fast date & time selection without clunky native browser popups.
+- 📊 **Productivity Insights**: Track your protected focus hours and tab statistics locally with 100% privacy (zero telemetry sent to external servers).
+- ☕ **Direct Community Support**: Integrated PIX, PayPal, and Ko-fi support options right in the popup footer.
 
 ---
 
-## 📦 How to Use
+## 🚀 Key Features
 
-1. 📥 Install from the Chrome Web Store (or load unpacked via `chrome://extensions`)
-2. 🖱️ Right-click a tab or use the extension icon
-3. ⏱️ Choose when you want the tab to return
-4. 💤 The tab will close and reopen automatically at the scheduled time
-
----
-
-## 🧑‍💻 Development
-
-To run locally:
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/allud1t/delayo.git
-cd delayo
-
-# 2. Install dependencies
-pnpm install
-
-# 3. Start in development mode
-pnpm dev
-
-# 4. Build for production
-pnpm build
-```
-
-## 🚚 Release Automation
-
-Chrome Web Store releases are validated, packaged, and submitted by GitHub Actions using the official Chrome Web Store API.
-
-- Runbook: [docs/CHROME_WEB_STORE_RELEASE.md](docs/CHROME_WEB_STORE_RELEASE.md)
-- Engineering spec: [docs/specs/chrome-web-store-release.md](docs/specs/chrome-web-store-release.md)
-
-## 📋 Contributing
-
-We welcome contributions! Please read our [Contributing Guidelines](docs/CONTRIBUTING.md) to get started.
-
-## 🔒 Privacy
-
-Your privacy is important to us. Read our [Privacy Policy](docs/PRIVACY.md) to understand how Delayo handles your data.
-
-## ⚖️ License
-
-This project is licensed under the [MIT License](LICENSE).
-Based on the [Snoozr](https://github.com/hardchor/snoozr) project with modifications and its own identity.
-
----
-
-## 🇧🇷 Versão em Português
-
-# Delayo Chrome Extension 💤
-
-**Adie suas abas com estilo — e volte a elas no momento certo.**  
-Delayo é uma extensão do Chrome que permite "colocar abas em espera", escondendo-as temporariamente e reabrindo-as no
-momento que você escolher.  
-Ideal para quem quer foco, organização e menos bagunça na barra de abas.
-
-> 📌 Este projeto é um *hard fork* do [Snoozr](https://github.com/hardchor/snoozr), com novas ideias, identidade própria
-> e planos de evolução distintos.
-
----
-
-## 🚀 Features
-
-- 💤 **Delay Tabs**: Adie abas temporariamente para focar no que importa agora
-- ⏰ **Flexible Timing**: Escolha entre horários predefinidos (hoje à noite, amanhã, semana que vem) ou data/hora
-  customizada
-- 🔔 **Notifications**: Seja avisado quando as abas "acordarem"
-- 📋 **Delay Manager**: Gerencie todas as abas adiadas em um só lugar
-- 🌙 **Dark Mode**: Tema escuro automático com base no sistema
+- 💤 **Delay Tabs**: Clean your tab workspace and save memory without bookmarking clutter.
+- 🎯 **Flexible Modes**: Snooze the active tab, multiple highlighted tabs, or all tabs in the current window.
+- ⏰ **Smart Presets**: Choose from quick presets (Later Today, Tonight, Tomorrow Morning, Weekend, Next Week, Next Month, Someday).
+- 🔁 **Recurring Delays**: Schedule tabs to reopen daily, on weekdays, weekly, or monthly (perfect for standups, timesheets, and newsletters).
+- 📋 **Tab Management Dashboard**: View, filter, wake immediately, or discard all queued tabs.
+- 🌙 **Dark & Light Modes**: Seamless theme switching with high-contrast readability.
+- 🔒 **100% Private**: No account required, no ads, no trackers. All data stays inside your browser's local storage.
 
 ---
 
 ## 🧰 Tech Stack
 
-| Tecnologia       | Função                                           |
-|------------------|--------------------------------------------------|
-| **Vite**         | Desenvolvimento rápido com hot reload            |
-| **TypeScript**   | Tipagem segura e produtividade no código         |
-| **React**        | Interfaces dinâmicas e responsivas               |
-| **CRX**          | Empacotamento moderno de extensões para o Chrome |
-| **Tailwind CSS** | Estilização ágil e escalável                     |
-| **DaisyUI**      | Componentes elegantes com suporte a temas        |
+| Technology | Purpose |
+| :--- | :--- |
+| **React 19** | Modern UI rendering & reactive state |
+| **TypeScript 5** | End-to-end type safety |
+| **Vite 5 & CRXJS** | Lightning-fast build and HMR development |
+| **Tailwind CSS & DaisyUI** | Clean, accessible design system |
+| **Vitest** | Comprehensive unit & integration test suite |
+| **GitHub Actions** | Automated CI/CD & Chrome Web Store API deployment |
 
 ---
 
-## 🛠 Requisitos
+## 📦 Installation
 
-- Node.js >=20
-- pnpm >=8.15.0
+### From Chrome Web Store
+Install directly from the official [Chrome Web Store](https://chrome.google.com/webstore) listing.
+
+### Local Development / Manual Load
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/allud1t/Delayo.git
+   cd Delayo
+   ```
+2. Install dependencies and build:
+   ```bash
+   pnpm install
+   pnpm build
+   ```
+3. Open `chrome://extensions` in Google Chrome.
+4. Enable **Developer mode** (top-right toggle).
+5. Click **Load unpacked** (top-left) and select the `dist/` directory.
 
 ---
 
-## 📦 Como Usar
-
-1. 📥 Instale a extensão pela Chrome Web Store (ou carregue não empacotada via `chrome://extensions`)
-2. 🖱️ Clique com o botão direito em uma aba ou use o ícone da extensão
-3. ⏱️ Escolha quando deseja que a aba retorne
-4. 💤 A aba será fechada e reaberta automaticamente no horário escolhido
-
----
-
-## 🧑‍💻 Desenvolvimento
-
-Para rodar localmente:
+## 🧑‍💻 Development Commands
 
 ```bash
-# 1. Clone o repositório
-git clone https://github.com/allud1t/delayo.git
-cd delayo
-
-# 2. Instale dependências
-pnpm install
-
-# 3. Rode em modo de desenvolvimento
-pnpm dev
-
-# 4. Build para produção
-pnpm build
+pnpm dev              # Start Vite in dev mode
+pnpm build            # Type-check and build production dist/
+pnpm test             # Run Vitest test suite
+pnpm lint             # Run ESLint checks
+pnpm zip              # Package production archive for store
 ```
 
-## 🚚 Automação de Release
+---
 
-As releases para a Chrome Web Store agora podem ser validadas, empacotadas e submetidas pelo GitHub Actions usando a API oficial da Chrome Web Store.
+## 🚚 Automated Releases
 
-- Runbook: [docs/CHROME_WEB_STORE_RELEASE.md](docs/CHROME_WEB_STORE_RELEASE.md)
-- Spec de engenharia: [docs/specs/chrome-web-store-release.md](docs/specs/chrome-web-store-release.md)
+Releases to the Chrome Web Store are fully automated via GitHub Actions using the official Google Chrome Web Store API.
 
-## 📋 Como Contribuir
+- [Runbook](docs/CHROME_WEB_STORE_RELEASE.md)
+- [Release Spec](docs/specs/chrome-web-store-release.md)
 
-Contribuições são bem-vindas! Leia nosso [Guia de Contribuição](docs/CONTRIBUTING.md) para começar.
+---
 
-## 🔒 Privacidade
+## ⚖️ License & Attribution
 
-Sua privacidade é importante para nós. Leia nossa [Política de Privacidade](docs/PRIVACY.md) para entender como o Delayo trata seus dados.
+Licensed under the [MIT License](LICENSE).  
+Hard-forked from [Snoozr](https://github.com/hardchor/snoozr) with unique architecture, modern stack refactor, and new features.
 
-## ⚖️ Licença
+---
 
-Este projeto está licenciado sob a [MIT License](LICENSE).  
-Baseado no projeto [Snoozr](https://github.com/hardchor/snoozr), com modificações e identidade própria.
+<p align="center">Made with ❤️ for a distraction-free browsing experience.</p>
