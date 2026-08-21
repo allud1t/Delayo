@@ -146,46 +146,35 @@ function MainView(): React.ReactElement {
           </div>
         </div>
 
-        <div className='mb-5 flex flex-col space-y-3'>
-          <div className='flex items-center justify-between gap-2'>
+        <div className='mb-4 flex flex-col space-y-3'>
+          <div className='flex items-center justify-between'>
             <div className='text-sm font-medium text-base-content/80'>
               {t('popup.delay')}:
             </div>
-            <div className='flex items-center space-x-2'>
-              <div className='flex space-x-1.5'>
-                <button
-                  type='button'
-                  className={`btn btn-sm ${selectedMode === 'active' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => handleModeChange('active')}
-                >
-                  {t('popup.tabs.active')}
-                </button>
-                <button
-                  type='button'
-                  className={`btn btn-sm ${selectedMode === 'highlighted' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => handleModeChange('highlighted')}
-                  disabled={highlightedTabs.length <= 1}
-                >
-                  {t('popup.tabs.highlighted')}{' '}
-                  {highlightedTabs.length > 1 ? `(${highlightedTabs.length})` : ''}
-                </button>
-                <button
-                  type='button'
-                  className={`btn btn-sm ${selectedMode === 'window' ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => handleModeChange('window')}
-                >
-                  {t('popup.tabs.window')}{' '}
-                  {allWindowTabs.length > 0 ? `(${allWindowTabs.length})` : ''}
-                </button>
-              </div>
+            <div className='flex space-x-2'>
               <button
                 type='button'
-                className='btn btn-sm border-none bg-gradient-to-r from-amber-500 to-delayo-orange text-white shadow-sm transition-all hover:scale-105 hover:opacity-95'
-                onClick={() => void handleQuickTurbo()}
-                title={t('popup.quickTurboDesc')}
+                className={`btn btn-sm ${selectedMode === 'active' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => handleModeChange('active')}
               >
-                <FontAwesomeIcon icon='bolt' className='h-3.5 w-3.5 text-white' />
-                <span className='font-bold'>{t('popup.quickTurbo')}</span>
+                {t('popup.tabs.active')}
+              </button>
+              <button
+                type='button'
+                className={`btn btn-sm ${selectedMode === 'highlighted' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => handleModeChange('highlighted')}
+                disabled={highlightedTabs.length <= 1}
+              >
+                {t('popup.tabs.highlighted')}{' '}
+                {highlightedTabs.length > 1 ? `(${highlightedTabs.length})` : ''}
+              </button>
+              <button
+                type='button'
+                className={`btn btn-sm ${selectedMode === 'window' ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => handleModeChange('window')}
+              >
+                {t('popup.tabs.window')}{' '}
+                {allWindowTabs.length > 0 ? `(${allWindowTabs.length})` : ''}
               </button>
             </div>
           </div>
@@ -228,6 +217,19 @@ function MainView(): React.ReactElement {
                 {t('popup.inWindow')}
               </div>
             )}
+          </div>
+
+          {/* Turbo Quick Action Button */}
+          <div className='flex items-center'>
+            <button
+              type='button'
+              className='btn btn-sm border-none bg-gradient-to-r from-amber-500 to-delayo-orange text-white shadow-sm transition-all duration-200 hover:scale-[1.02] hover:opacity-95'
+              onClick={() => void handleQuickTurbo()}
+              title={t('popup.quickTurboDesc')}
+            >
+              <FontAwesomeIcon icon='bolt' className='mr-1.5 h-3.5 w-3.5 text-white' />
+              <span className='font-bold'>{t('popup.quickTurbo')}</span>
+            </button>
           </div>
         </div>
 
@@ -303,7 +305,8 @@ function MainView(): React.ReactElement {
           </div>
         </div>
 
-        <div className='mt-6 flex items-center justify-between border-t border-base-200 pt-3'>
+        {/* Centered Manage Tabs & Centered Donation Button */}
+        <div className='mt-5 flex flex-col items-center justify-center gap-1 border-t border-base-200 pt-3'>
           <Link
             to='/manage-tabs'
             className='btn btn-ghost btn-sm text-sm font-medium text-base-content/70 transition-all duration-200 hover:text-delayo-orange'
