@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#081326" />
+    <meta name="theme-color" content="#0b111b" />
     <meta name="description" content="Delayo is a free, open-source Chrome extension that lets you postpone tabs and bring them back when you need them." />
     <link rel="canonical" href="https://allud1t.github.io/Delayo/" />
     <meta property="og:type" content="website" />
@@ -12,210 +12,382 @@
     <meta property="og:url" content="https://allud1t.github.io/Delayo/" />
     <meta property="og:image" content="https://allud1t.github.io/Delayo/assets/delayo-promo.png?v=2" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preload" as="image" href="assets/delayo-promo.png?v=2" fetchpriority="high" />
     <title>Delayo, a calmer tab bar</title>
     <style>
+      @font-face {
+        font-family: "Delayo Inter";
+        src: url("assets/fonts/Inter-Regular.ttf") format("truetype");
+        font-display: swap;
+        font-style: normal;
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: "Delayo Inter";
+        src: url("assets/fonts/Inter-SemiBold.ttf") format("truetype");
+        font-display: swap;
+        font-style: normal;
+        font-weight: 600;
+      }
+      @font-face {
+        font-family: "Delayo Inter";
+        src: url("assets/fonts/Inter-Black.ttf") format("truetype");
+        font-display: swap;
+        font-style: normal;
+        font-weight: 900;
+      }
+
       :root {
-        --night: #081326;
-        --ink: #f7f3ef;
-        --muted: #b7c0cf;
-        --quiet: #8290a6;
-        --line: rgba(247, 243, 239, 0.14);
-        --orange: #ff8a2a;
-        --orange-soft: #ffc083;
-        --purple: #8b6cff;
-        --max: 1160px;
+        color-scheme: dark light;
+        --bg: #0b111b;
+        --surface: #111a28;
+        --surface-strong: #172334;
+        --surface-accent: #2a1d17;
+        --art-surface: #e6e8e7;
+        --text: #f3f1ed;
+        --muted: #b2bdcc;
+        --quiet: #8190a5;
+        --line: rgba(243, 241, 237, 0.14);
+        --line-strong: rgba(243, 241, 237, 0.24);
+        --accent: #ff7626;
+        --accent-soft: #ffb276;
+        --accent-ink: #251005;
+        --shadow: 0 30px 90px rgba(2, 7, 18, 0.38);
+        --font-sans: "Delayo Inter", "Segoe UI", system-ui, sans-serif;
+        --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        --page: 1200px;
+        --radius: 24px;
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #eef1f4;
+          --surface: #f8fafb;
+          --surface-strong: #e2e8ed;
+          --surface-accent: #f8e7da;
+          --art-surface: #e7e9e8;
+          --text: #111a27;
+          --muted: #4d5a6b;
+          --quiet: #687688;
+          --line: rgba(17, 26, 39, 0.14);
+          --line-strong: rgba(17, 26, 39, 0.24);
+          --accent: #e9611c;
+          --accent-soft: #bd4d16;
+          --accent-ink: #210d04;
+          --shadow: 0 30px 90px rgba(32, 47, 62, 0.18);
+        }
       }
 
       * { box-sizing: border-box; }
       html { scroll-behavior: smooth; }
       body {
         margin: 0;
-        color: var(--ink);
-        background:
-          radial-gradient(circle at 88% 4%, rgba(255, 138, 42, 0.2), transparent 28rem),
-          radial-gradient(circle at 4% 45%, rgba(139, 108, 255, 0.13), transparent 25rem),
-          var(--night);
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        overflow-x: hidden;
+        color: var(--text);
+        background: var(--bg);
+        font-family: var(--font-sans);
         line-height: 1.55;
+        text-rendering: optimizeLegibility;
       }
 
+      ::selection { color: var(--accent-ink); background: var(--accent-soft); }
+      img { display: block; max-width: 100%; }
       a { color: inherit; }
-      .wrap { width: min(calc(100% - 40px), var(--max)); margin: 0 auto; }
-      .header { border-bottom: 1px solid var(--line); }
-      .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 76px; }
-      .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 850; letter-spacing: 0.12em; text-decoration: none; }
-      .brand-mark { display: block; flex: 0 0 auto; width: 36px; height: 36px; overflow: hidden; border-radius: 50%; }
-      .brand-mark img { display: block; width: 100%; height: 100%; }
-      .nav-links { display: flex; align-items: center; gap: 24px; color: var(--muted); font-size: 14px; }
-      .nav-links a { text-decoration: none; }
-      .nav-links a:hover, .nav-links a:focus-visible { color: var(--ink); }
-      .button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 46px; padding: 0 19px; border: 1px solid transparent; border-radius: 999px; font-weight: 800; text-decoration: none; transition: transform 160ms ease, background 160ms ease, border-color 160ms ease; }
-      .button:hover { transform: translateY(-2px); }
-      .button:focus-visible, a:focus-visible { outline: 3px solid var(--orange-soft); outline-offset: 4px; }
-      .primary { background: var(--orange); color: #291300; }
-      .primary:hover { background: #ffa45c; }
-      .quiet-button { border-color: var(--line); }
-      .quiet-button:hover { border-color: rgba(255, 192, 131, 0.7); background: rgba(255, 255, 255, 0.05); }
-
-      .hero { display: grid; grid-template-columns: 0.88fr 1.12fr; gap: 68px; align-items: center; padding: 92px 0 106px; }
-      .eyebrow { margin: 0 0 20px; color: var(--orange-soft); font-size: 12px; font-weight: 850; letter-spacing: 0.18em; text-transform: uppercase; }
       h1, h2, h3, p { margin-top: 0; }
-      h1 { max-width: 620px; margin-bottom: 25px; font-size: clamp(50px, 7vw, 88px); line-height: 0.98; letter-spacing: -0.075em; }
-      h1 span, .orange { color: var(--orange-soft); }
-      .hero-copy { max-width: 540px; color: var(--muted); font-size: 19px; }
-      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 31px; }
-      .note { margin: 18px 0 0; color: var(--quiet); font-size: 13px; }
-      .note strong { color: var(--muted); }
-      .hero-art { width: 100%; max-width: 520px; justify-self: end; overflow: hidden; border: 1px solid rgba(255, 192, 131, 0.34); border-radius: 25px; background: #f7f7f5; box-shadow: 0 32px 80px rgba(0, 0, 0, 0.25); }
-      .hero-art img { display: block; width: 100%; height: auto; }
-      .art-caption { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; padding: 16px 20px; color: #554d48; font-size: 12px; }
-      .art-caption strong { color: #d85d15; }
+      h1, h2, h3 { text-wrap: balance; }
+      .shell { width: min(calc(100% - 48px), var(--page)); margin: 0 auto; }
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 1px solid var(--line);
+        background: color-mix(in srgb, var(--bg) 88%, transparent);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+      .header-inner { display: flex; min-height: 72px; align-items: center; justify-content: space-between; gap: 28px; }
+      .brand { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 10px; color: var(--text); font-size: 16px; font-weight: 900; letter-spacing: -0.04em; text-decoration: none; }
+      .brand-mark { width: 36px; height: 36px; overflow: hidden; border-radius: 50%; }
+      .brand-mark img { width: 100%; height: 100%; }
+      .nav-links { display: flex; align-items: center; gap: 28px; margin-left: auto; color: var(--muted); font-size: 13px; }
+      .nav-links a { text-decoration: none; transition: color 180ms ease; }
+      .nav-links a:hover, .nav-links a:focus-visible { color: var(--text); }
+      .button {
+        display: inline-flex;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 0 18px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
+      }
+      .button:hover { transform: translateY(-2px); }
+      .button:active { transform: translateY(0) scale(0.98); }
+      .button:focus-visible, a:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 4px; }
+      .button-primary { background: var(--accent); color: var(--accent-ink); }
+      .button-primary:hover { background: var(--accent-soft); }
+      .button-secondary { border-color: var(--line-strong); color: var(--text); }
+      .button-secondary:hover { border-color: var(--accent); background: var(--surface-strong); }
 
-      .proof { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-      .proof-item { padding: 22px 24px; }
+      .hero {
+        display: grid;
+        min-height: calc(100dvh - 72px);
+        grid-template-columns: minmax(0, 1fr) minmax(420px, 1fr);
+        gap: clamp(40px, 5vw, 72px);
+        align-items: center;
+        padding: 52px 0 70px;
+      }
+      .hero-copy { max-width: 580px; }
+      .eyebrow, .section-eyebrow {
+        margin: 0 0 22px;
+        color: var(--accent-soft);
+        font-family: var(--font-mono);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        line-height: 1.4;
+        text-transform: uppercase;
+      }
+      h1 {
+        max-width: 580px;
+        margin-bottom: 25px;
+        color: var(--text);
+        font-size: clamp(50px, 4.85vw, 70px);
+        font-weight: 900;
+        letter-spacing: -0.06em;
+        line-height: 0.94;
+      }
+      h1 span { display: block; color: var(--accent-soft); }
+      .hero-description { max-width: 500px; margin-bottom: 0; color: var(--muted); font-size: clamp(17px, 1.5vw, 20px); letter-spacing: -0.025em; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+      .hero-art {
+        width: 100%;
+        max-width: 520px;
+        justify-self: end;
+        overflow: hidden;
+        border-radius: 28px;
+        background: transparent;
+        box-shadow: 0 30px 90px rgba(2, 7, 18, .32);
+      }
+      .hero-art img { display: block; width: 100%; height: auto; border-radius: 28px; }
+
+      .proof-strip {
+        display: grid;
+        grid-template-columns: 1.25fr 1fr 1fr;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .proof-item { min-height: 124px; padding: 27px 28px; }
       .proof-item + .proof-item { border-left: 1px solid var(--line); }
-      .proof-item strong { display: block; margin-bottom: 3px; font-size: 15px; }
-      .proof-item span { color: var(--quiet); font-size: 13px; }
+      .proof-label { display: block; margin-bottom: 12px; color: var(--accent-soft); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
+      .proof-item strong { display: block; margin-bottom: 5px; font-size: 15px; letter-spacing: -0.025em; }
+      .proof-item span:not(.proof-label) { display: block; max-width: 220px; color: var(--quiet); font-size: 13px; }
+      .proof-lead strong { font-size: 22px; letter-spacing: -0.05em; }
 
-      .section { padding: 108px 0; }
-      .section-heading { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 52px; align-items: end; margin-bottom: 50px; }
-      h2 { max-width: 570px; margin-bottom: 0; font-size: clamp(38px, 5vw, 64px); line-height: 0.99; letter-spacing: -0.065em; }
-      .section-intro { max-width: 500px; margin-bottom: 0; color: var(--muted); font-size: 17px; }
-      .flow { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-      .flow-item { position: relative; min-height: 235px; padding: 28px 28px 30px 0; }
-      .flow-item + .flow-item { padding-left: 28px; border-left: 1px solid var(--line); }
-      .flow-item::after { content: "→"; position: absolute; top: 24px; right: 20px; color: var(--orange); font-size: 25px; }
-      .flow-item:last-child::after { content: ""; }
-      .flow-label { display: block; margin-bottom: 44px; color: var(--orange-soft); font-size: 11px; font-weight: 850; letter-spacing: 0.17em; }
-      .flow-item h3 { margin-bottom: 9px; font-size: 24px; letter-spacing: -0.04em; }
-      .flow-item p { max-width: 245px; margin-bottom: 0; color: var(--muted); font-size: 14px; }
+      .section { padding: clamp(100px, 13vw, 164px) 0; }
+      .section-head { max-width: 770px; }
+      .section-head h2 { max-width: 700px; margin-bottom: 20px; font-size: clamp(42px, 5.3vw, 70px); font-weight: 900; letter-spacing: -0.05em; line-height: 0.96; }
+      .section-head > p:last-child { max-width: 620px; margin-bottom: 0; color: var(--muted); font-size: 17px; }
 
-      .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-      .feature { min-height: 215px; padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(140deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015)); }
-      .feature:nth-child(2) { background: linear-gradient(140deg, rgba(255, 138, 42, 0.16), rgba(255, 255, 255, 0.015)); }
-      .feature:nth-child(3) { background: linear-gradient(140deg, rgba(139, 108, 255, 0.16), rgba(255, 255, 255, 0.015)); }
-      .feature:nth-child(4) { background: linear-gradient(140deg, rgba(255, 192, 131, 0.12), rgba(255, 255, 255, 0.015)); }
-      .feature-icon { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 29px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); color: var(--orange-soft); font-size: 20px; }
-      .feature h3 { margin-bottom: 8px; font-size: 22px; letter-spacing: -0.04em; }
-      .feature p { max-width: 390px; margin-bottom: 0; color: var(--muted); font-size: 14px; }
+      .process-list { margin-top: 50px; border-top: 1px solid var(--line-strong); }
+      .process-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 32px; gap: 28px; align-items: center; padding: 27px 0; border-bottom: 1px solid var(--line); }
+      .process-verb { color: var(--accent-soft); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+      .process-row h3 { margin-bottom: 5px; font-size: 22px; letter-spacing: -0.045em; }
+      .process-row p { max-width: 580px; margin-bottom: 0; color: var(--muted); font-size: 15px; }
+      .process-arrow { color: var(--accent); font-size: 24px; text-align: right; transition: transform 180ms ease; }
+      .process-row:hover .process-arrow { transform: translate(3px, -3px); }
 
-      .closing { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: center; padding: 64px; border-radius: 28px; background: linear-gradient(120deg, #ff7b22, #ffad68 55%, #ffd1a5); color: #291300; }
-      .closing h2 { max-width: 530px; }
-      .closing p { max-width: 430px; margin-bottom: 0; font-size: 17px; }
-      .closing-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 24px; }
-      .closing .button { border-color: #291300; background: #291300; color: var(--ink); }
-      .closing .button:hover { background: #47230b; }
+      .feature-grid {
+        display: grid;
+        grid-template-areas:
+          "main turbo"
+          "main recurring"
+          "manager manager";
+        grid-template-columns: 1.18fr 0.82fr;
+        gap: 16px;
+        margin-top: 52px;
+      }
+      .feature { min-height: 195px; padding: 30px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); transition: transform 180ms ease, border-color 180ms ease, background 180ms ease; }
+      .feature:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+      .feature-main { display: flex; grid-area: main; min-height: 430px; flex-direction: column; justify-content: space-between; background: linear-gradient(145deg, var(--surface-strong), var(--surface)); }
+      .feature-turbo { grid-area: turbo; background: var(--surface-accent); }
+      .feature-recurring { grid-area: recurring; }
+      .feature-manager { display: grid; grid-area: manager; grid-template-columns: 0.8fr 1.2fr; align-items: end; gap: 40px; background: var(--surface-strong); }
+      .feature-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+      .feature-name { color: var(--accent-soft); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
+      .feature-icon { width: 48px; height: 48px; border-radius: 50%; }
+      .feature h3 { max-width: 540px; margin: 20px 0 10px; font-size: clamp(29px, 3.3vw, 46px); letter-spacing: -0.05em; line-height: 0.98; }
+      .feature:not(.feature-main) h3 { margin-top: 36px; font-size: 25px; }
+      .feature p { max-width: 470px; margin-bottom: 0; color: var(--muted); font-size: 14px; }
+      .feature-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 36px; }
+      .feature-presets span { padding: 7px 10px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--muted); font-family: var(--font-mono); font-size: 10px; }
+      .feature-manager h3 { margin-top: 14px; }
 
-      .footer { padding: 32px 0 52px; border-top: 1px solid var(--line); color: var(--quiet); font-size: 13px; }
-      .footer-inner { display: flex; justify-content: space-between; gap: 20px; }
-      .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
-      .footer-links a:hover { color: var(--ink); }
+      .cta-section { padding-top: 30px; }
+      .cta-shell { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: end; padding: clamp(34px, 6vw, 68px); border-radius: var(--radius); background: var(--accent); color: var(--accent-ink); }
+      .cta-shell h2 { max-width: 620px; margin-bottom: 17px; font-size: clamp(40px, 5vw, 66px); font-weight: 900; letter-spacing: -0.05em; line-height: 0.96; }
+      .cta-shell p { max-width: 510px; margin-bottom: 0; font-size: 16px; }
+      .cta-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+      .cta-shell .button-primary { background: var(--accent-ink); color: var(--text); }
+      .cta-shell .button-primary:hover { background: var(--surface); }
+      .cta-shell .button-secondary { border-color: rgba(37, 16, 5, 0.44); color: var(--accent-ink); }
+      .cta-shell .button-secondary:hover { border-color: var(--accent-ink); background: rgba(255, 255, 255, 0.16); }
 
-      @media (max-width: 900px) {
-        .hero, .section-heading, .closing { grid-template-columns: 1fr; }
-        .hero { gap: 50px; padding-top: 70px; }
-        .hero-art { max-width: 620px; margin: 0 auto; justify-self: center; }
-        .closing-actions { justify-content: flex-start; }
+      .site-footer { padding: 42px 0 56px; color: var(--quiet); font-size: 12px; }
+      .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+      .footer-links { display: flex; flex-wrap: wrap; gap: 20px; }
+      .footer-links a { text-decoration: none; }
+      .footer-links a:hover { color: var(--text); }
+
+      @media (prefers-reduced-transparency: reduce) {
+        .site-header { background: var(--bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
       }
 
-      @media (max-width: 620px) {
-        .wrap { width: min(calc(100% - 28px), var(--max)); }
-        .nav { min-height: 64px; }
+      @media (max-width: 980px) {
+        .hero { min-height: auto; grid-template-columns: 1fr; padding-top: 74px; }
+        .hero-copy { max-width: 700px; }
+        .hero-art { max-width: 620px; justify-self: start; }
+        .proof-strip { grid-template-columns: 1fr 1fr; }
+        .proof-lead { grid-column: 1 / -1; }
+        .proof-item:nth-child(3) { border-left: 1px solid var(--line); }
+        .cta-shell { grid-template-columns: 1fr; align-items: start; }
+        .cta-actions { justify-content: flex-start; }
+      }
+
+      @media (max-width: 720px) {
+        .shell { width: min(calc(100% - 32px), var(--page)); }
+        .header-inner { min-height: 66px; }
         .nav-links { display: none; }
-        h1 { font-size: clamp(48px, 16vw, 76px); }
+        .hero { gap: 48px; padding: 62px 0 82px; }
+        h1 { font-size: clamp(52px, 14vw, 76px); }
         .hero-copy { font-size: 17px; }
-        .proof, .flow, .features { grid-template-columns: 1fr; }
-        .proof-item + .proof-item, .flow-item + .flow-item { border-left: 0; border-top: 1px solid var(--line); }
-        .flow-item, .flow-item + .flow-item { min-height: 0; padding: 24px 0 28px; }
-        .flow-label { margin-bottom: 22px; }
-        .flow-item::after { top: 17px; right: 3px; content: "↓"; }
-        .closing { padding: 34px 25px; }
-        .footer-inner { flex-direction: column; }
+        .actions { flex-direction: column; align-items: stretch; }
+        .actions .button { width: 100%; }
+        .hero-art { border-radius: 20px; }
+        .hero-art img { border-radius: 20px; }
+        .proof-strip { grid-template-columns: 1fr; }
+        .proof-lead { grid-column: auto; }
+        .proof-item + .proof-item, .proof-item:nth-child(3) { border-top: 1px solid var(--line); border-left: 0; }
+        .proof-item { min-height: auto; padding: 23px 22px; }
+        .section { padding: 100px 0; }
+        .section-head h2 { font-size: clamp(41px, 12vw, 60px); }
+        .process-row { grid-template-columns: 1fr 28px; gap: 12px 18px; padding: 25px 0; }
+        .process-verb { grid-column: 1 / -1; }
+        .process-row h3 { font-size: 21px; }
+        .feature-grid { grid-template-areas: "main" "turbo" "recurring" "manager"; grid-template-columns: 1fr; }
+        .feature-main { min-height: 370px; }
+        .feature-manager { display: block; }
+        .feature-manager h3 { margin-bottom: 10px; }
+        .cta-shell { padding: 31px 24px; }
+        .cta-shell h2 { font-size: clamp(40px, 11vw, 58px); }
+        .cta-actions { flex-direction: column; align-items: stretch; }
+        .cta-actions .button { width: 100%; }
+        .footer-inner { align-items: flex-start; flex-direction: column; }
       }
 
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
-        *, *::before, *::after { transition-duration: 0.01ms !important; }
+        *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
       }
     </style>
   </head>
   <body>
-    <header class="header">
-      <div class="wrap nav">
+    <header class="site-header">
+      <div class="shell header-inner">
         <a class="brand" href="./" aria-label="Delayo home">
-          <span class="brand-mark" aria-hidden="true">
-            <img src="assets/delayo-icon.png" alt="" />
-          </span>
-          <span>DELAYO</span>
+          <span class="brand-mark" aria-hidden="true"><img src="assets/delayo-icon.png" alt="" /></span>
+          <span>Delayo</span>
         </a>
         <nav class="nav-links" aria-label="Main navigation">
           <a href="#how">How it works</a>
           <a href="#features">Features</a>
           <a href="https://github.com/allud1t/Delayo">Source code</a>
         </nav>
-        <a class="button primary" href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=delayo-site&utm_medium=referral&utm_campaign=organic">Install free</a>
+        <a class="button button-primary" href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=delayo-site&utm_medium=referral&utm_campaign=organic">Install free</a>
       </div>
     </header>
 
     <main>
-      <section class="wrap hero">
-        <div>
-          <p class="eyebrow">Focus now · return later</p>
-          <h1>Your tabs do not need to be <span>right now.</span></h1>
-          <p class="hero-copy">Delayo is a free, open-source Chrome extension that lets you postpone tabs and bring them back when the moment is right. Keep the useful page. Lose the visual noise.</p>
+      <section class="shell hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Chrome extension for a calmer tab bar</p>
+          <h1>Let the tab wait. <span>Keep your focus.</span></h1>
+          <p class="hero-description">Delayo lets you snooze a useful tab, clear the visual noise, and return when the timing is right.</p>
           <div class="actions">
-            <a class="button primary" href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=delayo-site&utm_medium=referral&utm_campaign=organic">Add Delayo to Chrome <span aria-hidden="true">↗</span></a>
-            <a class="button quiet-button" href="https://github.com/allud1t/Delayo">Inspect the source</a>
+            <a class="button button-primary" href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=delayo-site&utm_medium=referral&utm_campaign=organic">Add Delayo to Chrome <span aria-hidden="true">↗</span></a>
+            <a class="button button-secondary" href="https://github.com/allud1t/Delayo">Inspect the source</a>
           </div>
-          <p class="note"><strong>No account inside Delayo.</strong> Delayed tabs and settings stay local in the browser.</p>
         </div>
         <figure class="hero-art">
-          <img src="assets/delayo-promo.png?v=2" alt="Delayo promotional graphic with the original logo, a laptop interface, snooze controls, and return reminders" />
-          <figcaption class="art-caption"><span><strong>Delayo 1.3.0</strong> · built for calmer browsing</span><span>MIT open source</span></figcaption>
+          <img src="assets/delayo-promo.png?v=2" alt="Delayo promotional graphic with the original logo, a laptop interface, snooze controls, and return reminders" fetchpriority="high" decoding="async" />
         </figure>
       </section>
 
-      <section class="wrap proof" aria-label="Delayo principles">
-        <div class="proof-item"><strong>Free to use</strong><span>Open source and available from the Chrome Web Store.</span></div>
-        <div class="proof-item"><strong>Local by design</strong><span>Core tab data stays in your browser storage.</span></div>
-        <div class="proof-item"><strong>Built for the next moment</strong><span>Turn an open tab into a scheduled decision.</span></div>
+      <section class="shell proof-strip" aria-label="Delayo principles">
+        <div class="proof-item proof-lead"><span class="proof-label">Built for the next moment</span><strong>Clarity in. Clutter out.</strong></div>
+        <div class="proof-item"><strong>Local by design</strong><span>Core tab data stays in your browser.</span></div>
+        <div class="proof-item"><strong>Open source</strong><span>Read the code, report a problem, make it better.</span></div>
       </section>
 
-      <section class="wrap section" id="how">
-        <div class="section-heading">
-          <h2>Make room for the work in front of you.</h2>
-          <p class="section-intro">Bookmarks are for things you may need someday. Delayo is for the page you already know you want, just not in this moment.</p>
+      <section class="shell section" id="how">
+        <div class="section-head">
+          <p class="section-eyebrow">How it works</p>
+          <h2>Move the tab out of the way. Keep the intention.</h2>
+          <p>Bookmarks are for things you may need someday. Delayo is for the page you already know you want, just not in this moment.</p>
         </div>
-        <div class="flow" aria-label="How Delayo works">
-          <article class="flow-item"><span class="flow-label">THE FIND</span><h3>Keep the useful page</h3><p>Choose the active tab, selected tabs, or the whole window.</p></article>
-          <article class="flow-item"><span class="flow-label">THE PAUSE</span><h3>Pick a better time</h3><p>Use a quick preset, a custom date and time, or a recurring schedule.</p></article>
-          <article class="flow-item"><span class="flow-label">THE RETURN</span><h3>Let it come back</h3><p>When the alarm arrives, the tab wakes up with a notification.</p></article>
+        <div class="process-list" aria-label="How Delayo works">
+          <article class="process-row">
+            <span class="process-verb">Choose</span>
+            <div><h3>Keep the useful page.</h3><p>Choose the active tab, selected tabs, or the whole window.</p></div>
+            <span class="process-arrow" aria-hidden="true">↗</span>
+          </article>
+          <article class="process-row">
+            <span class="process-verb">Schedule</span>
+            <div><h3>Pick a better time.</h3><p>Use a quick preset, a custom date and time, or a recurring schedule.</p></div>
+            <span class="process-arrow" aria-hidden="true">↗</span>
+          </article>
+          <article class="process-row">
+            <span class="process-verb">Return</span>
+            <div><h3>Let it come back.</h3><p>When the alarm arrives, the tab wakes up with a notification.</p></div>
+            <span class="process-arrow" aria-hidden="true">↗</span>
+          </article>
         </div>
       </section>
 
-      <section class="wrap section" id="features">
-        <div class="section-heading">
-          <h2>A tiny tool for a very familiar problem.</h2>
-          <p class="section-intro">Delayo keeps the interaction quick, visible, and easy to undo. It is made for articles, research, comparisons, and the pages that should not become permanent furniture.</p>
+      <section class="shell section" id="features">
+        <div class="section-head">
+          <h2>A small tool for a familiar problem.</h2>
+          <p>Delayo keeps the interaction quick, visible, and easy to undo. It is made for articles, research, comparisons, and the pages that should not become permanent furniture.</p>
         </div>
-        <div class="features">
-          <article class="feature"><div class="feature-icon" aria-hidden="true">◷</div><h3>Quick timing</h3><p>Postpone a tab for later today, tonight, tomorrow, next week, or a custom date and time.</p></article>
-          <article class="feature"><div class="feature-icon" aria-hidden="true">✦</div><h3>Turbo Snooze</h3><p>Give selected tabs a one hour pause when you need an immediate focus block.</p></article>
-          <article class="feature"><div class="feature-icon" aria-hidden="true">▤</div><h3>Recurring tabs</h3><p>Bring a tab back daily, on weekdays, weekly, monthly, or on a custom rhythm.</p></article>
-          <article class="feature"><div class="feature-icon" aria-hidden="true">◐</div><h3>Delay manager</h3><p>See queued tabs in one place, then wake or remove them in batches.</p></article>
+        <div class="feature-grid">
+          <article class="feature feature-main">
+            <div class="feature-top"><span class="feature-name">Quick timing</span><img class="feature-icon" src="assets/delayo-icon.png" alt="" /></div>
+            <div><h3>Put the browser on your schedule.</h3><p>Postpone a tab for later today, tonight, tomorrow, next week, or a custom date and time.</p><div class="feature-presets" aria-label="Timing options"><span>later today</span><span>tomorrow</span><span>custom time</span></div></div>
+          </article>
+          <article class="feature feature-turbo"><span class="feature-name">Turbo Snooze</span><h3>Take an hour back.</h3><p>Give selected tabs a one hour pause when you need an immediate focus block.</p></article>
+          <article class="feature feature-recurring"><span class="feature-name">Recurring tabs</span><h3>Bring it back on a rhythm.</h3><p>Return a tab daily, on weekdays, weekly, monthly, or on a custom rhythm.</p></article>
+          <article class="feature feature-manager"><div><span class="feature-name">Delay manager</span><h3>See the queue. Change your mind.</h3></div><p>Wake or remove delayed tabs in batches, without hunting through a crowded browser.</p></article>
         </div>
       </section>
 
-      <section class="wrap section" id="open-source">
-        <div class="closing">
-          <div><p class="eyebrow">Open source, easy to inspect</p><h2>Less tab guilt. More intentional browsing.</h2></div>
-          <div><p>Delayo is maintained in public. Read the code, report a problem, suggest an improvement, or install the extension from the Chrome Web Store.</p><div class="closing-actions"><a class="button" href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=delayo-site&utm_medium=referral&utm_campaign=organic">Install free ↗</a><a class="button" href="https://github.com/allud1t/Delayo">GitHub ↗</a></div></div>
+      <section class="shell section cta-section" id="open-source">
+        <div class="cta-shell">
+          <div><h2>Less tab guilt. More intentional browsing.</h2><p>Delayo is maintained in public. Read the code, report a problem, suggest an improvement, or install the extension.</p></div>
+          <div class="cta-actions"><a class="button button-primary" href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh?utm_source=delayo-site&utm_medium=referral&utm_campaign=organic">Install free <span aria-hidden="true">↗</span></a><a class="button button-secondary" href="https://github.com/allud1t/Delayo">GitHub <span aria-hidden="true">↗</span></a></div>
         </div>
       </section>
     </main>
 
-    <footer class="footer">
-      <div class="wrap footer-inner"><span>Delayo · focus now, return later.</span><div class="footer-links"><a href="https://github.com/allud1t/Delayo/blob/main/docs/PRIVACY.md">Privacy</a><a href="https://github.com/allud1t/Delayo">GitHub</a><a href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh">Chrome Web Store</a></div></div>
+    <footer class="site-footer">
+      <div class="shell footer-inner"><span>Delayo. Focus now, return later.</span><div class="footer-links"><a href="https://github.com/allud1t/Delayo/blob/main/docs/PRIVACY.md">Privacy</a><a href="https://github.com/allud1t/Delayo">GitHub</a><a href="https://chromewebstore.google.com/detail/delayo/egbfkigkgocjmahcdmigccelneabbajh">Chrome Web Store</a></div></div>
     </footer>
   </body>
 </html>
