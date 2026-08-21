@@ -1,20 +1,20 @@
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from '@tanstack/react-router';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DonationButton from '../../../components/DonationButton';
-import DelaySettingsComponent from '../../options/DelaySettings';
 import useTheme from '../../../utils/useTheme';
+import DelaySettingsComponent from '../../options/DelaySettings';
 
 function SettingsView(): React.ReactElement {
   const { theme, toggleTheme } = useTheme();
   const { t } = useTranslation();
 
   return (
-    <div className='card w-[40rem] rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-6'>
-        <div className='mb-5 flex items-center justify-between'>
+    <div className='card w-[40rem] max-w-full rounded-none bg-base-300 shadow-md'>
+      <div className='card-body p-4 sm:p-5'>
+        <div className='mb-4 flex items-center justify-between'>
           <div className='flex items-center'>
             <Link
               to='/'
@@ -22,7 +22,9 @@ function SettingsView(): React.ReactElement {
             >
               <FontAwesomeIcon icon='arrow-left' />
             </Link>
-            <h2 className='card-title font-bold text-delayo-orange'>{t('common.settings')}</h2>
+            <h2 className='card-title font-bold text-delayo-orange'>
+              {t('common.settings')}
+            </h2>
           </div>
           <button
             type='button'
@@ -45,11 +47,11 @@ function SettingsView(): React.ReactElement {
         </div>
 
         <div className='flex flex-col'>
-          <div className='overflow-y-auto max-h-[350px] pr-2 pb-2'>
+          <div className='max-h-[350px] overflow-y-auto pb-2 pr-2'>
             <DelaySettingsComponent isPopup={true} />
           </div>
-          
-          <div className='mt-4 flex justify-center border-t border-base-200 pt-3'>
+
+          <div className='mt-3 flex justify-center border-t border-base-200 pt-3'>
             <DonationButton isCompact={true} />
           </div>
         </div>

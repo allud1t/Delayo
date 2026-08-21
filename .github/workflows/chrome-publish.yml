@@ -25,7 +25,6 @@ jobs:
     name: Validate and release Delayo
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    environment: chrome-web-store
     permissions:
       contents: read
       id-token: write
@@ -102,7 +101,7 @@ jobs:
         if: ${{ steps.release-mode.outputs.value == 'validate_only' }}
         run: echo "Validation completed without store upload."
 
-      - name: Authenticate to Google Cloud with Workload Identity Federation
+      - name: Authenticate to Google Cloud with Workload Identity Federation (Optional)
         if: ${{ steps.release-mode.outputs.value != 'validate_only' && secrets.CWS_WORKLOAD_IDENTITY_PROVIDER != '' && secrets.CWS_SERVICE_ACCOUNT_EMAIL != '' }}
         id: auth-wif
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
@@ -112,7 +111,7 @@ jobs:
           service_account: ${{ secrets.CWS_SERVICE_ACCOUNT_EMAIL }}
           access_token_scopes: https://www.googleapis.com/auth/chromewebstore
 
-      - name: Authenticate to Google Cloud with service account key fallback
+      - name: Authenticate to Google Cloud with service account key fallback (Optional)
         if: ${{ steps.release-mode.outputs.value != 'validate_only' && steps.auth-wif.outcome == 'skipped' && secrets.CWS_SERVICE_ACCOUNT_KEY_JSON != '' && secrets.CWS_SERVICE_ACCOUNT_EMAIL != '' }}
         id: auth-key
         uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
@@ -122,29 +121,15 @@ jobs:
           service_account: ${{ secrets.CWS_SERVICE_ACCOUNT_EMAIL }}
           access_token_scopes: https://www.googleapis.com/auth/chromewebstore
 
-      - name: Resolve Chrome Web Store access token
-        if: ${{ steps.release-mode.outputs.value != 'validate_only' }}
-        id: access-token
-        shell: bash
-        env:
-          TOKEN_WIF: ${{ steps.auth-wif.outputs.access_token }}
-          TOKEN_KEY: ${{ steps.auth-key.outputs.access_token }}
-        run: |
-          TOKEN="${TOKEN_WIF:-$TOKEN_KEY}"
-
-          if [ -z "$TOKEN" ]; then
-            echo "::error::No Chrome Web Store access token was generated. Configure Workload Identity Federation or the JSON key fallback."
-            exit 1
-          fi
-
-          echo "value=$TOKEN" >> "$GITHUB_OUTPUT"
-
       - name: Upload and optionally publish to Chrome Web Store
         if: ${{ steps.release-mode.outputs.value != 'validate_only' }}
         env:
-          CWS_ACCESS_TOKEN: ${{ steps.access-token.outputs.value }}
+          CWS_ACCESS_TOKEN: ${{ steps.auth-wif.outputs.access_token || steps.auth-key.outputs.access_token }}
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
           CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
-          CWS_PUBLISH: ${{ steps.release-mode.outputs.value == 'upload_and_publish' }}
           CWS_PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CWS_PUBLISH: ${{ steps.release-mode.outputs.value == 'upload_and_publish' }}
           CWS_ZIP_FILE: ${{ steps.package-extension.outputs.archive_path }}
         run: node ./scripts/release/publish-chrome-web-store.mjs

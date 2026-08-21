@@ -1,5 +1,5 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useMemo, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 
 interface CustomCalendarProps {
@@ -17,7 +17,10 @@ function CustomCalendar({
 }: CustomCalendarProps): React.ReactElement {
   const { i18n, t } = useTranslation();
   const locale =
-    i18n.language || document.documentElement.lang || navigator.language || 'pt-BR';
+    i18n.language ||
+    document.documentElement.lang ||
+    navigator.language ||
+    'pt-BR';
 
   // Navigation state (month and year currently being viewed)
   const [viewDate, setViewDate] = useState<Date>(
@@ -113,15 +116,11 @@ function CustomCalendar({
   }, [viewDate, selectedDate, startOfMinDate]);
 
   const handlePrevMonth = () => {
-    setViewDate(
-      (curr) => new Date(curr.getFullYear(), curr.getMonth() - 1, 1)
-    );
+    setViewDate((curr) => new Date(curr.getFullYear(), curr.getMonth() - 1, 1));
   };
 
   const handleNextMonth = () => {
-    setViewDate(
-      (curr) => new Date(curr.getFullYear(), curr.getMonth() + 1, 1)
-    );
+    setViewDate((curr) => new Date(curr.getFullYear(), curr.getMonth() + 1, 1));
   };
 
   const handleSelect = (d: Date) => {
@@ -137,7 +136,9 @@ function CustomCalendar({
   };
 
   return (
-    <div className={`rounded-xl bg-base-100/80 p-3 shadow-sm border border-base-200/60 ${className}`}>
+    <div
+      className={`rounded-lg border border-base-200/60 bg-base-100/70 p-3 ${className}`}
+    >
       {/* Calendar Header */}
       <div className='mb-2 flex items-center justify-between px-1'>
         <button

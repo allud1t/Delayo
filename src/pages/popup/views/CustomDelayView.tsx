@@ -1,8 +1,8 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from '@tanstack/react-router';
-import useTabSelection from '@hooks/useTabSelection';
-import { scheduleTabs } from '@utils/delayedTabsRuntime';
 import React, { useMemo, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useTabSelection from '@hooks/useTabSelection';
+import { Link } from '@tanstack/react-router';
+import { scheduleTabs } from '@utils/delayedTabsRuntime';
 import { useTranslation } from 'react-i18next';
 
 import CustomCalendar from '../../../components/CustomCalendar';
@@ -12,7 +12,10 @@ import { trackTabDelayed } from '../../../services/analytics';
 function CustomDelayView(): React.ReactElement {
   const { i18n, t } = useTranslation();
   const locale =
-    i18n.language || document.documentElement.lang || navigator.language || 'pt-BR';
+    i18n.language ||
+    document.documentElement.lang ||
+    navigator.language ||
+    'pt-BR';
 
   const {
     activeTab,
@@ -89,17 +92,16 @@ function CustomDelayView(): React.ReactElement {
     );
   }
 
-  const isToday =
-    new Date().toDateString() === selectedDate.toDateString();
+  const isToday = new Date().toDateString() === selectedDate.toDateString();
   const isTomorrow =
     new Date(Date.now() + 86400000).toDateString() ===
     selectedDate.toDateString();
 
   return (
-    <div className='card w-[40rem] rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-4 sm:p-5'>
+    <div className='card w-[32rem] max-w-full rounded-none bg-base-300 shadow-md'>
+      <div className='card-body p-4'>
         {/* Header */}
-        <div className='mb-3 flex items-center justify-between'>
+        <div className='mb-4 flex items-center justify-between'>
           <div className='flex items-center'>
             <Link
               to='/'
@@ -108,7 +110,7 @@ function CustomDelayView(): React.ReactElement {
             >
               <FontAwesomeIcon icon='arrow-left' />
             </Link>
-            <h2 className='card-title text-base sm:text-lg font-bold text-delayo-orange'>
+            <h2 className='card-title text-base font-bold text-delayo-orange sm:text-lg'>
               {t('customDelay.title')}
             </h2>
           </div>
@@ -122,7 +124,7 @@ function CustomDelayView(): React.ReactElement {
         </div>
 
         {/* Tab Summary Preview */}
-        <div className='mb-3 rounded-lg bg-base-100/70 px-3 py-2 shadow-sm'>
+        <div className='mb-3 rounded-lg border border-base-200/60 bg-base-100/70 px-3 py-2'>
           {selectedMode === 'active' && activeTab && (
             <div className='flex items-center'>
               {activeTab.favIconUrl && (
@@ -163,7 +165,7 @@ function CustomDelayView(): React.ReactElement {
         </div>
 
         {/* Main 2-Column Content */}
-        <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+        <div className='grid grid-cols-2 items-start gap-3'>
           {/* Left Column: Quick Chips + Calendar */}
           <div className='flex flex-col gap-2'>
             <div className='flex items-center justify-between'>
@@ -173,7 +175,7 @@ function CustomDelayView(): React.ReactElement {
             </div>
 
             {/* Quick Date Chips */}
-            <div className='grid grid-cols-4 gap-1'>
+            <div className='grid grid-cols-2 gap-1'>
               <button
                 type='button'
                 className={`btn btn-xs ${isToday ? 'btn-primary' : 'btn-outline'}`}
@@ -190,14 +192,14 @@ function CustomDelayView(): React.ReactElement {
               </button>
               <button
                 type='button'
-                className='btn btn-xs btn-outline'
+                className='btn btn-outline btn-xs'
                 onClick={() => setOffsetDays(2)}
               >
                 +2d
               </button>
               <button
                 type='button'
-                className='btn btn-xs btn-outline'
+                className='btn btn-outline btn-xs'
                 onClick={() => setOffsetDays(7)}
               >
                 +7d
@@ -211,41 +213,37 @@ function CustomDelayView(): React.ReactElement {
             />
           </div>
 
-          {/* Right Column: Time Selection & Action */}
-          <div className='flex flex-col justify-between rounded-xl bg-base-100/50 p-3 border border-base-200/60'>
-            <div>
-              <span className='mb-2 block text-xs font-bold text-base-content/80'>
-                {t('recurringDelay.selectTime')}
-              </span>
+          <div className='rounded-lg border border-base-200/60 bg-base-100/50 p-3'>
+            <span className='mb-2 block text-xs font-bold text-base-content/80'>
+              {t('recurringDelay.selectTime')}
+            </span>
 
-              <TimePicker
-                value={timeString}
-                onChange={handleTimeChange}
-                isPopup={true}
-              />
-            </div>
-
-            {/* Summary & Confirmation */}
-            <div className='mt-4 flex flex-col gap-2 border-t border-base-200/60 pt-3'>
-              <div className='flex items-center justify-between rounded-lg bg-base-200/70 px-3 py-2 text-xs'>
-                <span className='font-medium text-base-content/70'>
-                  {t('popup.delay')}:
-                </span>
-                <span className='font-bold text-delayo-orange capitalize'>
-                  {formattedSummary}
-                </span>
-              </div>
-
-              <button
-                type='button'
-                className='btn btn-primary btn-sm w-full font-semibold'
-                onClick={() => void handleDelay()}
-                disabled={tabsToDelay.length === 0}
-              >
-                {t('customDelay.delayTab')}
-              </button>
-            </div>
+            <TimePicker
+              value={timeString}
+              onChange={handleTimeChange}
+              isPopup={true}
+            />
           </div>
+        </div>
+
+        <div className='mt-3 flex items-center gap-3 rounded-lg border border-base-200/60 bg-base-100/50 p-3'>
+          <div className='min-w-0 flex-1 text-xs'>
+            <span className='font-medium text-base-content/70'>
+              {t('popup.delay')}:{' '}
+            </span>
+            <span className='font-bold capitalize text-delayo-orange'>
+              {formattedSummary}
+            </span>
+          </div>
+
+          <button
+            type='button'
+            className='btn btn-primary btn-sm shrink-0 font-semibold'
+            onClick={() => void handleDelay()}
+            disabled={tabsToDelay.length === 0}
+          >
+            {t('customDelay.delayTab')}
+          </button>
         </div>
       </div>
     </div>

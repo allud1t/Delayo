@@ -1,9 +1,9 @@
+import React, { useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from '@tanstack/react-router';
 import useDelayedTabs from '@hooks/useDelayedTabs';
+import { Link } from '@tanstack/react-router';
 import { DelayedTab } from '@types';
 import { formatDateTime, formatTimeLeft } from '@utils/dateTime';
-import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { trackTabDeleted, trackTabWoken } from '../../../services/analytics';
@@ -18,7 +18,10 @@ function ManageTabsView(): React.ReactElement {
   const [selectMode, setSelectMode] = useState(false);
 
   const locale =
-    i18n.language || document.documentElement.lang || navigator.language || 'en';
+    i18n.language ||
+    document.documentElement.lang ||
+    navigator.language ||
+    'en';
   const timeLeftLabels = useMemo(
     () => ({
       day: t('manageTabs.timeUnits.day'),
@@ -53,7 +56,9 @@ function ManageTabsView(): React.ReactElement {
 
   const toggleSelectAll = (): void => {
     setSelectedTabs((current) =>
-      current.length === delayedTabs.length ? [] : delayedTabs.map((tab) => tab.id)
+      current.length === delayedTabs.length
+        ? []
+        : delayedTabs.map((tab) => tab.id)
     );
   };
 
@@ -86,9 +91,9 @@ function ManageTabsView(): React.ReactElement {
   }
 
   return (
-    <div className='card w-[40rem] rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-6'>
-        <div className='mb-5 flex items-center justify-between'>
+    <div className='card w-[40rem] max-w-full rounded-none bg-base-300 shadow-md'>
+      <div className='card-body p-4 sm:p-5'>
+        <div className='mb-4 flex items-center justify-between'>
           <div className='flex items-center'>
             <Link
               to='/'
@@ -122,12 +127,14 @@ function ManageTabsView(): React.ReactElement {
         </div>
 
         {delayedTabs.length === 0 ? (
-          <div className='flex flex-col items-center justify-center p-8 text-center'>
+          <div className='flex flex-col items-center justify-center p-6 text-center'>
             <FontAwesomeIcon
               icon='hourglass-empty'
               className='mb-4 h-12 w-12 text-neutral-400'
             />
-            <h3 className='mb-2 text-lg font-medium'>{t('manageTabs.noTabs')}</h3>
+            <h3 className='mb-2 text-lg font-medium'>
+              {t('manageTabs.noTabs')}
+            </h3>
             <p className='text-sm text-base-content/70'>
               {t('manageTabs.noDelayedTabs')}
             </p>
@@ -194,7 +201,7 @@ function ManageTabsView(): React.ReactElement {
               {delayedTabs.map((tab) => (
                 <div
                   key={tab.id}
-                  className='flex items-center justify-between rounded-lg bg-base-100/70 p-4 shadow-sm transition-all duration-200 hover:bg-base-100'
+                  className='flex items-center justify-between rounded-lg border border-base-200/60 bg-base-100/70 p-3 transition-colors duration-150 hover:bg-base-100'
                 >
                   <div className='flex items-center'>
                     {selectMode && (
@@ -205,7 +212,11 @@ function ManageTabsView(): React.ReactElement {
                         aria-label={t('manageTabs.toggleSelection')}
                       >
                         <FontAwesomeIcon
-                          icon={selectedTabs.includes(tab.id) ? 'check-square' : 'square'}
+                          icon={
+                            selectedTabs.includes(tab.id)
+                              ? 'check-square'
+                              : 'square'
+                          }
                           className={
                             selectedTabs.includes(tab.id)
                               ? 'text-delayo-orange'

@@ -1,12 +1,12 @@
+import React, { useCallback, useMemo } from 'react';
 import { faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from '@tanstack/react-router';
 import useDelaySettings from '@hooks/useDelaySettings';
 import useTabSelection from '@hooks/useTabSelection';
+import { Link } from '@tanstack/react-router';
 import { DelayOption, TabSelectionMode } from '@types';
 import { scheduleTabs } from '@utils/delayedTabsRuntime';
 import { createPresetDelayOptions } from '@utils/delayPresets';
-import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DonationButton from '../../../components/DonationButton';
@@ -30,7 +30,10 @@ function MainView(): React.ReactElement {
 
   const loading = settingsLoading || tabsLoading;
   const locale =
-    i18n.language || document.documentElement.lang || navigator.language || 'en';
+    i18n.language ||
+    document.documentElement.lang ||
+    navigator.language ||
+    'en';
   const translate = useCallback(
     (key: string, options?: Record<string, unknown>): string =>
       t(key, options) as string,
@@ -102,10 +105,10 @@ function MainView(): React.ReactElement {
   }
 
   return (
-    <div className='card w-[40rem] rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-4 sm:p-5'>
+    <div className='card w-[32rem] max-w-full rounded-none bg-base-300 shadow-md'>
+      <div className='card-body p-4'>
         {/* Header */}
-        <div className='mb-3 flex items-center justify-between'>
+        <div className='mb-4 flex items-center justify-between'>
           <h2 className='card-title flex items-center font-bold text-delayo-orange'>
             <FontAwesomeIcon
               icon={faHourglassHalf}
@@ -148,7 +151,7 @@ function MainView(): React.ReactElement {
         </div>
 
         {/* Tab Selection & Tab Info */}
-        <div className='mb-3 flex flex-col space-y-2'>
+        <div className='mb-3 flex flex-col gap-2'>
           <div className='flex items-center justify-between'>
             <div className='text-sm font-medium text-base-content/80'>
               {t('popup.delay')}:
@@ -168,7 +171,9 @@ function MainView(): React.ReactElement {
                 disabled={highlightedTabs.length <= 1}
               >
                 {t('popup.tabs.highlighted')}{' '}
-                {highlightedTabs.length > 1 ? `(${highlightedTabs.length})` : ''}
+                {highlightedTabs.length > 1
+                  ? `(${highlightedTabs.length})`
+                  : ''}
               </button>
               <button
                 type='button'
@@ -181,7 +186,7 @@ function MainView(): React.ReactElement {
             </div>
           </div>
 
-          <div className='rounded-lg bg-base-100/70 px-3 py-2 shadow-sm transition-all duration-200 hover:bg-base-100'>
+          <div className='rounded-lg border border-base-200/60 bg-base-100/70 px-3 py-2'>
             {selectedMode === 'active' && activeTab && (
               <div className='flex items-center'>
                 {activeTab.favIconUrl && (
@@ -221,98 +226,94 @@ function MainView(): React.ReactElement {
             )}
           </div>
 
-          {/* Turbo Quick Action Button - Alinhado à esquerda com espaçamento vertical equilibrado */}
-          <div className='flex items-center justify-start py-1'>
+          <div className='flex items-center'>
             <button
               type='button'
-              className='btn btn-sm border-none bg-delayo-orange text-white hover:bg-[#e67300] font-medium'
+              className='btn btn-sm border-none bg-delayo-orange font-medium text-white hover:bg-[#e67300]'
               onClick={() => void handleQuickTurbo()}
               title={t('popup.quickTurboDesc')}
             >
-              <FontAwesomeIcon icon='bolt' className='mr-1.5 h-3.5 w-3.5 text-white' />
+              <FontAwesomeIcon
+                icon='bolt'
+                className='mr-1.5 h-3.5 w-3.5 text-white'
+              />
               <span>{t('popup.quickTurbo')}</span>
             </button>
           </div>
         </div>
 
-        {/* 3x3 Delay Presets Grid */}
+        {/* Delay preset grid */}
         <div className='grid grid-cols-3 gap-2'>
           {delayOptions.map((option) => (
-            <div key={option.id} className='card'>
-              <button
-                type='button'
-                className='group btn h-20 flex-col items-center justify-center rounded-xl border-none bg-base-100/70 p-2 shadow-sm transition-all duration-200 hover:bg-base-100'
-                onClick={() => void handleDelay(option)}
-              >
-                <FontAwesomeIcon
-                  icon={
-                    option.id === 'later_today'
-                      ? 'mug-hot'
-                      : option.id === 'tonight'
-                        ? 'moon'
-                        : option.id === 'tomorrow'
-                          ? 'cloud-sun'
-                          : option.id === 'weekend'
-                            ? 'couch'
-                            : option.id === 'next_week'
-                              ? 'briefcase'
-                              : option.id === 'next_month'
-                                ? 'envelope'
-                                : option.id === 'someday'
-                                  ? 'umbrella-beach'
-                                  : 'clock'
-                  }
-                  className='mb-1.5 h-4 w-4 transform text-neutral-400 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-delayo-orange'
-                />
-                <span className='text-center text-xs font-medium text-base-content/80 group-hover:text-base-content'>
-                  {option.label}
-                </span>
-              </button>
-            </div>
+            <button
+              key={option.id}
+              type='button'
+              className='group btn h-[4.5rem] flex-col items-center justify-center rounded-lg border border-base-200/60 bg-base-100/70 p-2 shadow-none transition-colors duration-150 hover:bg-base-100'
+              onClick={() => void handleDelay(option)}
+            >
+              <FontAwesomeIcon
+                icon={
+                  option.id === 'later_today'
+                    ? 'mug-hot'
+                    : option.id === 'tonight'
+                      ? 'moon'
+                      : option.id === 'tomorrow'
+                        ? 'cloud-sun'
+                        : option.id === 'weekend'
+                          ? 'couch'
+                          : option.id === 'next_week'
+                            ? 'briefcase'
+                            : option.id === 'next_month'
+                              ? 'envelope'
+                              : option.id === 'someday'
+                                ? 'umbrella-beach'
+                                : 'clock'
+                }
+                className='mb-1.5 h-4 w-4 text-neutral-400 transition-colors duration-150 group-hover:text-delayo-orange'
+              />
+              <span className='text-center text-xs font-medium text-base-content/80 group-hover:text-base-content'>
+                {option.label}
+              </span>
+            </button>
           ))}
 
-          <div className='card'>
-            <Link
-              to='/custom-delay'
-              className='group btn h-20 flex-col items-center justify-center rounded-xl border-none bg-base-100/70 p-2 shadow-sm transition-all duration-200 hover:bg-base-100'
-              onClick={() => {
-                void persistSelectedMode();
-              }}
-            >
-              <FontAwesomeIcon
-                icon='calendar-days'
-                className='mb-1.5 h-4 w-4 transform text-neutral-400 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-delayo-orange'
-              />
-              <span className='text-center text-xs font-medium text-base-content/80 group-hover:text-base-content'>
-                {t('popup.delayOptions.custom')}
-              </span>
-            </Link>
-          </div>
+          <Link
+            to='/custom-delay'
+            className='group btn h-[4.5rem] flex-col items-center justify-center rounded-lg border border-base-200/60 bg-base-100/70 p-2 shadow-none transition-colors duration-150 hover:bg-base-100'
+            onClick={() => {
+              void persistSelectedMode();
+            }}
+          >
+            <FontAwesomeIcon
+              icon='calendar-days'
+              className='mb-1.5 h-4 w-4 text-neutral-400 transition-colors duration-150 group-hover:text-delayo-orange'
+            />
+            <span className='text-center text-xs font-medium text-base-content/80 group-hover:text-base-content'>
+              {t('popup.delayOptions.custom')}
+            </span>
+          </Link>
 
-          <div className='card'>
-            <Link
-              to='/recurring-delay'
-              className='group btn h-20 flex-col items-center justify-center rounded-xl border-none bg-base-100/70 p-2 shadow-sm transition-all duration-200 hover:bg-base-100'
-              onClick={() => {
-                void persistSelectedMode();
-              }}
-            >
-              <FontAwesomeIcon
-                icon='repeat'
-                className='mb-1.5 h-4 w-4 transform text-neutral-400 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-delayo-orange'
-              />
-              <span className='text-center text-xs font-medium text-base-content/80 group-hover:text-base-content'>
-                {t('popup.delayOptions.recurring')}
-              </span>
-            </Link>
-          </div>
+          <Link
+            to='/recurring-delay'
+            className='group btn h-[4.5rem] flex-col items-center justify-center rounded-lg border border-base-200/60 bg-base-100/70 p-2 shadow-none transition-colors duration-150 hover:bg-base-100'
+            onClick={() => {
+              void persistSelectedMode();
+            }}
+          >
+            <FontAwesomeIcon
+              icon='repeat'
+              className='mb-1.5 h-4 w-4 text-neutral-400 transition-colors duration-150 group-hover:text-delayo-orange'
+            />
+            <span className='text-center text-xs font-medium text-base-content/80 group-hover:text-base-content'>
+              {t('popup.delayOptions.recurring')}
+            </span>
+          </Link>
         </div>
 
-        {/* Centered Manage Tabs & Centered Donation Button */}
-        <div className='mt-3 flex flex-col items-center justify-center gap-1 border-t border-base-200 pt-2'>
+        <div className='mt-3 flex items-center justify-between border-t border-base-200 pt-3'>
           <Link
             to='/manage-tabs'
-            className='btn btn-ghost btn-xs text-xs font-medium text-base-content/70 transition-all duration-200 hover:text-delayo-orange sm:btn-sm'
+            className='btn btn-ghost btn-xs text-xs font-medium text-base-content/70 transition-all duration-200 sm:btn-sm hover:text-delayo-orange'
           >
             <FontAwesomeIcon icon='list-ul' className='mr-1.5 h-3.5 w-3.5' />
             {t('popup.actions.manageTabs')}

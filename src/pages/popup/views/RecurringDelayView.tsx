@@ -1,11 +1,12 @@
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from '@tanstack/react-router';
 import useTabSelection from '@hooks/useTabSelection';
+import { Link } from '@tanstack/react-router';
 import { RecurrencePattern } from '@types';
 import { scheduleTabs } from '@utils/delayedTabsRuntime';
 import { calculateNextWakeTime } from '@utils/recurrence';
-import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
 import TimePicker from '../../../components/TimePicker';
 import { trackTabDelayed } from '../../../services/analytics';
 
@@ -18,7 +19,9 @@ function FormControl({
 }): React.ReactElement {
   return (
     <div className='form-control'>
-      <span className='mb-1.5 block text-xs font-bold text-base-content/80'>{label}</span>
+      <span className='mb-1.5 block text-xs font-bold text-base-content/80'>
+        {label}
+      </span>
       {children}
     </div>
   );
@@ -121,10 +124,10 @@ function RecurringDelayView(): React.ReactElement {
   }
 
   return (
-    <div className='card w-[40rem] rounded-none bg-base-300 shadow-md'>
-      <div className='card-body p-4 sm:p-5'>
+    <div className='card w-[32rem] max-w-full rounded-none bg-base-300 shadow-md'>
+      <div className='card-body p-4'>
         {/* Header */}
-        <div className='mb-3 flex items-center justify-between'>
+        <div className='mb-4 flex items-center justify-between'>
           <div className='flex items-center'>
             <Link
               to='/'
@@ -133,7 +136,7 @@ function RecurringDelayView(): React.ReactElement {
             >
               <FontAwesomeIcon icon='arrow-left' />
             </Link>
-            <h2 className='card-title text-base sm:text-lg font-bold text-delayo-orange'>
+            <h2 className='card-title text-base font-bold text-delayo-orange sm:text-lg'>
               {t('recurringDelay.title')}
             </h2>
           </div>
@@ -147,7 +150,7 @@ function RecurringDelayView(): React.ReactElement {
         </div>
 
         {/* Tab Summary Preview */}
-        <div className='mb-3 rounded-lg bg-base-100/70 px-3 py-2 shadow-sm'>
+        <div className='mb-3 rounded-lg border border-base-200/60 bg-base-100/70 px-3 py-2'>
           {selectedMode === 'active' && activeTab && (
             <div className='flex items-center'>
               {activeTab.favIconUrl && (
@@ -188,16 +191,18 @@ function RecurringDelayView(): React.ReactElement {
         </div>
 
         {/* Main 2-Column Content */}
-        <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+        <div className='grid grid-cols-2 items-start gap-3'>
           {/* Left Column: Frequency & Day Selectors */}
-          <div className='flex flex-col gap-3 rounded-xl bg-base-100/50 p-3 border border-base-200/60'>
+          <div className='flex flex-col gap-3 rounded-lg border border-base-200/60 bg-base-100/50 p-3'>
             <FormControl label={t('recurringDelay.frequency')}>
               <select
                 id={patternId}
                 className='select select-bordered select-sm w-full bg-base-200 font-semibold focus:outline-none'
                 value={recurrenceType}
                 onChange={(event) =>
-                  setRecurrenceType(event.target.value as RecurrencePattern['type'])
+                  setRecurrenceType(
+                    event.target.value as RecurrencePattern['type']
+                  )
                 }
               >
                 <option value='daily'>{t('recurringDelay.daily')}</option>
@@ -220,7 +225,9 @@ function RecurringDelayView(): React.ReactElement {
                       type='button'
                       className={`btn btn-circle btn-xs h-7 w-7 ${selectedDays.includes(day.value) ? 'btn-primary font-bold' : 'btn-outline'}`}
                       onClick={() => toggleDay(day.value)}
-                      aria-label={t('recurringDelay.toggleDay', { day: day.label })}
+                      aria-label={t('recurringDelay.toggleDay', {
+                        day: day.label,
+                      })}
                       aria-pressed={selectedDays.includes(day.value)}
                     >
                       {day.label}
@@ -237,17 +244,22 @@ function RecurringDelayView(): React.ReactElement {
                   <input
                     id={dayOfMonthId}
                     type='number'
-                    className='input input-bordered input-sm w-20 bg-base-200 font-bold'
+                    className='input input-sm input-bordered w-20 bg-base-200 font-bold'
                     min='1'
                     max='31'
                     value={dayOfMonth}
                     onChange={(event) =>
                       setDayOfMonth(
-                        Math.min(31, Math.max(1, parseInt(event.target.value, 10) || 1))
+                        Math.min(
+                          31,
+                          Math.max(1, parseInt(event.target.value, 10) || 1)
+                        )
                       )
                     }
                   />
-                  <span className='text-xs text-base-content/70'>de cada mês</span>
+                  <span className='text-xs text-base-content/70'>
+                    de cada mês
+                  </span>
                 </div>
               </FormControl>
             )}
@@ -256,7 +268,7 @@ function RecurringDelayView(): React.ReactElement {
               <input
                 id={endDateId}
                 type='date'
-                className='input input-bordered input-sm w-full bg-base-200 font-medium'
+                className='input input-sm input-bordered w-full bg-base-200 font-medium'
                 value={endDate}
                 onChange={(event) => setEndDate(event.target.value)}
                 min={new Date().toISOString().split('T')[0]}
@@ -264,34 +276,27 @@ function RecurringDelayView(): React.ReactElement {
             </FormControl>
           </div>
 
-          {/* Right Column: Time & CTA Action */}
-          <div className='flex flex-col justify-between rounded-xl bg-base-100/50 p-3 border border-base-200/60'>
-            <div>
-              <span className='mb-2 block text-xs font-bold text-base-content/80'>
-                {t('recurringDelay.selectTime')}
-              </span>
+          <div className='rounded-lg border border-base-200/60 bg-base-100/50 p-3'>
+            <span className='mb-2 block text-xs font-bold text-base-content/80'>
+              {t('recurringDelay.selectTime')}
+            </span>
 
-              <TimePicker
-                value={time}
-                onChange={setTime}
-                isPopup={true}
-              />
-            </div>
-
-            <div className='mt-4 flex flex-col gap-2 border-t border-base-200/60 pt-3'>
-              <button
-                type='button'
-                className='btn btn-primary btn-sm w-full font-semibold'
-                onClick={() => void handleDelay()}
-                disabled={
-                  tabsToDelay.length === 0 ||
-                  (recurrenceType === 'custom' && selectedDays.length === 0)
-                }
-              >
-                {t('recurringDelay.delayTab')}
-              </button>
-            </div>
+            <TimePicker value={time} onChange={setTime} isPopup={true} />
           </div>
+        </div>
+
+        <div className='mt-3 border-t border-base-200 pt-3'>
+          <button
+            type='button'
+            className='btn btn-primary btn-sm w-full font-semibold'
+            onClick={() => void handleDelay()}
+            disabled={
+              tabsToDelay.length === 0 ||
+              (recurrenceType === 'custom' && selectedDays.length === 0)
+            }
+          >
+            {t('recurringDelay.delayTab')}
+          </button>
         </div>
       </div>
     </div>
