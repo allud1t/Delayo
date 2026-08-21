@@ -1,7 +1,7 @@
 # Delayo 💤 — Snooze Tabs, Boost Focus
 
 <p align="center">
-  <img src="docs/assets/delayo-banner.jpg" alt="Delayo - Snooze Tabs, Boost Focus" width="100%" />
+  <img src="docs/assets/delayo-promo.png" alt="Delayo promotional graphic with a laptop interface and snooze reminders" width="100%" />
 </p>
 
 <p align="center">
@@ -111,4 +111,3 @@ Hard-forked from [Snoozr](https://github.com/hardchor/snoozr) with unique archit
 ---
 
 <p align="center">Made with ❤️ for a distraction-free browsing experience.</p>
-
