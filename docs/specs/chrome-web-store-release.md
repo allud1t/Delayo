@@ -52,6 +52,7 @@ The repository already has CI and a publish workflow, but the release path has f
 ### Chrome Web Store API integration
 
 - A first-party Node script uses the Chrome Web Store API v2 when `CWS_PUBLISHER_ID` is configured.
+- The V2 path uses Google's generated `googleapis` Node.js client by default, with the existing direct REST client available through `CWS_API_CLIENT=rest` for troubleshooting.
 - Until the v1 API retirement date, the script keeps a tested v1.1 fallback for the repository's existing OAuth secrets.
 - The same script can optionally submit the uploaded revision for review.
 - Status fetches are best-effort and used for observability, not as a separate source of truth.
@@ -67,6 +68,7 @@ The repository already has CI and a publish workflow, but the release path has f
 - `validate_only`: runs lint, tests, build, and packaging. No store mutation.
 - `upload_only`: runs full validation and uploads the zip to the store without submitting for review.
 - `upload_and_publish`: runs full validation, uploads the zip, and submits the revision for review.
+- `auth_mode=auto` prefers WIF, while `auth_mode=oauth`, `auth_mode=wif`, and `auth_mode=service_account_key` force a configured authentication path for diagnosis and controlled rollout.
 - Tag pushes always run `upload_and_publish`.
 
 ## Security model

@@ -15,6 +15,16 @@ on:
           - validate_only
           - upload_only
           - upload_and_publish
+      auth_mode:
+        description: 'auto prefers WIF; choose oauth to test the owner refresh token explicitly'
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - oauth
+          - wif
+          - service_account_key
 
 concurrency:
   group: chrome-web-store-release
@@ -106,20 +116,64 @@ jobs:
           OAUTH_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
           OAUTH_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
           OAUTH_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+          REQUESTED_AUTH_MODE: ${{ inputs.auth_mode }}
         run: |
+          REQUESTED_AUTH_MODE="${REQUESTED_AUTH_MODE:-auto}"
+
+          has_wif=false
+          has_service_account_key=false
+          has_oauth=false
+
           if [ -n "$WIF_PROVIDER" ] && [ -n "$SERVICE_ACCOUNT_EMAIL" ]; then
-            echo "value=wif" >> "$GITHUB_OUTPUT"
-            echo "Using Workload Identity Federation authentication."
-          elif [ -n "$SERVICE_ACCOUNT_KEY_JSON" ] && [ -n "$SERVICE_ACCOUNT_EMAIL" ]; then
-            echo "value=service_account_key" >> "$GITHUB_OUTPUT"
-            echo "Using service account key authentication."
-          elif [ -n "$OAUTH_CLIENT_ID" ] && [ -n "$OAUTH_CLIENT_SECRET" ] && [ -n "$OAUTH_REFRESH_TOKEN" ]; then
-            echo "value=oauth" >> "$GITHUB_OUTPUT"
-            echo "Using OAuth2 refresh-token authentication."
-          else
-            echo "::error::Configure either CWS_WORKLOAD_IDENTITY_PROVIDER plus CWS_SERVICE_ACCOUNT_EMAIL, CWS_SERVICE_ACCOUNT_KEY_JSON plus CWS_SERVICE_ACCOUNT_EMAIL, or the CWS_CLIENT_ID/CWS_CLIENT_SECRET/CWS_REFRESH_TOKEN trio."
-            exit 1
+            has_wif=true
           fi
+          if [ -n "$SERVICE_ACCOUNT_KEY_JSON" ] && [ -n "$SERVICE_ACCOUNT_EMAIL" ]; then
+            has_service_account_key=true
+          fi
+          if [ -n "$OAUTH_CLIENT_ID" ] && [ -n "$OAUTH_CLIENT_SECRET" ] && [ -n "$OAUTH_REFRESH_TOKEN" ]; then
+            has_oauth=true
+          fi
+
+          selected_mode="$REQUESTED_AUTH_MODE"
+          if [ "$REQUESTED_AUTH_MODE" = "auto" ]; then
+            if [ "$has_wif" = true ]; then
+              selected_mode="wif"
+            elif [ "$has_service_account_key" = true ]; then
+              selected_mode="service_account_key"
+            elif [ "$has_oauth" = true ]; then
+              selected_mode="oauth"
+            fi
+          fi
+
+          case "$selected_mode" in
+            wif)
+              if [ "$has_wif" != true ]; then
+                echo "::error::WIF authentication was selected, but CWS_WORKLOAD_IDENTITY_PROVIDER and CWS_SERVICE_ACCOUNT_EMAIL are not both configured."
+                exit 1
+              fi
+              echo "Using Workload Identity Federation authentication."
+              ;;
+            service_account_key)
+              if [ "$has_service_account_key" != true ]; then
+                echo "::error::Service account key authentication was selected, but CWS_SERVICE_ACCOUNT_KEY_JSON and CWS_SERVICE_ACCOUNT_EMAIL are not both configured."
+                exit 1
+              fi
+              echo "Using service account key authentication."
+              ;;
+            oauth)
+              if [ "$has_oauth" != true ]; then
+                echo "::error::OAuth authentication was selected, but CWS_CLIENT_ID, CWS_CLIENT_SECRET, and CWS_REFRESH_TOKEN are not all configured."
+                exit 1
+              fi
+              echo "Using OAuth2 refresh-token authentication."
+              ;;
+            *)
+              echo "::error::No usable Chrome Web Store authentication is configured or auth_mode is invalid."
+              exit 1
+              ;;
+          esac
+
+          echo "value=$selected_mode" >> "$GITHUB_OUTPUT"
 
       - name: Authenticate with Workload Identity Federation
         if: ${{ steps.cws-auth-mode.outputs.value == 'wif' }}
@@ -150,6 +204,7 @@ jobs:
           CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
           CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
           CWS_PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CWS_API_CLIENT: googleapis
           CWS_PUBLISH: ${{ steps.release-mode.outputs.value == 'upload_and_publish' }}
           CWS_ZIP_FILE: ${{ steps.package-extension.outputs.archive_path }}
         run: node ./scripts/release/publish-chrome-web-store.mjs

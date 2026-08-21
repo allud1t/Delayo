@@ -38,6 +38,8 @@ For organizations using GCP Service Accounts:
 
 When these values are present, the workflow uses a short-lived access token from the service account instead of the OAuth refresh-token fallback. If `CWS_PUBLISHER_ID` is also present, the script uses the Chrome Web Store API v2 endpoints.
 
+The V2 workflow uses the official `googleapis` Node.js client, generated from the Chrome Web Store API discovery document. Set `CWS_API_CLIENT=rest` only when a direct REST request is needed for troubleshooting. The REST fallback supports the same V2 endpoints and the legacy OAuth v1.1 path.
+
 ---
 
 ## Supported Release Modes
@@ -74,4 +76,6 @@ git push origin v1.3.0
 
 1. Go to **Actions > Chrome Web Store Release**.
 2. Click **Run workflow**.
-3. Select the branch (`main`) and desired `release_mode` (`validate_only`, `upload_only`, or `upload_and_publish`).
+3. Select the branch (`main`), desired `release_mode` (`validate_only`, `upload_only`, or `upload_and_publish`) and `auth_mode`.
+
+Use `auto` for normal releases. Use `oauth` to explicitly test the owner refresh-token path without removing the WIF secrets. Use `wif` to test Workload Identity Federation directly.

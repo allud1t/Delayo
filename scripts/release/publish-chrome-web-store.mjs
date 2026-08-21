@@ -3,6 +3,11 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import {
+  fetchItemStatusWithGoogleApi,
+  publishExtensionRevisionWithGoogleApi,
+  uploadExtensionPackageWithGoogleApi,
+} from './lib/chrome-web-store-google.mjs';
+import {
   fetchItemStatus,
   fetchOAuthAccessToken,
   parseBoolean,
@@ -40,9 +45,9 @@ function assertUploadSucceeded(body) {
   throw new Error(`Chrome Web Store rejected the upload: ${details}`);
 }
 
-async function tryFetchStatus(params, label) {
+async function tryFetchStatus(fetchStatus, params, label) {
   try {
-    return await fetchItemStatus(params);
+    return await fetchStatus(params);
   } catch (error) {
     console.warn(`${label} status fetch failed:`, error);
     return null;
@@ -80,6 +85,19 @@ async function main() {
   const publisherId = process.env.CWS_PUBLISHER_ID || undefined;
   const zipFile = path.resolve(requireEnv('CWS_ZIP_FILE'));
   const shouldPublish = parseBoolean(process.env.CWS_PUBLISH, false);
+  const apiClient = (
+    process.env.CWS_API_CLIENT || (publisherId ? 'googleapis' : 'rest')
+  ).toLowerCase();
+
+  if (!['googleapis', 'rest'].includes(apiClient)) {
+    throw new Error('CWS_API_CLIENT must be either googleapis or rest.');
+  }
+
+  if (apiClient === 'googleapis' && !publisherId) {
+    throw new Error(
+      'CWS_API_CLIENT=googleapis requires CWS_PUBLISHER_ID for Chrome Web Store API v2.'
+    );
+  }
 
   if (!existsSync(zipFile)) {
     throw new Error(`Release archive not found: ${zipFile}`);
@@ -89,7 +107,18 @@ async function main() {
   console.log(
     `Uploading release package to Chrome Web Store (Extension ID: ${extensionId})...`
   );
-  const uploadResult = await uploadExtensionPackage({
+  const upload =
+    apiClient === 'googleapis'
+      ? uploadExtensionPackageWithGoogleApi
+      : uploadExtensionPackage;
+  const publish =
+    apiClient === 'googleapis'
+      ? publishExtensionRevisionWithGoogleApi
+      : publishExtensionRevision;
+  const fetchStatus =
+    apiClient === 'googleapis' ? fetchItemStatusWithGoogleApi : fetchItemStatus;
+
+  const uploadResult = await upload({
     accessToken,
     extensionId,
     publisherId,
@@ -99,6 +128,7 @@ async function main() {
   assertUploadSucceeded(uploadResult.body);
 
   const statusAfterUpload = await tryFetchStatus(
+    fetchStatus,
     {
       accessToken,
       extensionId,
@@ -112,7 +142,7 @@ async function main() {
 
   if (shouldPublish) {
     console.log('Submitting extension for review/publish...');
-    publishResult = await publishExtensionRevision({
+    publishResult = await publish({
       accessToken,
       extensionId,
       publisherId,
@@ -120,6 +150,7 @@ async function main() {
     console.log('Publish result:', JSON.stringify(publishResult.body, null, 2));
 
     statusAfterPublish = await tryFetchStatus(
+      fetchStatus,
       {
         accessToken,
         extensionId,
@@ -132,6 +163,7 @@ async function main() {
   const output = {
     extensionId,
     publisherId: publisherId || 'none (v1.1 API)',
+    apiClient,
     publishSubmitted: shouldPublish,
     zipFile,
     uploadResult: uploadResult.body,
@@ -149,6 +181,7 @@ async function main() {
     `- Archive: \`${zipFile}\``,
     `- Extension ID: \`${extensionId}\``,
     `- API Mode: \`${publisherId ? 'v2 (Publisher)' : 'v1.1 (OAuth2)'}\``,
+    `- API Client: \`${apiClient}\``,
     `- Upload completed: \`yes\``,
     `- Publish submitted: \`${shouldPublish ? 'yes' : 'no'}\``,
   ];
