@@ -59,14 +59,17 @@ describe('chrome-web-store-google', () => {
         credentials: { access_token: 'token-123' },
       }),
     });
-    expect(mocks.upload).toHaveBeenCalledWith({
+    const uploadCall = mocks.upload.mock.calls[0][0];
+
+    expect(uploadCall).toMatchObject({
       name: 'publishers/publisher-123/items/extension-456',
       requestBody: {},
       media: {
         mimeType: 'application/zip',
-        body: zipBuffer,
       },
     });
+    expect(uploadCall.media.body).toHaveProperty('pipe');
+
     expect(result).toEqual({
       url: 'https://chromewebstore.googleapis.com/upload/v2/publishers/publisher-123/items/extension-456:upload',
       version: 'v2',

@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import { google } from 'googleapis';
 
 import { buildItemName } from './chrome-web-store.mjs';
@@ -70,7 +71,7 @@ export async function uploadExtensionPackageWithGoogleApi({
       requestBody: {},
       media: {
         mimeType: 'application/zip',
-        body: zipBuffer,
+        body: Readable.from([zipBuffer]),
       },
     });
 
